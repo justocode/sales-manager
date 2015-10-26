@@ -5,7 +5,12 @@
   "license": "MIT",
   "repository": "local",
   "scripts": {
-    "run": ""
+    "run": "node app.js"
+  },
+  "dependencies": {
+    "consolidate": "^0.13.1",
+    "express": "^3.x",
+    "swig": "^1.4.2"
   },
   "devDependencies": {
     "gulp": "^3.9.0",
