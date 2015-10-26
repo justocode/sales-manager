@@ -1,0 +1,20 @@
+{
+  "name": "sales-manager",
+  "version": "1.0.0",
+  "description": "Sales manager",
+  "license": "MIT",
+  "repository": "local",
+  "scripts": {
+    "run": ""
+  },
+  "devDependencies": {
+    "gulp": "^3.9.0",
+    "gulp-browserify": "^0.5.1",
+    "gulp-clean": "^0.3.1",
+    "gulp-concat": "^2.6.0",
+    "gulp-react": "^3.0.1",
+    "gulp-rename": "^1.2.2",
+    "gulp-sourcemaps": "^1.6.0",
+    "react": "^0.13.3"
+  }
+}
