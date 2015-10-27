@@ -5,6 +5,8 @@ var gulp = require('gulp') // define task builder
   , appInfo = require('./package.json') // load app info from package.json
   , concat = require('gulp-concat') // join multiple file to vendor.js (one file)
   , sourcemaps = require('gulp-sourcemaps')
+  , minifyJs = require('gulp-uglify')
+  , minifyCss = require('gulp-minify-css')
   ;
 
 var buildDir = 'build/' + appInfo.version;
@@ -26,7 +28,7 @@ gulp.task('jsx', ['clean'], function() {
 gulp.task('browserify', ['jsx'], function() {
   return gulp.src( buildDir + '/js/app.js' )
     .pipe( browserify() )
-    .pipe( gulp.dest(buildDir + '/js') );
+    .pipe( gulp.dest(buildDir) );
 });
 
 // join all file *.js in folder lib
@@ -48,9 +50,24 @@ gulp.task('concat-css', ['clean'], function() {
     .pipe( gulp.dest(buildDir + '/css') );
 });
 
+// minifile *.js
+gulp.task('compress-js', function() {
+  return gulp.src( buildDir + '/lib/vendor.js' )
+    .pipe( minifyJs() )
+    .pipe( gulp.dest(buildDir + '/lib/vendor.min.js') );
+});
+
+// minifile *.css
+gulp.task('compress-css', function() {
+  return gulp.src( buildDir + '/css/vendor.css' )
+    .pipe( minifyCss() )
+    .pipe( gulp.dest(buildDir + '/css/vendor.min.css') );
+});
+
 gulp.task('watch', function() {
   gulp.watch('src/jsx/**/*.jsx', ['build']);
 });
 
+gulp.task('minify', ['compress-js', 'compress-css']);
 gulp.task('build', ['jsx', 'browserify', 'concat-js', 'concat-css']);
 gulp.task('default', ['build']);

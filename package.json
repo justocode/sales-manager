@@ -5,7 +5,9 @@
   "license": "MIT",
   "repository": "local",
   "scripts": {
-    "run": "node app.js"
+    "start": "node app.js",
+    "build": "gulp build",
+    "minify": "gulp minify"
   },
   "dependencies": {
     "consolidate": "^0.13.1",
@@ -13,13 +15,16 @@
     "swig": "^1.4.2"
   },
   "devDependencies": {
+    "bower": "^1.6.5",
     "gulp": "^3.9.0",
     "gulp-browserify": "^0.5.1",
     "gulp-clean": "^0.3.1",
     "gulp-concat": "^2.6.0",
+    "gulp-minify-css": "^1.2.1",
     "gulp-react": "^3.0.1",
     "gulp-rename": "^1.2.2",
     "gulp-sourcemaps": "^1.6.0",
+    "gulp-uglify": "^1.4.2",
     "react": "^0.13.3"
   }
 }
