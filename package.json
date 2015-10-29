@@ -1,6 +1,6 @@
 {
   "name": "sales-manager",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "description": "Sales manager",
   "license": "MIT",
   "repository": "local",
@@ -12,6 +12,7 @@
   "dependencies": {
     "consolidate": "^0.13.1",
     "express": "^3.x",
+    "swagger-noodle": "^0.1.0",
     "swig": "^1.4.2"
   },
   "devDependencies": {

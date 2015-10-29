@@ -1,6 +1,6 @@
 {
   "name": "sales-manager",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "homepage": "https://github.com/justocode/sales-manager",
   "authors": [
     "justocode@gmail.com",
@@ -35,6 +35,7 @@
     "morrisjs": "~0.5.1",
     "datatables-responsive": "~1.0.3",
     "bootstrap-social": "~4.8.0",
-    "flot.tooltip": "~0.8.4"
+    "flot.tooltip": "~0.8.4",
+    "eonasdan-bootstrap-datetimepicker": "~4.17.37"
   }
 }

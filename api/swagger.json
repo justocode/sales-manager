@@ -1,0 +1,94 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Sales-manager API",
+    "description": "Document for Sales-manager API",
+    "version": "0.0.1"
+  },
+  "produces": ["application/json"],
+  "host": "localhost:3000",
+  "basePath": "/v1",
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "Product Types",
+        "description":"The Products endpoint returns information about the *Uber* products\noffered at a given location. The response includes the display name\nand other details about each product, and lists the products in the\nproper display order.\n",
+        "x-swagger-router-controller": "Products",
+        "tags": ["Products"],
+        "operationId": "productsGet",
+        "parameters": [
+          {
+            "name" : "p_name",
+            "in" : "query",
+            "description" : "The name of product",
+            "required" : true,
+            "type" : "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description" : "An array of products",
+            "schema" : {
+              "type" : "array",
+              "items" : {
+                "$ref" : "#/definitions/Product"
+              }
+            }
+          },
+          "default": {
+            "description" : "Unexpected error",
+            "schema" : {
+              "$ref" : "#/definitions/Error"
+            }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Product": {
+      "properties" : {
+        "product_id" : {
+          "type" : "string",
+          "description" : "Unique identifier representing a specific product for a given latitude & longitude. For example, uberX in San Francisco will have a different product_id than uberX in Los Angeles."
+        },
+        "description" : {
+          "type" : "string",
+          "description" : "Description of product."
+        },
+        "display_name" : {
+          "type" : "string",
+          "description" : "Display name of product."
+        },
+        "price" : {
+          "type" : "double",
+          "format" : "double",
+          "description" : "Price of Product."
+        },
+        "stock": {
+          "type": "integer",
+          "format" : "int32",
+          "description" : "Products remain in stock"
+        },
+        "image" : {
+          "type" : "string",
+          "description" : "Image URL representing the product."
+        }
+      }
+    },
+    "Error": {
+      "properties" : {
+        "code" : {
+          "type" : "integer",
+          "format" : "int32"
+        },
+        "message" : {
+          "type" : "string"
+        },
+        "fields" : {
+          "type" : "string"
+        }
+      }
+    }
+  }
+}
