@@ -1,15 +1,20 @@
-var gulp = require('gulp') // define task builder
-  , react = require('gulp-react') // compile React from JSX
-  , browserify = require('gulp-browserify') // require lib/module for client-side
-  , clean = require('gulp-clean') // clean old-sourcecode
-  , appInfo = require('./package.json') // load app info from package.json
-  , concat = require('gulp-concat') // join multiple file to vendor.js (one file)
-  , sourcemaps = require('gulp-sourcemaps')
-  , minifyJs = require('gulp-uglify')
-  , minifyCss = require('gulp-minify-css')
+'use strict';
+
+var gulp = require('gulp'), // define task builder
+    react = require('gulp-react'), // compile React from JSX
+    browserify = require('gulp-browserify'), // require lib/module for client-side
+    clean = require('gulp-clean'), // clean old-sourcecode
+    appInfo = require('./package.json'), // load app info from package.json
+    concat = require('gulp-concat'), // join multiple file to vendor.js (one file)
+    sourcemaps = require('gulp-sourcemaps'),
+    minifyJs = require('gulp-uglify'),
+    minifyCss = require('gulp-minify-css')
   ;
 
-var buildDir = 'build/' + appInfo.version;
+var rootDir = 'public';
+var srcDir = rootDir + '/src';
+var buildDir = rootDir + '/build';
+// var buildDir = rootDir + '/build/' + appInfo.version;
 
 // clean all old-sourcecode JS
 gulp.task('clean', function() {
@@ -19,22 +24,21 @@ gulp.task('clean', function() {
 
 // compile JSX to JS and save to folder "build/"
 gulp.task('jsx', ['clean'], function() {
-  return gulp.src( 'src/jsx/**/*.jsx' )
+  return gulp.src( srcDir + '/jsx/**/*.jsx' )
     .pipe( react() )
     .pipe( gulp.dest(buildDir + '/js') );
 });
 
 // browserify to help client-side require/load all lib/module
 gulp.task('browserify', ['jsx'], function() {
-  return gulp.src( buildDir + '/js/app.js' )
+  return gulp.src( [buildDir + '/js/app.js', buildDir + '/js/admin.js'] )
     .pipe( browserify() )
     .pipe( gulp.dest(buildDir) );
 });
 
 // join all file *.js in folder lib
 gulp.task('concat-js', ['clean'], function() {
-  return gulp.src( ['src/lib/jquery.js', 'src/lib/moment.min.js',
-                    'src/lib/**/*.js'] )
+  return gulp.src( srcDir + '/lib/**/*.js' )
     .pipe( sourcemaps.init() )
       .pipe( concat('vendor.js') )
     .pipe( sourcemaps.write('') )
@@ -43,7 +47,7 @@ gulp.task('concat-js', ['clean'], function() {
 
 // join all file style *.css
 gulp.task('concat-css', ['clean'], function() {
-  return gulp.src( 'src/css/**/*.css' )
+  return gulp.src( srcDir + '/css/**/*.css' )
     .pipe( sourcemaps.init() )
       .pipe( concat('vendor.css', {newLine: ''}) )
     .pipe( sourcemaps.write('') )
@@ -65,9 +69,9 @@ gulp.task('compress-css', function() {
 });
 
 gulp.task('watch', function() {
-  gulp.watch('src/jsx/**/*.jsx', ['build']);
+  gulp.watch(srcDir + '/jsx/**/*.jsx', ['build']);
 });
 
 gulp.task('minify', ['compress-js', 'compress-css']);
-gulp.task('build', ['jsx', 'browserify', 'concat-js', 'concat-css']);
+gulp.task('build', ['jsx', 'browserify']);
 gulp.task('default', ['build']);
