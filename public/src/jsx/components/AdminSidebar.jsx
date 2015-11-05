@@ -4,6 +4,9 @@ var React = require('react'),
     UL = require('./../components/ElementUl');
 
 var AdminSidebar = React.createClass({
+  componentDidMount: function() {
+    $('#side-menu').metisMenu();
+  },
   render: function() {
     var data = {
       'className': 'nav',
