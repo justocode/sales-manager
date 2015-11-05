@@ -34,8 +34,10 @@ module.exports = React.createClass({
           { this.props.span ? <span className={this.props.span}></span> : '' }
         </a>
         {
-          this.props.sublist && this.props.sublist.list.length > 0 ?
-            <UL className={this.props.sublist.className} list={this.props.sublist.list}/> : ''
+          this.props.sublist !== null && this.props.sublist.hasOwnProperty('list')
+            && this.props.sublist.list.length > 0 ?
+              <UL className={this.props.sublist.className} list={this.props.sublist.list}/>
+              : ''
         }
       </li>
     );

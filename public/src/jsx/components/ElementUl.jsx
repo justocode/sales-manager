@@ -6,7 +6,7 @@ var React = require('react'),
 module.exports = React.createClass({
   propTypes: {
     className: React.PropTypes.string,
-    list: React.PropTypes.array
+    list: React.PropTypes.array.isRequired
   },
   getDefaultProps: function() {
     return {
@@ -18,9 +18,10 @@ module.exports = React.createClass({
     return (
       <ul className={this.props.className}>
       {
-        this.props.list.map(function(li) {
+        this.props.list.map(function(li, index) {
           return (
-            <LI className={li.className}
+            <LI key={'eli-'+index}
+              className={li.className}
               url={li.url}
               title={li.title}
               icon={li.icon}
