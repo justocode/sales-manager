@@ -1,44 +1,44 @@
 'use strict';
 
 var React = require('react'),
-    UL = require('./../components/ElementUl');
+    MenuItem = require('./../components/AdminSidebarMenuItem');
 
 var AdminSidebar = React.createClass({
   componentDidMount: function() {
     $('#side-menu').metisMenu();
   },
   render: function() {
-    var data = {
+    var lidemo = {
       'className': 'nav',
-      'list': [
-        {
-          'className': '',
-          'url': '#',
-          'title': 'Li 1',
-          'icon': 'fa fa-sitemap fa-fw',
-          'span': 'fa arrow',
-          'sublist': {}
-        },{
-          'className': '',
-          'url': '#',
-          'title': 'Li 2',
-          'icon': 'fa fa-sitemap fa-fw',
-          'span': 'fa arrow',
-          'sublist': {}
-        },{
-          'className': '',
-          'url': '#',
-          'title': 'Li 3',
-          'icon': 'fa fa-sitemap fa-fw',
-          'span': 'fa arrow',
-          'sublist': {}
-        }
-      ]
+      'url': 'index.html',
+      'title': 'Charts',
+      'icon': 'fa fa-bar-chart-o fa-fw',
+      'span': 'fa arrow',
+      'submenu': {
+        'className': 'nav nav-second-level',
+        'itemList': [
+          {
+            'url': 'flot.html',
+            'title': 'Flot Charts'
+          },{
+            'url': 'morris.html',
+            'title': 'Morris.js Charts'
+          }
+        ]
+      }
     };
     return (
       <div className='navbar-default sidebar' role='navigation'>
           <div className='sidebar-nav navbar-collapse'>
               <ul className='nav' id='side-menu'>
+                  <MenuItem
+                    className={lidemo.className}
+                    url={lidemo.url}
+                    icon={lidemo.icon}
+                    title={lidemo.title}
+                    span={lidemo.span}
+                    submenu={lidemo.submenu}
+                  />
                   <li className='sidebar-search'>
                       <div className='input-group custom-search-form'>
                           <input type='text' className='form-control' placeholder='Search...'/>
@@ -138,7 +138,6 @@ var AdminSidebar = React.createClass({
                       {/*<!-- /.nav-second-level -->*/}
                   </li>
               </ul>
-              <UL className={data.className} list={data.list} />
           </div>
           {/*<!-- /.sidebar-collapse -->*/}
       </div>
