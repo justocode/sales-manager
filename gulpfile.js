@@ -68,7 +68,7 @@ gulp.task('compress-css', function() {
     .pipe( gulp.dest(buildDir + '/css/vendor.min.css') );
 });
 
-gulp.task('watch', function() {
+gulp.task('watch', ['build'], function() {
   gulp.watch(srcDir + '/jsx/**/*.jsx', ['build']);
 });
 
