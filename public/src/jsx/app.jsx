@@ -70,5 +70,5 @@ var MyApp = React.createClass({
 
 React.render(
 	<MyApp />,
-	document.getElementById('wrapper')
+	document.getElementById('content')
 );

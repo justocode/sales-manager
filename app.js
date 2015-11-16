@@ -4,6 +4,7 @@ var join = require('path').join,
 		fs = require('fs'),
 		express = require('express'),
 		mongoose = require('mongoose'),
+		passport = require('passport'),
 		config = require('./config/config');
 
 var app = express();
@@ -24,37 +25,17 @@ fs.readdirSync(join(__dirname, 'api/models')).forEach(function(file) {
 	if(~file.indexOf('.js')) { require(join(__dirname, 'api/models', file)); }
 });
 
+// Bootstrap passport config
+require('./config/passport')(passport);
+
 // Bootstrap application settings
-require('./config/express')(app);
+require('./config/express')(app, passport);
+
+// Bootstrap swagger config
+require('./config/swagger')(app);
 
 // Bootstrap routes
-// require('./config/routes')(app);
-
-
-
-// apply using express.router
-app.use(app.router);
-
-app.get('/', function(req, res) {
-	res.render('index', {title: 'hello'});
-});
-
-app.get('/admin', function(req, res) {
-	res.render('admin', {title: 'admin'});
-});
-
-app.get('*', function(req, res) {
-	res.send('Page not found!', 404);
-});
-
-
-// setup swagger
-var swagger = require('swagger-noodle')({
-	API_SPEC_FILE: join(__dirname, 'api/swagger.json'),
-	CONTROLLERS_DIR: join(__dirname, 'api/controllers'),
-	MOCK_MODE: true
-});
-app.use(swagger);
+require('./config/routes')(app, passport);
 
 // setup Server
 app.listen(port, function() {

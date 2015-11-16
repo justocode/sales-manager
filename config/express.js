@@ -19,7 +19,7 @@ var join = require('path').join,
 
 var env = process.env.NODE_ENV || 'development';
 
-module.exports = function(app) {
+module.exports = function(app, passport) {
 
 	// compression middleware (should be placed before express.static)
 	app.use(compression({
@@ -89,4 +89,7 @@ module.exports = function(app) {
 		})
 	}));
 
+	// use passport session
+	app.use(passport.initialize());
+	app.use(passport.session());
 };

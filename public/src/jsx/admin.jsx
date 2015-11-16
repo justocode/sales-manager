@@ -17,5 +17,5 @@ var AdminPage = React.createClass({
 
 React.render(
 	<AdminPage />,
-	document.getElementById('wrapper')
+	document.getElementById('content')
 );
