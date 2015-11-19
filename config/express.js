@@ -12,10 +12,11 @@ var join = require('path').join,
 		multer = require('multer'),
 
 		mongoStore = require('connect-mongo')(session),
+		flash = require('connect-flash'),
 		winston = require('winston'),
 		cons = require('consolidate'),
 		pkg = require('../package.json'),
-		config = require('../config/config');
+		config = require('config');
 
 var env = process.env.NODE_ENV || 'development';
 
@@ -92,4 +93,8 @@ module.exports = function(app, passport) {
 	// use passport session
 	app.use(passport.initialize());
 	app.use(passport.session());
+
+	// connect flash for flash messages - should be declared after sessions
+	app.use(flash());
+
 };

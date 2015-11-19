@@ -7,18 +7,19 @@ var React = require('react'),
 		OrderForm = require('./forms/OrderForm'),
 		OrderInForm = require('./forms/OrderImportForm'),
 		OrderOutForm = require('./forms/OrderExportForm'),
-		LoginForm = require('./forms/LoginForm');
+		LoginForm = require('./forms/LoginForm'),
+		ProductFormNew = require('./forms/ProductFormNew');
 
 var MyApp = React.createClass({
 	getInitialState: function () {
 		var _tabListData = [
 			{
 				key: 'Home',
-				content: ProductForm
+				content: ProductFormNew
 			},
 			{
 				key: 'Products',
-				content: ProductForm
+				content: ProductFormNew
 			},
 			{
 				key: 'Orders',
@@ -34,7 +35,7 @@ var MyApp = React.createClass({
 			},
 		];
 		return ({
-			currentTab: 'Login',
+			currentTab: 'Products',
 			tabListData: _tabListData
 		});
 	},

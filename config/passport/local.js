@@ -14,11 +14,11 @@ module.exports = new LocalStrategy({
 			select: 'name username email hashed_password salt'
 		};
 		User.load(options, function (err, user) {
-			if(err) { return done(err); }
-			if(!user) {
+			if (err) { return done(err); }
+			if (!user) {
 				return done(null, false, { message: 'Unknown user' });
 			}
-			if(!user.authenticate(password)) {
+			if (!user.authenticate(password)) {
 				return done(null, false, { message: 'Invalid password' });
 			}
 			return done(null, user);

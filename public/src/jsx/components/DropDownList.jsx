@@ -10,7 +10,8 @@ module.exports = React.createClass({
 	getDefaultProps: function() {
 		return {
 			_key: 'key',
-			_value: 'value'
+			_value: 'value',
+			_class: ''
 		};
 	},
 	onChangeData: function(e) {
@@ -22,11 +23,11 @@ module.exports = React.createClass({
 		var propKey = this.props._key;
 		var propValue = this.props._value;
 		return (
-			<select className="form-control" ref={this.props.ref}
+			<select className={'form-control '+ this.props._class} ref={this.props.ref}
 							value={this.props.value} onChange={this.onChangeData}>
 			{
 				this.props.dataList.map(function(data) {
-					return (<option key={'opt-'+data[propKey]} value={data[propKey]}>{data[propValue]}</option>);
+					return (<option key={'opt-'+data[propKey]+propKey} value={data[propKey]}>{data[propValue]}</option>);
 				})
 			}
 			</select>

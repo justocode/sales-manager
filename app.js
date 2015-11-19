@@ -5,7 +5,9 @@ var join = require('path').join,
 		express = require('express'),
 		mongoose = require('mongoose'),
 		passport = require('passport'),
-		config = require('./config/config');
+		promise = require('bluebird'),
+		mongoose = promise.promisifyAll(mongoose),
+		config = require('config');
 
 var app = express();
 var port = process.env.PORT || 3000;
@@ -13,7 +15,9 @@ var port = process.env.PORT || 3000;
 // setup connect to mongodb
 var connect = function() {
 	var options = { server: { socketOptions: { keepAlive: 1 } } };
-	mongoose.connect(config.db.mongodb, options);
+	mongoose.connect(config.db.mongodb, options, function() {
+		console.log('connect to mongodb successfully');
+	});
 };
 connect();
 
