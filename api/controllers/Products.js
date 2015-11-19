@@ -11,36 +11,38 @@ var mongoose = require('mongoose'),
  * Load all products
  */
 exports.loadAllProducts = function (req, res, next) {
-	var options = { select: '_id productname categories price stock description' };
+	var options = { select: '_id productName category price stock description' };
 	var getProducts = Product.list(options);
 
 	getProducts.then(function (products) {
-			res.json({products: products});
-		}, function(err) { next(err); });
+			res.json({ products: products });
+		}, function(err) {
+			next(err);
+		});
 };
 
 /**
  * List products per page
  */
 exports.loadAllProductsByCat = function (req, res, next) {
-	var _criteria = req.params.catId ? { categories: req.params.catId } : '';
+	var _criteria = req.params.catId ? { category: req.params.catId } : '';
 	var _page = (req.params.page > 0 ? req.params.page : 1) - 1;
 	var _perPage = req.params.perPage > 0 ? req.params.perPage : 20;
 	var options = {
 		criteria: _criteria,
-		select: '_id productname categories price stock description',
+		select: '_id productName category price stock description',
 		perPage: _perPage,
 		page: _page
 	};
 
 	var getList = Product.list(options);
 	getList.then(function (products) {
-			var count = Product.count({criteria: _criteria});
+			var count = Product.count({ criteria: _criteria });
 			count.then(function(total) {
-				res.json({products: products, total: total});
+				res.json({ products: products, total: total });
 			}, function(err) {
 				console.log(err);
-				res.json({products: products});
+				res.json({ products: products });
 			});
 		}, function(err) {
 			next(err);

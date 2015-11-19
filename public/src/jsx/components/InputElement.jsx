@@ -13,9 +13,11 @@ module.exports = React.createClass({
 	},
 	render: function() {
 		return (
-			<div className={'mgb5px input-group col-xs-6 col-sm-6 '+this.props.styleClass}>
-				<span className='input-group-addon w20'>{this.props.title}</span>
-				<input ref={this.props.ref} className='form-control'
+			<div className={'input-group col-xs-6 col-sm-6 '+this.props.styleClass}>
+				<span className='input-group-addon'>{this.props.title}</span>
+				<input id={this.props._ref}
+							ref={this.props._ref}
+							className='form-control'
 							type={this.props.type}
 							valueLink={this.props.valueLink}
 							placeholder={this.props.placeholder}/>

@@ -32,11 +32,11 @@ CategorySchema.pre('remove', function (next) {
 CategorySchema.pre('save', function (next) {
 	if (!this.isNew) { return next(); }
 
-	this.findOne({categoryName: this.categoryName}, 'categoryName', function(err, cat) {
-		if (err) { next(err); }
-		if (cat) { next(new Error('This category is exists')); }
-		next();
-	});
+	// this.findOne({ categoryName: this.categoryName }, 'categoryName', function(err, cat) {
+	// 	if (err) { next(err); }
+	// 	if (cat) { next(new Error('This category is exists')); }
+	// 	next();
+	// });
 });
 
 /**

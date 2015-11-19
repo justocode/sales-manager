@@ -8,18 +8,7 @@ var React = require('react'),
 module.exports = React.createClass({
 	getInitialState: function() {
 		return ({
-			orderItemList: [],
-			currentOrder: {
-				orderstatus: 'opening',
-				orderdate: new Date().toISOString(),
-				orderbillingdate: new Date().toISOString(),
-				amount: 0,
-				shopname: '',
-				customername: '',
-				customerphone: '',
-				customeraddress: '',
-				customernote: ''
-			}
+			orderItems: []
 		});
 	},
 	getOrderStatusList: function() {
@@ -49,166 +38,128 @@ module.exports = React.createClass({
 		return orderStatus;
 	},
 	componentDidMount: function() {
-		$('#inputOrderDate').datetimepicker();
+		$('#inputCreateAt').datetimepicker();
 		$('#inputBillingDate').datetimepicker();
 	},
-	getProductList: function() {
-		// Request get orders list
-		$.ajax({
-			type: 'GET',
-			dataType: 'json',
-			url: '/api/products',
-			cache: false,
-			success: function(orders) {
-				this.setState({orderItemList: orders});
-			}.bind(this),
-			error: function(xhr, status, err) {
-				console.error('/api/orders', status, err.toString());
-			}.bind(this)
-		});
-	},
-	pushOrderItem: function(newOrderItem) {
-		// Push new orderItem to orderItemList
-		var newOrderItemListData = this.state.orderItemList.concat(newOrderItem);
-		this.setState({orderItemList: newOrderItemListData});
+	pushOrderItem: function(newItem) {
+		// Push new orderItem to orderItems
+		var newOrderItems = this.state.orderItems;
+		newOrderItems.push(newItem);
+		this.setState({orderItems: newOrderItems});
 	},
 	pullOrderItem: function(index) {
-
-		// var rowData = that.props.dataRow;
-		// var isEmpty = true;
-
-		// var orderItemDefault = this.createNewOrderItem();
-
-		// Check orderItem was remove is exist and not null
-		// for(var property in orderItemDefault) {
-		// 	if(orderItemDefault.hasOwnProperty(property)) {
-		// 		if(rowData[property] !== '' && rowData[property] !== 0) {
-		// 			isEmpty = false;
-		// 		}
-		// 	}
-		// }
-
-		// If not null then Confirm remove
-		// var comfirmination = !isEmpty ? confirm('Are you sure?') : true;
-
-		// If accept remove
-		// if(comfirmination) {
-			// var index = this.state.orderItemList.indexOf(rowData);
-			var newOrderItemList = this.state.orderItemList;
-
-			newOrderItemList.splice(index, 1);
-			this.setState({orderItemList: newOrderItemList});
-			// var node = that.getDOMNode();
-			// React.unmountComponentAtNode(node);
-			// $(node).remove();
-		// }
+			var newOrderItems = this.state.orderItems;
+			newOrderItems.splice(index, 1);
+			this.setState({orderItems: newOrderItems});
 	},
 	addOrder: function(e) {
 		e.preventDefault();
 
-		var _shopname = $('#addOrderInfo fieldset input#inputShopName').val(),
-			_orderstatus = $('#addOrderInfo fieldset input#inputOrderStatus').val(),
-			_orderdate = $('#addOrderInfo fieldset input#inputOrderDate').data('DateTimePicker').date(),
-			_orderbillingdate = $('#addOrderInfo fieldset input#inputBillingDate').data('DateTimePicker').date(),
-			_customername = $('#addOrderInfo fieldset input#inputCustomerName').val(),
-			_customerphone = $('#addOrderInfo fieldset input#inputCustomerPhone').val(),
-			_customeraddress = $('#addOrderInfo fieldset input#inputCustomerAddress').val(),
-			_customernote = $('#addOrderInfo fieldset input#inputCustomerNote').val();
+		// get total amount from orderItems
+		var amountTotal = 0;
+		for (var i = 0; i < this.state.orderItems.length; i++) {
+			amountTotal += parseInt(this.state.orderItems[i].amount);
+		}
 
-			_orderdate = _orderdate === null ? new Date() : _orderdate;
-			_orderbillingdate = _orderbillingdate === null ? new Date() : _orderbillingdate;
-
-		// Checking data inputs not null
-		var errorCount = 0;
-		if(_shopname === '') { errorCount++; }
-		if(_customername === '') { errorCount++; }
-		if(_customerphone === '') { errorCount++; }
-
-		var _orderItem = {
-			productid: '55d2bff6729e098a568b624e',
-			quantity: 5,
-			price: 550000,
-			coupon: 0,
-			amount: 2750000
+		// create new object Order
+		var newOrder = {
+			orderStatus: React.findDOMNode(this.refs.inputOrderStatus).value,
+			createAt: $('#inputCreateAt').data('DateTimePicker').date(),
+			billingDate: $('#inputBillingDate').data('DateTimePicker').date(),
+			amount: amountTotal,
+			shopName: $('#inputShopName').val(),
+			customerName: $('#inputCustomerName').val(),
+			customerPhone: $('#inputCustomerPhone').val(),
+			customerAddress: $('#inputCustomerAddress').val(),
+			customerNote: $('#inputCustomerNote').val(),
+			orderItems: this.state.orderItems
 		};
 
-		// Check and make sure errorCount's still at zero
-		if(errorCount === 0) {
-			// If it is, compile all order info into one object
-			var newOrder = {
-				shopname: _shopname,
-				orderstatus: _orderstatus,
-				orderdate: _orderdate.toISOString(),
-				orderbillingdate: _orderbillingdate.toISOString(),
-				customername: _customername,
-				customerphone: _customerphone,
-				customeraddress: _customeraddress,
-				customernote: _customernote,
-				orderItems: [_orderItem]
-			};
+		// convert type Date
+		if (this.isStringNull(newOrder.createAt)) {
+			newOrder.createAt = new Date();
+		}
+		if (this.isStringNull(newOrder.billingDate)) {
+			newOrder.billingDate = new Date();
+		}
+		newOrder.createAt = newOrder.createAt.toISOString();
+		newOrder.billingDate = newOrder.billingDate.toISOString();
 
-			console.log('addOrder() ' + JSON.stringify(newOrder));
+		// Checking data inputs not null
+		var isError = (
+				this.isStringNull(newOrder.customerName) ||
+				this.isStringNull(newOrder.customerPhone) ||
+				this.isStringNull(newOrder.customerAddress) ||
+				this.isStringNull(newOrder.orderItems)
+			);
 
-			// Adding newOrder to Server
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				url: '/api/orders',
-				data: newOrder,
-				success: function(order) {
-					if(!$.isEmptyObject(order)) {
-						// Update order to orderItemList
-						// var newOrderItemListData = this.state.orderItemList.concat(order);
-						// this.setState({orderItemList: newOrderItemListData});
-						console.log('Yeahhhh create success');
-					}
-				}.bind(this),
-				error: function(xhr, status, err) {
-					console.error('/api/orders', status, err.toString());
-				}.bind(this)
+		// Check and make sure is not Error
+		if(!isError) {
+
+			var addNewOrder = $.post('/api/orders', newOrder);
+
+			addNewOrder.done(function (data) {
+				console.log(data.message);
+				this.resetInput();
+			}.bind(this));
+
+			addNewOrder.fail(function (xhr, status, err) {
+				console.error('/api/orders', status, err.toString());
 			});
-
-			// Clear old form data
-			// $('#addOrder fieldset input').val('');
 
 		} else {
 			// If errorCount is more than 0, error out
 			console.error('Please fill in all fields');
 		}
 	},
+	resetInput: function() {
+		React.findDOMNode(this.refs.inputOrderStatus).value = 'opening';
+		$('#inputCreateAt').data('DateTimePicker');
+		$('#inputBillingDate').data('DateTimePicker');
+		$('#inputShopName').val('');
+		$('#inputCustomerName').val('');
+		$('#inputCustomerPhone').val('');
+		$('#inputCustomerAddress').val('');
+		$('#inputCustomerNote').val('');
+		this.setState({orderItems: []});
+	},
 	onChangeStatus: function(status) {
 		console.log('onChangeStatus()');
+	},
+	isStringNull: function (str) {
+		return (typeof str === undefined) || (str === null) || (str === '');
 	},
 	render: function() {
 		var formReturn = (
 			<div className='form-group col-xs-12 col-sm-12'>
 				<div className='panel panel-default'>
 					<div className='panel-heading heading-button'>
-						<span>Create new Order</span>
+						Create new Order
 						<button ref='btnAddOrder' className='btn btn-primary col-xs-2 col-sm-2 pull-right' onClick={this.addOrder}>Save</button>
 					</div>
 					<fieldset>
-							<InputElm ref='inputShopName' styleClass='pull-left' title='Shop Name' placeholder='shopname'/>
-							<InputElm ref='inputCustomerName' styleClass='pull-right' title='Customer Name' placeholder='customername'/>
+							<InputElm _ref='inputShopName' styleClass='pull-left' title='Shop Name' placeholder='shopName'/>
+							<InputElm _ref='inputCustomerName' styleClass='pull-right' title='Customer Name' placeholder='customerName'/>
 
 							<div className='input-group col-xs-6 col-sm-6 pull-left'>
 								<span className='input-group-addon w20'>Order Status</span>
 								<DropDownList
 									dataList={this.getOrderStatusList()}
-									onChangeData={this.onChangeStatus}/>
+									onChangeData={this.onChangeStatus}
+									ref='inputOrderStatus'/>
 							</div>
-							<InputElm ref='inputCustomerPhone' styleClass='pull-right' title='Customer Phone' placeholder='customerphone'/>
+							<InputElm _ref='inputCustomerPhone' styleClass='pull-right' title='Customer Phone' placeholder='customerPhone'/>
 
-							<InputElm ref='inputOrderDate' styleClass='pull-left' title='Order Date' placeholder=''/>
-							<InputElm ref='inputCustomerAddress' styleClass='pull-right' title='Customer Address' placeholder='customeraddress'/>
+							<InputElm _ref='inputCreateAt' styleClass='pull-left' title='Order Date' placeholder=''/>
+							<InputElm _ref='inputCustomerAddress' styleClass='pull-right' title='Customer Address' placeholder='customerAddress'/>
 
-							<InputElm ref='inputBillingDate' styleClass='pull-left' title='Billing Date' placeholder=''/>
-							<InputElm ref='inputCustomerNote' styleClass='pull-right' title='Customer Note' placeholder='customernote'/>
+							<InputElm _ref='inputBillingDate' styleClass='pull-left' title='Billing Date' placeholder=''/>
+							<InputElm _ref='inputCustomerNote' styleClass='pull-right' title='Customer Note' placeholder='customerNote'/>
 					</fieldset>
 				</div>
 
 				<OrderExportItemList
-					orderItemList={this.state.orderItemList}
+					orderItems={this.state.orderItems}
 					pushOrderItem={this.pushOrderItem}
 					pullOrderItem={this.pullOrderItem}/>
 

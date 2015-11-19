@@ -10,11 +10,12 @@ var mongoose = require('mongoose'),
  * Product Schema
  */
 var ProductSchema = new Schema({
-	productname: { type : String, default : '', trim : true },
+	_id: { type: Schema.Types.ObjectId },
+	productName: { type : String, default : '', trim : true },
 	description: { type : String, default : '', trim : true },
 	price: { type : Number, default : 0 },
 	stock: { type : Number, default : 0 },
-	categories: Number,
+	category: Number,
 	image: {
 		cdnUri: String,
 		files: []
@@ -25,8 +26,8 @@ var ProductSchema = new Schema({
 /**
  * Validations
  */
-ProductSchema.path('productname').required(true, 'Product\'s name cannot be blank');
-ProductSchema.path('categories').required(true, 'Product\'s category cannot be blank');
+ProductSchema.path('productName').required(true, 'Product\'s name cannot be blank');
+ProductSchema.path('category').required(true, 'Product\'s category cannot be blank');
 ProductSchema.path('price').validate(function (price) {
 	return price >= 0;
 }, 'Product\'s price cannot less than blank');

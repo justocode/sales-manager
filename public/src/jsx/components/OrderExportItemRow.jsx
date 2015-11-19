@@ -6,11 +6,17 @@ module.exports = React.createClass({
 	propTypes: {
 		deleteRow: React.PropTypes.func.isRequired
 	},
-	deleteRow: function(e) {
+	deleteRow: function (e) {
 		e.preventDefault();
 
 		// invoke to parent's function
 		this.props.deleteRow(this.props.index);
+	},
+	getCategoryName: function (catId) {
+		return catId;
+	},
+	getProductName: function (productId) {
+		return productId;
 	},
 	render: function() {
 		var rowData = this.props.rowData;
@@ -18,11 +24,11 @@ module.exports = React.createClass({
 			<tr>
 				<td>{this.props.index + 1}</td>
 				<td>{rowData.category}</td>
-				<td>{rowData.productname}</td>
+				<td>{this.getProductName(rowData.product)}</td>
 				<td>{rowData.quantity}</td>
 				<td>{rowData.price}</td>
 				<td>{rowData.amount}</td>
-				<td>{rowData.provider}</td>
+				<td>{rowData.discount}</td>
 				<td>{rowData.note}</td>
 				<td><a href='#' onClick={this.deleteRow}>delete</a></td>
 			</tr>

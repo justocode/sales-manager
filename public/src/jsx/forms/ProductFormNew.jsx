@@ -28,11 +28,9 @@ module.exports = React.createClass({
 		// Request get products list
 		var url = '/api/products/'+ perPage +'/'+ page;
 		url += catId ? '/'+ catId : '';
-		console.log(url);
 		var getProducts = $.get(url);
 
 		getProducts.done(function(data) {
-		console.log(JSON.stringify(data.products));
 				var _pages = Math.floor(data.total/perPage);
 				_pages += (data.total%perPage > 0) ? 1 : 0;
 				this.setState({
@@ -50,8 +48,7 @@ module.exports = React.createClass({
 
 		getCats.done(function(data) {
 				var cats = data.categories;
-				console.log(JSON.stringify(cats));
-				cats.splice(0, 0, { _id: '', categoryname: 'All' });
+				cats.splice(0, 0, { _id: '', categoryName: 'All' });
 				this.setState({ categories: cats });
 			}.bind(this));
 
@@ -90,61 +87,63 @@ module.exports = React.createClass({
 			{ key: 25, value: 25 }
 		];
 		var formReturn = (
-			<div className='panel panel-default'>
-				<div className='panel-heading'>
-					Products
-				</div>
-				<div className='panel-body'>
-					<div className='row'>
-						<div className='col-sm-6'>
-							<label><DropDownList
-								dataList={pageSizes}
-								onChangeData={this.changeProductsPerPage}
-								_class='input-sm'/></label>
+			<div className='form-group col-xs-12 col-sm-12'>
+				<div className='panel panel-default'>
+					<div className='panel-heading'>
+						Products
+					</div>
+					<div className='panel-body'>
+						<div className='row'>
+							<div className='col-sm-6'>
+								<label><DropDownList
+									dataList={pageSizes}
+									onChangeData={this.changeProductsPerPage}
+									_class='input-sm'/></label>
+							</div>
+							<div className="col-sm-6">
+								<DropDownList
+									dataList={this.state.categories}
+									onChangeData={this.changeCategory}
+									_key='_id' _value='categoryName' _class='input-sm'/>
+							</div>
 						</div>
-						<div className="col-sm-6">
-							<DropDownList
-								dataList={this.state.categories}
-								onChangeData={this.changeCategory}
-								_key='_id' _value='categoryname' _class='input-sm'/>
+						<div className='table-responsive'>
+							<table className='table table-striped table-bordered table-hover'>
+								<thead>
+									<tr>
+										<th>#</th>
+										<th>Product Name</th>
+										<th>Category</th>
+										<th>Price</th>
+										<th>Stock</th>
+										<th>Description</th>
+									</tr>
+								</thead>
+								<tbody>
+									{
+										this.state.productListData.map(function(product, index) {
+											return (
+												<tr>
+													<td>{index}</td>
+													<td>{product.productName}</td>
+													<td>{product.category}</td>
+													<td>{product.price}</td>
+													<td>{product.stock}</td>
+													<td>{product.description}</td>
+												</tr>
+											)
+										})
+									}
+								</tbody>
+							</table>
 						</div>
 					</div>
-					<div className='table-responsive'>
-						<table className='table table-striped table-bordered table-hover'>
-							<thead>
-								<tr>
-									<th>#</th>
-									<th>Product Name</th>
-									<th>Category</th>
-									<th>Price</th>
-									<th>Stock</th>
-									<th>Description</th>
-								</tr>
-							</thead>
-							<tbody>
-								{
-									this.state.productListData.map(function(product, index) {
-										return (
-											<tr>
-												<td>{index}</td>
-												<td>{product.productname}</td>
-												<td>{product.categories}</td>
-												<td>{product.price}</td>
-												<td>{product.stock}</td>
-												<td>{product.description}</td>
-											</tr>
-										)
-									})
-								}
-							</tbody>
-						</table>
-					</div>
-				</div>
 
-				<Pagination
-					pages={this.state.pages}
-					currentPage={this.state.currentPage}
-					moveToPage={this.moveToPage}/>
+					<Pagination
+						pages={this.state.pages}
+						currentPage={this.state.currentPage}
+						moveToPage={this.moveToPage}/>
+				</div>
 			</div>
 		);
 

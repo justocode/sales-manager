@@ -3,6 +3,7 @@
 var users = require('../api/controllers/Users'),
 		products = require('../api/controllers/Products'),
 		categories = require('../api/controllers/Categories'),
+		orders = require('../api/controllers/Orders'),
 		auth = require('./middlewares/authorization');
 
 /**
@@ -15,9 +16,20 @@ var users = require('../api/controllers/Users'),
  */
 module.exports = function (app, passport) {
 
+	// apply using express.router
+	// app.use('/', app.router);
+
 	app.get('/', function(req, res) {
-		res.render('index', {title: 'hello'});
+		res.render('index', { title: 'hello' });
 	});
+
+	// app.use('/api/products', require('./routes/products'));
+	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
+	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
+
+	app.get('/api/categories', categories.loadAllCategories);
+	app.post('/api/categories', categories.create);
+	app.post('/api/orders', orders.create);
 
 	// user routes
 	app.get('/login', users.login);
@@ -31,21 +43,13 @@ module.exports = function (app, passport) {
 	// 		failureFlash: 'Invalid email or password.'
 	// 	}), users.session);
 	// app.get('/users/:userId', users.show);
-	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
-	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
-
-	app.get('/api/categories', categories.loadAllCategories);
-
 	// app.param('userId', users.load);
 
 	// home route
 	// app.get('/', articles.index);
 
-	// apply using express.router
-	// app.use(app.router);
-
 	app.get('/admin', function(req, res) {
-		res.render('admin', {title: 'admin'});
+		res.render('admin', { title: 'admin' });
 	});
 
 	app.get('*', function(req, res) {
