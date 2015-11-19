@@ -4,7 +4,7 @@ var mongoose = require('mongoose'),
 		promise = require('bluebird'),
 		mongoose = promise.promisifyAll(mongoose),
 		Category = mongoose.model('Category'),
-		utils = require('../../lib/utils');
+		utils = require('utils');
 
 /**
  * Load all Categories
@@ -25,8 +25,6 @@ exports.loadAllCategories = function (req, res, next) {
  */
 exports.create = function (req, res) {
 	var category = new Category(req.body);
-	console.log('la chuyen gi vay');
-	console.log(JSON.stringify(req.body));
 	category.save(function (err) {
 		if (err) {
 			return res.render({ errors: utils.errors(err) });

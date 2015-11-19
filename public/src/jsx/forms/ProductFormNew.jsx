@@ -14,8 +14,7 @@ module.exports = React.createClass({
 			currentCat: '',
 			pages: 1,
 			currentPage: 1,
-			productsPerPage: 5,
-			productInfo: ''
+			productsPerPage: 5
 		});
 	},
 	componentWillMount: function() {
@@ -127,8 +126,8 @@ module.exports = React.createClass({
 													<td>{index}</td>
 													<td>{product.productName}</td>
 													<td>{product.category}</td>
-													<td>{product.price}</td>
-													<td>{product.stock}</td>
+													<td>{parseInt(product.price).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
+													<td>{parseInt(product.stock).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
 													<td>{product.description}</td>
 												</tr>
 											)

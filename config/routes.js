@@ -23,12 +23,17 @@ module.exports = function (app, passport) {
 		res.render('index', { title: 'hello' });
 	});
 
+// routes product
 	// app.use('/api/products', require('./routes/products'));
 	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
 	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
 
+// routes category
 	app.get('/api/categories', categories.loadAllCategories);
 	app.post('/api/categories', categories.create);
+
+// routes order
+	app.get('/api/orders/:perPage/:page', orders.loadAllOrders);
 	app.post('/api/orders', orders.create);
 
 	// user routes

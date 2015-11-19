@@ -4,6 +4,7 @@ var mongoose = require('mongoose'),
 		Schema = mongoose.Schema;
 
 var OrderSchema = new Schema({
+	_id: { type: Schema.Types.ObjectId },
 	orderStatus: { type: String, default: 'opening' },
 	createdAt: { type: Date, default: Date.now },
 	billingDate: { type: Date, default: Date.now },
@@ -74,8 +75,15 @@ OrderSchema.statics = {
 			.skip(_skip)
 			.populate('orderItems.product')
 			.exec();
-	}
+	},
 
+	count: function (options) {
+		var _criteria = options.criteria || {};
+
+		return this.find(_criteria)
+			.count()
+			.exec();
+	}
 };
 
 mongoose.model('Order', OrderSchema);

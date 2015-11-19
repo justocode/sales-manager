@@ -25,9 +25,9 @@ module.exports = React.createClass({
 				<td>{this.props.index + 1}</td>
 				<td>{rowData.category}</td>
 				<td>{this.getProductName(rowData.product)}</td>
-				<td>{rowData.quantity}</td>
-				<td>{rowData.price}</td>
-				<td>{rowData.amount}</td>
+				<td>{parseInt(rowData.quantity).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
+				<td>{parseInt(rowData.price).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
+				<td>{parseInt(rowData.amount).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
 				<td>{rowData.discount}</td>
 				<td>{rowData.note}</td>
 				<td><a href='#' onClick={this.deleteRow}>delete</a></td>

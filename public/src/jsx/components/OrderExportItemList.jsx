@@ -61,12 +61,12 @@ module.exports = React.createClass({
 			price = this.state.productList[index].price;
 		}
 
-		$('#inputPrice').val(price);
+		$('#inputPrice').val(parseInt(price).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 
 		// and calculate amount
 		var quantity = parseInt($('#inputQuantity').val());
 		if (quantity && quantity >= 0) {
-			$('#inputAmount').val(quantity * parseInt(price));
+			$('#inputAmount').val(parseInt(quantity * parseInt(price)).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 		} else {
 			$('#inputAmount').val(0);
 		}
@@ -79,7 +79,7 @@ module.exports = React.createClass({
 		// Calculate amount
 		var quantity = parseInt($('#inputQuantity').val());
 		if (quantity >= 0 && price >= 0) {
-			$('#inputAmount').val(quantity * price);
+			$('#inputAmount').val(parseInt(quantity * price).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 		}
 	},
 	pushOrderItem: function(e) {

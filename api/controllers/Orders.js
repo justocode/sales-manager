@@ -1,20 +1,33 @@
 'use strict';
 
 var mongoose = require('mongoose'),
-		// promise = require('bluebird'),
-		// mongoose = promise.promisifyAll(mongoose),
-		Order = mongoose.model('Order'),
-		utils = require('utils');
+		promise = require('bluebird'),
+		mongoose = promise.promisifyAll(mongoose),
+		Order = mongoose.model('Order');
 
 /**
  * Load all Orders
  */
 exports.loadAllOrders = function (req, res, next) {
-	var options = { select: '_id categoryName' };
-	var getOrders = Order.list(options);
+	var _criteria = {};
+	var _page = (req.params.page > 0 ? req.params.page : 1) - 1;
+	var _perPage = req.params.perPage > 0 ? req.params.perPage : 20;
+	var options = {
+		criteria: _criteria,
+		sort: {createdAt: -1},
+		perPage: _perPage,
+		page: _page
+	};
 
-	getOrders.then(function (orders) {
-			res.json({ orders: orders });
+	var getList = Order.list(options);
+	getList.then(function (orders) {
+			var count = Order.count({ criteria: _criteria });
+			count.then(function(total) {
+				res.json({ orders: orders, total: total });
+			}, function(err) {
+				console.log(err);
+				res.json({ orders: orders });
+			});
 		}, function(err) {
 			next(err);
 		});

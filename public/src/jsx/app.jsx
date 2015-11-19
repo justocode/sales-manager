@@ -14,20 +14,16 @@ var MyApp = React.createClass({
 	getInitialState: function () {
 		var _tabListData = [
 			{
-				key: 'Home',
-				content: ProductFormNew
-			},
-			{
 				key: 'Products',
 				content: ProductFormNew
 			},
 			{
 				key: 'Orders',
-				content: OrderOutForm
+				content: OrderForm
 			},
 			{
-				key: 'About',
-				content: AboutForm
+				key: 'CreateOrder',
+				content: OrderOutForm
 			},
 			{
 				key: 'Login',
