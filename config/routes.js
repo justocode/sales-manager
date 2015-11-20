@@ -33,7 +33,9 @@ module.exports = function (app, passport) {
 	app.post('/api/categories', categories.create);
 
 // routes order
-	app.get('/api/orders/:perPage/:page', orders.loadAllOrders);
+	app.get('/api/orders/:perPage/:page/:shopId/:status', orders.loadAllOrdersByShop);
+	app.get('/api/orders/:perPage/:page/:shopId', orders.loadAllOrdersByShop);
+	app.get('/api/orders/:perPage/:page', orders.loadAllOrdersByShop);
 	app.post('/api/orders', orders.create);
 
 	// user routes

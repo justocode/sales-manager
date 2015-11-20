@@ -8,13 +8,19 @@ var mongoose = require('mongoose'),
 /**
  * Load all Orders
  */
-exports.loadAllOrders = function (req, res, next) {
+exports.loadAllOrdersByShop = function (req, res, next) {
 	var _criteria = {};
+	if (req.params.shopId && req.params.shopId !== 'all') {
+		_criteria.shopName = req.params.shopId;
+	}
+	if (req.params.status && req.params.status !== 'all') {
+		_criteria.orderStatus = req.params.status;
+	}
 	var _page = (req.params.page > 0 ? req.params.page : 1) - 1;
 	var _perPage = req.params.perPage > 0 ? req.params.perPage : 20;
 	var options = {
 		criteria: _criteria,
-		sort: {createdAt: -1},
+		sort: { createdAt: -1 },
 		perPage: _perPage,
 		page: _page
 	};

@@ -1,39 +1,36 @@
 'use strict';
 
-var React = require('react');
-var OrderRow = require('./../components/OrderRow');
+var React = require('react'),
+		OrderItem = require('./../components/OrderItem');
 
 module.exports = React.createClass({
 	render: function() {
 		return (
-			<div id='orderList' className='panel panel-default'>
-				<div className='panel-heading'>Order List</div>
-				<table className='table table-bordered table-striped menu-items'>
-					<thead>
-						<tr>
-							<th>#</th>
-							<th>CreatedAt</th>
-							<th>Shop Name</th>
-							<th>Order status</th>
-							<th>Amount</th>
-							<th>Note</th>
-						</tr>
-					</thead>
-					<tbody>
+			<table className='table table-striped table-bordered table-hover'>
+				<thead>
+					<tr>
+						<th>#</th>
+						<th>CreatedAt</th>
+						<th>Shop Name</th>
+						<th>Order status</th>
+						<th>Amount</th>
+						<th>Note</th>
+					</tr>
+				</thead>
+				<tbody>
 					{
-						this.props.orderListData.map(function(product, index) {
+						this.props.orderListData.map(function(order, index) {
 							return (
-								<OrderRow
-									key={'OrderRow-'+index}
+								<OrderItem
+									key={'order-'+order._id}
 									index={index}
-									product={product}
+									order={order}
 									{...this.props}/>
 							);
 						}, this)
 					}
-					</tbody>
-				</table>
-			</div>
+				</tbody>
+			</table>
 		);
 	}
 });

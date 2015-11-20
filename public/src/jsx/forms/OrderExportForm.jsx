@@ -37,6 +37,26 @@ module.exports = React.createClass({
 		];
 		return orderStatus;
 	},
+	getShops: function() {
+		return [
+			{
+				key: '',
+				value: ''
+			},
+			{
+				key: 'danang',
+				value: 'Da Nang'
+			},
+			{
+				key: 'hanoi',
+				value: 'Ha Noi'
+			},
+			{
+				key: 'hcm',
+				value: 'Ho Chi Minh'
+			}
+		];
+	},
 	componentDidMount: function() {
 		$('#inputCreateAt').datetimepicker();
 		$('#inputBillingDate').datetimepicker();
@@ -67,7 +87,7 @@ module.exports = React.createClass({
 			createAt: $('#inputCreateAt').data('DateTimePicker').date(),
 			billingDate: $('#inputBillingDate').data('DateTimePicker').date(),
 			amount: amountTotal,
-			shopName: $('#inputShopName').val(),
+			shopName: React.findDOMNode(this.refs.inputShopName).value,
 			customerName: $('#inputCustomerName').val(),
 			customerPhone: $('#inputCustomerPhone').val(),
 			customerAddress: $('#inputCustomerAddress').val(),
@@ -113,6 +133,7 @@ module.exports = React.createClass({
 		}
 	},
 	resetInput: function() {
+		React.findDOMNode(this.refs.inputShopName).value = '';
 		React.findDOMNode(this.refs.inputOrderStatus).value = 'opening';
 		$('#inputCreateAt').data('DateTimePicker');
 		$('#inputBillingDate').data('DateTimePicker');
@@ -126,6 +147,9 @@ module.exports = React.createClass({
 	onChangeStatus: function(status) {
 		console.log('onChangeStatus()');
 	},
+	onChangeShop: function(shopId) {
+		console.log('onChangeShops()');
+	},
 	isStringNull: function (str) {
 		return (typeof str === undefined) || (str === null) || (str === '');
 	},
@@ -138,23 +162,29 @@ module.exports = React.createClass({
 						<button ref='btnAddOrder' className='btn btn-primary col-xs-2 col-sm-2 pull-right' onClick={this.addOrder}>Save</button>
 					</div>
 					<fieldset>
-							<InputElm _ref='inputShopName' styleClass='pull-left' title='Shop Name' placeholder='shopName'/>
-							<InputElm _ref='inputCustomerName' styleClass='pull-right' title='Customer Name' placeholder='customerName'/>
+						<div className='input-group col-xs-6 col-sm-6 pull-left'>
+							<span className='input-group-addon w20'>Shop Name</span>
+							<DropDownList
+								dataList={this.getShops()}
+								onChangeData={this.onChangeShop}
+								ref='inputShopName'/>
+						</div>
+						<InputElm _ref='inputCustomerName' styleClass='pull-right' title='Customer Name' placeholder='customerName'/>
 
-							<div className='input-group col-xs-6 col-sm-6 pull-left'>
-								<span className='input-group-addon w20'>Order Status</span>
-								<DropDownList
-									dataList={this.getOrderStatusList()}
-									onChangeData={this.onChangeStatus}
-									ref='inputOrderStatus'/>
-							</div>
-							<InputElm _ref='inputCustomerPhone' styleClass='pull-right' title='Customer Phone' placeholder='customerPhone'/>
+						<div className='input-group col-xs-6 col-sm-6 pull-left'>
+							<span className='input-group-addon w20'>Order Status</span>
+							<DropDownList
+								dataList={this.getOrderStatusList()}
+								onChangeData={this.onChangeStatus}
+								ref='inputOrderStatus'/>
+						</div>
+						<InputElm _ref='inputCustomerPhone' styleClass='pull-right' title='Customer Phone' placeholder='customerPhone'/>
 
-							<InputElm _ref='inputCreateAt' styleClass='pull-left' title='Order Date' placeholder=''/>
-							<InputElm _ref='inputCustomerAddress' styleClass='pull-right' title='Customer Address' placeholder='customerAddress'/>
+						<InputElm _ref='inputCreateAt' styleClass='pull-left' title='Order Date' placeholder=''/>
+						<InputElm _ref='inputCustomerAddress' styleClass='pull-right' title='Customer Address' placeholder='customerAddress'/>
 
-							<InputElm _ref='inputBillingDate' styleClass='pull-left' title='Billing Date' placeholder=''/>
-							<InputElm _ref='inputCustomerNote' styleClass='pull-right' title='Customer Note' placeholder='customerNote'/>
+						<InputElm _ref='inputBillingDate' styleClass='pull-left' title='Billing Date' placeholder=''/>
+						<InputElm _ref='inputCustomerNote' styleClass='pull-right' title='Customer Note' placeholder='customerNote'/>
 					</fieldset>
 				</div>
 
