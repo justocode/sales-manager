@@ -27,6 +27,7 @@ module.exports = function (app, passport) {
 	// app.use('/api/products', require('./routes/products'));
 	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
 	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
+	app.post('/api/products', products.create);
 
 // routes category
 	app.get('/api/categories', categories.loadAllCategories);

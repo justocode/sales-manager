@@ -11,7 +11,7 @@ var mongoose = require('mongoose'),
  * Load all products
  */
 exports.loadAllProducts = function (req, res, next) {
-	var options = { select: '_id productName category price stock description' };
+	var options = { select: '_id productName category price stock description image createdAt' };
 	var getProducts = Product.list(options);
 
 	getProducts.then(function (products) {
@@ -30,7 +30,7 @@ exports.loadAllProductsByCat = function (req, res, next) {
 	var _perPage = req.params.perPage > 0 ? req.params.perPage : 20;
 	var options = {
 		criteria: _criteria,
-		select: '_id productName category price stock description',
+		select: '_id productName category price stock description image createdAt',
 		perPage: _perPage,
 		page: _page
 	};
@@ -50,35 +50,17 @@ exports.loadAllProductsByCat = function (req, res, next) {
 };
 
 /**
- * New Product
- */
-exports.new = function (req, res) {
-	res.render('Products/new', {
-		title: 'New Product',
-		Product: new Product({})
-	});
-};
-
-/**
  * Create an Product
  * Upload an image
  */
 exports.create = function (req, res, next) {
-	var product = new Product(req.body);
-	var images = req.files.image ? [req.files.image] : undefined;
-
+	var product = new Product(req.body.product);
+	var images = req.body.upload ? [req.body.upload] : undefined;
 	var upload = Product.uploadAndSave(images);
-	upload.then(function () { res.json({product: product}); })
-		.error(function(err) { next(err); });
-};
-
-/**
- * Edit an Product
- */
-exports.edit = function (req, res) {
-	res.render('Products/edit', {
-		title: 'Edit ' + req.product.title,
-		Product: req.product
+	upload.then(function () {
+		res.json({ product: product });
+	}, function (err) {
+		next(err);
 	});
 };
 
@@ -103,16 +85,6 @@ exports.update = function (req, res) {
 			Product: Product,
 			errors: utils.errors(err.errors || err)
 		});
-	});
-};
-
-/**
- * Show
- */
-exports.show = function (req, res) {
-	res.render('Products/show', {
-		title: req.product.title,
-		Product: req.product
 	});
 };
 

@@ -8,12 +8,8 @@ module.exports = React.createClass({
 	},
 	deleteRow: function (e) {
 		e.preventDefault();
-
 		// invoke to parent's function
 		this.props.deleteRow(this.props.index);
-	},
-	getCategoryName: function (catId) {
-		return catId;
 	},
 	formatCurrency: function (number) {
 		number = number ? number : 0;
@@ -24,7 +20,7 @@ module.exports = React.createClass({
 		return (
 			<tr>
 				<td>{this.props.index + 1}</td>
-				<td>{rowData.category}</td>
+				<td>{rowData.category.categoryName}</td>
 				<td>{rowData.product.productName}</td>
 				<td>{this.formatCurrency(orderItem.quantity)}</td>
 				<td>{this.formatCurrency(orderItem.price)}</td>

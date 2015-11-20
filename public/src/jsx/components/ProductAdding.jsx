@@ -1,30 +1,17 @@
 'use strict';
 
-var React = require('react/addons'),
+var React = require('react'),
 		InputElm = require('./../components/InputElement'),
 		DropDownList = require('./../components/DropDownList');
 
 module.exports = React.createClass({
-	mixins: [React.addons.LinkedStateMixin],
 	getInitialState: function() {
 		return {
-			category: '',
-			productname: '',
-			price: 0,
-			quatity: 0
+			categories: []
 		};
 	},
-	componentWillReceiveProps: function(nextProps) {
-		if(nextProps.productInfo !== '' && nextProps.productInfo !== this.props.productInfo) {
-			console.log('componentWillReceiveProps');
-			// Fill data to input form
-			var updateState = {
-				category: nextProps.productInfo.category,
-				productname: nextProps.productInfo.productname,
-				price: nextProps.productInfo.price
-			};
-			this.setState(updateState);
-		}
+	componentWillMount: function () {
+		this.getCategoies();
 	},
 	addProduct: function(e) {
 		e.preventDefault();
@@ -35,35 +22,37 @@ module.exports = React.createClass({
 			if($(this).val() === '') { errorCount++; }
 		});
 
+		var file = $('#inputImage')[0].files[0];
+
 		// Check and make sure errorCount's still at zero
 		if(errorCount === 0) {
+
 			// If it is, compile all product info into one object
 			var newProduct = {
-				'category': this.state.category,
-				'productname': this.state.productname,
-				'price': this.state.price,
-				'quatity': this.state.quatity
+				'category': React.findDOMNode(this.refs.inputCategory).value,
+				'productName': $('#inputProductName').val(),
+				'price': $('#inputPrice').val(),
+				'quatity': $('#inputQuatity').val()
 			};
 
+			var data = new FormData();
+			data.append('upload', file);
+			data.append('product', newProduct);
+
 			// Adding newProduct to Server
-			$.ajax({
-				type: 'POST',
-				dataType: 'json',
-				url: '/api/products',
-				data: newProduct,
-				success: function(product) {
+			var insertProduct = $.post('/api/products', data);
+			insertProduct.done(function (product) {
 					if(!$.isEmptyObject(product)) {
 						console.log('Add new product successfully!');
 						this.props.addCallback(product);
+						// Clear old form data
+						$('#addProduct fieldset input').val('');
 					}
-				}.bind(this),
-				error: function(xhr, status, err) {
-					console.error('/api/products', status, err.toString());
-				}.bind(this)
-			});
+				}.bind(this));
 
-			// Clear old form data
-			$('#addProduct fieldset input').val('');
+			insertProduct.fail(function (xhr, status, err) {
+					console.error('/api/products', status, err.toString());
+				}.bind(this));
 
 		} else {
 			// If errorCount is more than 0, error out
@@ -71,7 +60,7 @@ module.exports = React.createClass({
 		}
 	},
 	updateProduct: function(e) {
-
+		e.preventDefault();
 		var errorCount = 0;
 
 		// Checking data inputs not null
@@ -82,11 +71,12 @@ module.exports = React.createClass({
 		// Check and make sure errorCount's still at <=1
 		if(errorCount <= 1) {
 			// If it is, compile all product info into one object
-			var updateObj = {
-				'_id': this.props.productInfo._id,
-				'category': this.state.category,
-				'productname': this.state.productname,
-				'price': this.state.price
+			var newProduct = {
+				'category': React.findDOMNode(this.refs.inputCategory).value,
+				'productName': $('#productName').val(),
+				'price': $('#productPrice').val(),
+				'quatity': $('#inputQuatity').val(),
+				'image': $('#inputImage').val()
 			};
 
 			// Adding updateObj to Server
@@ -102,7 +92,7 @@ module.exports = React.createClass({
 						// Clear old form data
 						$('#addProduct fieldset input').val('');
 
-						this.props.updateCallback(product);
+						// this.props.updateCallback(product);
 					}
 				}.bind(this),
 				error: function(xhr, status, err) {
@@ -116,6 +106,25 @@ module.exports = React.createClass({
 			return;
 		}
 	},
+	getCategoies: function() {
+		var getCats = $.get('/api/categories');
+		var catList = [];
+
+		getCats.done(function(data) {
+				catList = data.categories;
+				catList.splice(0, 0, { _id: '', categoryName: 'Choose' });
+				this.setState({ categories: catList });
+			}.bind(this));
+
+		getCats.fail(function(xhr, status, err) {
+				console.error('/api/catigories', status, err.toString());
+			});
+	},
+	onChangeCategory: function(catId) {
+		// change value
+		// this.setState({category: category});
+		console.log('onChangeCategory()');
+	},
 	onCancel: function(e) {
 		e.preventDefault();
 
@@ -124,53 +133,31 @@ module.exports = React.createClass({
 
 		this.props.cancel();
 	},
-	getCategoryList: function() {
-		// hard code
-		var _categoryList = [
-			{ key: '', value: '--- Choose ---' },
-			{ key: 'Ram', value: 'Ram' },
-			{ key: 'CPU', value: 'CPU' },
-			{ key: 'Pan', value: 'Pan' },
-			{ key: 'Mouse', value: 'Mouse' },
-			{ key: 'Keyboard', value: 'Keyboard' }
-		];
-		return _categoryList;
-	},
-	onChangeCategory: function(category) {
-		// change value
-		this.setState({category: category});
-	},
 	render: function() {
 		return (
-			<div id='addProduct' className="panel panel-default">
-				<div className="panel-heading">
-					{ this.props.productInfo === '' ? 'Add Product' : 'Update Product' }
-				</div>
+			<div className='panel panel-default'>
+				<div className='panel-heading'>Add Product</div>
+				<form id='addProduct' enctype='multipart/form-data' action='/api/products' method='post'>
 				<fieldset>
 					<div className='input-group col-xs-6 col-sm-6 pull-left'>
 						<span className='input-group-addon w20'>Category</span>
 						<DropDownList ref='inputCategory'
-							value={this.state.category}
-							dataList={this.getCategoryList()}
-							onChangeData={this.onChangeCategory}/>
+							dataList={this.state.categories}
+							onChangeData={this.onChangeCategory}
+							_key='_id' _value='categoryName'/>
 					</div>
-					<InputElm ref='inputProductName' title='Product name'
-							styleClass='pull-right' placeholder='Product name'
-							valueLink={this.linkState('productname')}/>
-					<InputElm ref='inputPrice' title='Price' type='number'
-							styleClass='pull-left' placeholder='Price'
-							valueLink={this.linkState('price')}/>
-					<InputElm ref='inputQuatity' title='Quatity' type='number'
-							styleClass='pull-right' placeholder='Quatity'
-							valueLink={this.linkState('quatity')}/>
-					{
-						this.props.productInfo ?
-							<button id='btnUpdateProduct' className="btn btn-primary col-xs-6 col-sm-6" onClick={this.updateProduct}>Update</button>
-							:
-							<button id='btnAddProduct' className="btn btn-primary col-xs-6 col-sm-6" onClick={this.addProduct}>Add Product</button>
-					}
-					<button id='btnCancel' className="btn btn-primary col-xs-6 col-sm-6" onClick={this.onCancel}>Cancel</button>
+					<InputElm _ref='inputProductName' title='Product name'
+							styleClass='pull-right' placeholder='Product name'/>
+					<InputElm _ref='inputPrice' title='Price' type='number'
+							styleClass='pull-left' placeholder='Price'/>
+					<InputElm _ref='inputQuatity' title='Quatity' type='number'
+							styleClass='pull-right' placeholder='Quatity'/>
+					<InputElm _ref='inputImage' title='Image' type='file'
+							styleClass='pull-left' placeholder='Choose image'/>
+					<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct}>Add Product</button>
+					<button id='btnCancel' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.onCancel}>Cancel</button>
 				</fieldset>
+				</form>
 			</div>
 		);
 	}

@@ -55,6 +55,15 @@ module.exports = React.createClass({
 				console.error('/api/catigories', status, err.toString());
 			}.bind(this));
 	},
+	getPageSizes: function() {
+		return [
+			{ key: 5, value: 5 },
+			{ key: 10, value: 10 },
+			{ key: 15, value: 15 },
+			{ key: 20, value: 20 },
+			{ key: 25, value: 25 }
+		];
+	},
 	changeCategory: function(catId) {
 		this.getProductList(this.state.productsPerPage, 1, catId);
 		this.setState({currentCat: catId, currentPage: 1});
@@ -78,24 +87,15 @@ module.exports = React.createClass({
 		}
 	},
 	render: function() {
-		var pageSizes = [
-			{ key: 5, value: 5 },
-			{ key: 10, value: 10 },
-			{ key: 15, value: 15 },
-			{ key: 20, value: 20 },
-			{ key: 25, value: 25 }
-		];
 		var formReturn = (
 			<div className='form-group col-xs-12 col-sm-12'>
 				<div className='panel panel-default'>
-					<div className='panel-heading'>
-						Products
-					</div>
+					<div className='panel-heading'>Products</div>
 					<div className='panel-body'>
 						<div className='row'>
 							<div className='col-sm-6'>
 								<label><DropDownList
-									dataList={pageSizes}
+									dataList={this.getPageSizes()}
 									onChangeData={this.changeProductsPerPage}
 									_class='input-sm'/></label>
 							</div>
@@ -107,41 +107,16 @@ module.exports = React.createClass({
 							</div>
 						</div>
 						<div className='table-responsive'>
-							<table className='table table-striped table-bordered table-hover'>
-								<thead>
-									<tr>
-										<th>#</th>
-										<th>Product Name</th>
-										<th>Category</th>
-										<th>Price</th>
-										<th>Stock</th>
-										<th>Description</th>
-									</tr>
-								</thead>
-								<tbody>
-									{
-										this.state.productListData.map(function(product, index) {
-											return (
-												<tr>
-													<td>{index}</td>
-													<td>{product.productName}</td>
-													<td>{product.category}</td>
-													<td>{parseInt(product.price).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
-													<td>{parseInt(product.stock).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
-													<td>{product.description}</td>
-												</tr>
-											)
-										})
-									}
-								</tbody>
-							</table>
+							<ProductList productListData={this.state.productListData} />
 						</div>
 					</div>
-
 					<Pagination
 						pages={this.state.pages}
 						currentPage={this.state.currentPage}
 						moveToPage={this.moveToPage}/>
+				</div>
+				<div className='row col-xs-12 col-sm-12'>
+					<ProductAdding />
 				</div>
 			</div>
 		);

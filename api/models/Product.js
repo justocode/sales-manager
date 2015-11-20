@@ -15,7 +15,7 @@ var ProductSchema = new Schema({
 	description: { type : String, default : '', trim : true },
 	price: { type : Number, default : 0 },
 	stock: { type : Number, default : 0 },
-	category: Number,
+	category: { type: Number, ref: 'Category' },
 	image: {
 		cdnUri: String,
 		files: []
@@ -91,7 +91,7 @@ ProductSchema.methods = {
 ProductSchema.statics = {
 
 	load: function (options) {
-		return this.findOne(options.criteria).select(options.select).exec();
+		return this.findOne(options.criteria).select(options.select).populate('category').exec();
 	},
 
 	list: function (options) {
@@ -106,6 +106,7 @@ ProductSchema.statics = {
 			.sort(_sort)
 			.limit(_limit)
 			.skip(_skip)
+			.populate('category')
 			.exec();
 	},
 

@@ -31,7 +31,7 @@ var MyApp = React.createClass({
 			},
 		];
 		return ({
-			currentTab: 'Orders',
+			currentTab: 'Products',
 			tabListData: _tabListData
 		});
 	},
