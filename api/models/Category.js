@@ -30,13 +30,18 @@ CategorySchema.pre('remove', function (next) {
  * Pre-save hook
  */
 CategorySchema.pre('save', function (next) {
-	if (!this.isNew) { return next(); }
-
-	// this.findOne({ categoryName: this.categoryName }, 'categoryName', function(err, cat) {
-	// 	if (err) { next(err); }
-	// 	if (cat) { next(new Error('This category is exists')); }
-	// 	next();
-	// });
+	if (this.isNew) {
+		var findOne = this.findOne({ categoryName: this.categoryName });
+		findOne.then(function(product) {
+				if (product) {
+					next(new Error('This category was existed'));
+				}
+				next();
+			}, function(err) {
+				console.error(err);
+				next(err);
+			});
+	}
 });
 
 /**

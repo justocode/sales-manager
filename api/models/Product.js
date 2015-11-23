@@ -10,7 +10,6 @@ var mongoose = require('mongoose'),
  * Product Schema
  */
 var ProductSchema = new Schema({
-	_id: { type: Schema.Types.ObjectId },
 	productName: { type : String, default : '', trim : true },
 	description: { type : String, default : '', trim : true },
 	price: { type : Number, default : 0 },
@@ -20,7 +19,7 @@ var ProductSchema = new Schema({
 		cdnUri: String,
 		files: []
 	},
-	createdAt : { type : Date, default : Date.now }
+	createdAt : { type: Date, default: Date.now }
 });
 
 /**
@@ -42,9 +41,27 @@ ProductSchema.pre('remove', function (next) {
 	// if there are files associated with the item, remove from the cloud too
 	imager.remove(files, function (err) {
 		if (err) { return next(err); }
-	}, 'Product');
+	}, 'product');
 
 	next();
+});
+
+/**
+ * Pre-save hook
+ */
+ProductSchema.pre('save', function (next) {
+	if (this.isNew) {
+		var findOne = this.findOne({ productName: this.productName });
+		findOne.then(function(product) {
+				if (product) {
+					next(new Error('This product was existed'));
+				}
+				next();
+			}, function(err) {
+				console.error(err);
+				next(err);
+			});
+	}
 });
 
 /**
@@ -52,36 +69,33 @@ ProductSchema.pre('remove', function (next) {
  */
 ProductSchema.methods = {
 
-	uploadAndSave: function (images, callback) {
-		if (!images || !images.length) { return this.save(callback); }
+	uploadAndSave: function (images) {
 
-		var imager = new Imager(imagerConfig, 'S3');
-		var self = this;
+		// if (!images || !images.length) {
+			this.image = { cdnUri: images.destination, files: images };
+			return this.save();
+		// } else {
+			// var imager = new Imager(imagerConfig, 'S3');
+			// var self = this;
 
-		// this.validate()
-		// 	.then(function() {
-		// 		return imager.upload(images);
-		// 	})
-		// 	.then(function(cdnUri, files) {
-		// 		if (files.length) {
-		// 			self.image = { cdnUri : cdnUri, files : files };
-		// 		}
-		// 		self.save(callback);
-		// 	})
-		// 	.catch(function(err) {
-		// 		console.log(err);
-		// 	});
+			// var err = this.validate();
+			// if(err && err.toString()) {
+			// 	console.error(err);
+			// }
 
-		this.validate(function (err) {
-			if (err) { return callback(err); }
-			imager.upload(images, function (err, cdnUri, files) {
-				if (err) { return callback(err); }
-				if (files.length) {
-					self.image = { cdnUri : cdnUri, files : files };
-				}
-				self.save(callback);
-			}, 'Product');
-		});
+			// imager.upload(images, function (err, files) {
+			// 	if (err) {
+			// 		console.error('image.upload() - '+err);
+			// 	}
+				// console.log(cdnUri);
+			// 	console.log(files);
+			// 	if (files.length) {
+			// 		console.log(files.length);
+			// 		// self.image = { cdnUri: cdnUri, files: files };
+			// 	}
+			// 	return self.save();
+			// }, 'product');
+		// }
 	}
 };
 

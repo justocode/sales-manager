@@ -17,6 +17,7 @@ module.exports = React.createClass({
 				<span className='input-group-addon'>{this.props.title}</span>
 				<input id={this.props._ref}
 							ref={this.props._ref}
+							name={this.props._ref}
 							className='form-control'
 							type={this.props.type}
 							valueLink={this.props.valueLink}

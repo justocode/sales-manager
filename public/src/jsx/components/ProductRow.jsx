@@ -55,7 +55,7 @@ var ProductDetail = React.createClass({
 							Product Detail
 						</div>
 						<div className='col-sm-6'>
-							<img src={product.image.cdnUri + '/mini_' + product.image.files[0]} alt={product.image.cdnUri} className='img-rounded pull-left'/>
+							<img src={'uploads/'+ product.image.files[0].filename} alt={'uploads/'+ product.image.files[0].filename} className='img-rounded pull-left'/>
 						</div>
 						<div className='col-sm-6'>
 							<p>Shop Name: <span>{product.productName}</span></p>

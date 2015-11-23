@@ -1,10 +1,14 @@
 'use strict';
 
-var users = require('../api/controllers/Users'),
+var join = require('path').join,
+		users = require('../api/controllers/Users'),
 		products = require('../api/controllers/Products'),
 		categories = require('../api/controllers/Categories'),
 		orders = require('../api/controllers/Orders'),
-		auth = require('./middlewares/authorization');
+		auth = require('./middlewares/authorization'),
+		config = require('config'),
+		multer  = require('multer'),
+		upload = multer({ dest: join(config.root, 'public', 'uploads') });
 
 /**
  * Route middlewares
@@ -27,7 +31,7 @@ module.exports = function (app, passport) {
 	// app.use('/api/products', require('./routes/products'));
 	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
 	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
-	app.post('/api/products', products.create);
+	app.post('/api/products', upload.single('image'), products.create);
 
 // routes category
 	app.get('/api/categories', categories.loadAllCategories);

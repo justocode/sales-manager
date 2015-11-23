@@ -2,17 +2,20 @@
 
 module.exports = {
 	variants: {
-		article: {
-			resize: {
-				detail: 'x440'
+		product: {
+			thumb: {					// preset
+				options: {			// preset options
+					pool: 5,
+					scale: { width: 200, height: 150, type: 'contain' },
+					crop: { width: 200, height: 150, x: 0, y: 0 },
+					format: 'png',
+					rotate: 'auto',
+				}
 			},
-			crop: {
-			},
-			resizeAndCrop: {
-				mini: { resize: '63504@', crop: '252x210' }
+			large: {
+				original: true	// upload original image without image processing
 			}
 		},
-
 		gallery: {
 			crop: {
 				thumb: '100x100'

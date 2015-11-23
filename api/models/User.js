@@ -16,13 +16,13 @@ var oAuthTypes = [
  * User Schema
  */
 var UserSchema = new Schema({
-	name: { type: String, default: '', trim : true },
-	email: { type: String, default: '', trim : true },
-	userName: { type: String, default: '', trim : true },
-	provider: { type: String, default: '' },
-	hashedPassword: { type: String, default: '' },
-	salt: { type: String, default: '' },
-	authToken: { type: String, default: '' }
+	'name': { type: String, default: '', trim : true },
+	'email': { type: String, default: '', trim : true },
+	'userName': { type: String, default: '', trim : true },
+	'provider': { type: String, default: '' },
+	'hashedPassword': { type: String, default: '' },
+	'salt': { type: String, default: '' },
+	'authToken': { type: String, default: '' }
 });
 
 /**

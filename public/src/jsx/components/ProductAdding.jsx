@@ -15,45 +15,24 @@ module.exports = React.createClass({
 	},
 	addProduct: function(e) {
 		e.preventDefault();
-		var errorCount = 0;
 
 		// Checking data inputs not null
+		var errorCount = 0;
 		$('#addProduct fieldset input').each(function(index, val) {
 			if($(this).val() === '') { errorCount++; }
 		});
 
-		var file = $('#inputImage')[0].files[0];
-
 		// Check and make sure errorCount's still at zero
 		if(errorCount === 0) {
-
-			// If it is, compile all product info into one object
-			var newProduct = {
-				'category': React.findDOMNode(this.refs.inputCategory).value,
-				'productName': $('#inputProductName').val(),
-				'price': $('#inputPrice').val(),
-				'quatity': $('#inputQuatity').val()
-			};
-
-			var data = new FormData();
-			data.append('upload', file);
-			data.append('product', newProduct);
-
 			// Adding newProduct to Server
-			var insertProduct = $.post('/api/products', data);
-			insertProduct.done(function (product) {
-					if(!$.isEmptyObject(product)) {
-						console.log('Add new product successfully!');
-						this.props.addCallback(product);
-						// Clear old form data
-						$('#addProduct fieldset input').val('');
-					}
-				}.bind(this));
-
-			insertProduct.fail(function (xhr, status, err) {
+			$('#addProduct').ajaxSubmit({
+				success: function(response) {
+					console.log(response);
+				},
+				error: function(xhr, status, err) {
 					console.error('/api/products', status, err.toString());
-				}.bind(this));
-
+				}
+			});
 		} else {
 			// If errorCount is more than 0, error out
 			console.error('Please fill in all fields');
@@ -72,11 +51,11 @@ module.exports = React.createClass({
 		if(errorCount <= 1) {
 			// If it is, compile all product info into one object
 			var newProduct = {
-				'category': React.findDOMNode(this.refs.inputCategory).value,
+				'category': React.findDOMNode(this.refs.category).value,
 				'productName': $('#productName').val(),
 				'price': $('#productPrice').val(),
-				'quatity': $('#inputQuatity').val(),
-				'image': $('#inputImage').val()
+				'quatity': $('#quatity').val(),
+				'image': $('#image').val()
 			};
 
 			// Adding updateObj to Server
@@ -131,30 +110,30 @@ module.exports = React.createClass({
 		// Clear old form data
 		$('#addProduct fieldset input').val('');
 
-		this.props.cancel();
+		// this.props.cancel();
 	},
 	render: function() {
 		return (
 			<div className='panel panel-default'>
 				<div className='panel-heading'>Add Product</div>
-				<form id='addProduct' enctype='multipart/form-data' action='/api/products' method='post'>
+				<form id='addProduct' encType='multipart/form-data' action='/api/products' method='post'>
 				<fieldset>
 					<div className='input-group col-xs-6 col-sm-6 pull-left'>
 						<span className='input-group-addon w20'>Category</span>
-						<DropDownList ref='inputCategory'
+						<DropDownList _ref='category'
 							dataList={this.state.categories}
 							onChangeData={this.onChangeCategory}
 							_key='_id' _value='categoryName'/>
 					</div>
-					<InputElm _ref='inputProductName' title='Product name'
+					<InputElm _ref='productName' title='Product name'
 							styleClass='pull-right' placeholder='Product name'/>
-					<InputElm _ref='inputPrice' title='Price' type='number'
+					<InputElm _ref='price' title='Price' type='number'
 							styleClass='pull-left' placeholder='Price'/>
-					<InputElm _ref='inputQuatity' title='Quatity' type='number'
+					<InputElm _ref='quatity' title='Quatity' type='number'
 							styleClass='pull-right' placeholder='Quatity'/>
-					<InputElm _ref='inputImage' title='Image' type='file'
+					<InputElm _ref='image' title='Image' type='file'
 							styleClass='pull-left' placeholder='Choose image'/>
-					<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct}>Add Product</button>
+						<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct} >Add Product</button>
 					<button id='btnCancel' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.onCancel}>Cancel</button>
 				</fieldset>
 				</form>

@@ -54,10 +54,11 @@ exports.loadAllProductsByCat = function (req, res, next) {
  * Upload an image
  */
 exports.create = function (req, res, next) {
-	var product = new Product(req.body.product);
-	var images = req.body.upload ? [req.body.upload] : undefined;
-	var upload = Product.uploadAndSave(images);
-	upload.then(function () {
+	var newProduct = new Product(req.body);
+	var images = req.file ? [req.file] : undefined;
+
+	var insertNew = newProduct.uploadAndSave(images);
+	insertNew.then(function (product) {
 		res.json({ product: product });
 	}, function (err) {
 		next(err);
