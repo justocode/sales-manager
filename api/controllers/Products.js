@@ -94,15 +94,14 @@ exports.update = function (req, res, next) {
  * Delete an Product
  */
 exports.delete = function (req, res, next) {
-	var productId = req.body.productId;
+	var productId = req.params.productId;
 	var orderCheck = Order.findOne({ 'orderItems.product': productId });
 
 	orderCheck.then(function (order) {
 			if (order) {
 				next(new Error('This product has related with some Order'));
 			}
-			// return self.findByIdAndRemove(Schema.Types.ObjectId(productId));
-			return Product.remove({ _id: productId }).exec();
+			return Product.findByIdAndRemove(productId).exec();
 		}, function (err) {
 			next(err);
 		})

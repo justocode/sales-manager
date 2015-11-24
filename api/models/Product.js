@@ -2,7 +2,6 @@
 
 var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
-		Order = mongoose.model('Order'),
 		Imager = require('imager'),
 		config = require('config'),
 		imagerConfig = require(config.root + '/config/imager.js');

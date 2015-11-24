@@ -19,8 +19,13 @@ module.exports = React.createClass({
 		// Checking data inputs not null
 		var errorCount = 0;
 		$('#addProduct fieldset input').each(function(index, val) {
-			if($(this).val() === '') { errorCount++; }
+			if($(this).val() === '') {
+				errorCount++;
+			}
 		});
+		if ($('#category').val() === '') {
+			errorCount++;
+		}
 
 		// Check and make sure errorCount's still at zero
 		if(errorCount === 0) {
@@ -28,6 +33,7 @@ module.exports = React.createClass({
 			$('#addProduct').ajaxSubmit({
 				success: function(response) {
 					console.log(response);
+					this.resetInput();
 					this.props.refreshProductList();
 				}.bind(this),
 				error: function(xhr, status, err) {
@@ -105,12 +111,10 @@ module.exports = React.createClass({
 		// this.setState({category: category});
 		console.log('onChangeCategory()');
 	},
-	onCancel: function(e) {
-		e.preventDefault();
-
+	resetInput: function() {
 		// Clear old form data
 		$('#addProduct fieldset input').val('');
-
+		$('#category').val('');
 		// this.props.cancel();
 	},
 	render: function() {
@@ -130,12 +134,15 @@ module.exports = React.createClass({
 							styleClass='pull-right' placeholder='Product name'/>
 					<InputElm _ref='price' title='Price' type='number'
 							styleClass='pull-left' placeholder='Price'/>
-					<InputElm _ref='quatity' title='Quatity' type='number'
-							styleClass='pull-right' placeholder='Quatity'/>
 					<InputElm _ref='image' title='Image' type='file'
-							styleClass='pull-left' placeholder='Choose image'/>
-					<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct} >Add Product</button>
-					<button id='btnCancel' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.onCancel}>Cancel</button>
+							styleClass='pull-rifht' placeholder='Choose image'/>
+					<div className='input-group col-xs-6 center'>
+						<div className='col-xs-1'></div>
+						<button id='btnAddProduct' className='btn btn-primary col-xs-5 col-sm-5' onClick={this.addProduct} >Add Product</button>
+						<div className='col-xs-1'></div>
+						<button id='btnCancel' className='btn btn-primary col-xs-4 col-sm-4' onClick={this.resetInput}>Cancel</button>
+						<div className='col-xs-1'></div>
+					</div>
 				</fieldset>
 				</form>
 			</div>

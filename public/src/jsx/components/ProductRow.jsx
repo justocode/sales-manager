@@ -26,8 +26,7 @@ module.exports = React.createClass({
 				url: '/api/products/' + this.props.product._id,
 				success: function(product) {
 					if(!$.isEmptyObject(product)) {
-						console.log(JSON.stringify(product));
-						console.log('Delete product successfully!');
+						console.log('Delete product.id='+ product._id +' successfully!');
 						this.props.refreshProductList();
 					}
 				}.bind(this),
@@ -58,10 +57,10 @@ var ProductDetail = React.createClass({
 						<div className='panel-heading heading-button' onClick={this.props.showDetail}>
 							Product Detail
 						</div>
-						<div className='col-sm-6'>
-							<img src={imgUri} alt={imgUri} className='img-rounded pull-left'/>
+						<div className='col-sm-4'>
+							<img src={imgUri} alt={imgUri} className='center thumbnail' width='150' height='150'/>
 						</div>
-						<div className='col-sm-6'>
+						<div className='col-sm-8'>
 							<p>Shop Name: <span>{product.productName}</span></p>
 							<p>Category: <span>{product.category ? product.category.categoryName : ''}</span></p>
 							<p>Price: <span>{formatCurrency(product.price)}</span></p>
