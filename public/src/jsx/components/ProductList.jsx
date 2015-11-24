@@ -25,9 +25,10 @@ module.exports = React.createClass({
 								<ProductRow
 									key={'product-'+product._id}
 									index={index}
-									product={product}/>
+									product={product}
+									{...this.props}/>
 							)
-						})
+						}, this)
 					}
 				</tbody>
 			</table>

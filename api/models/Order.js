@@ -38,8 +38,9 @@ OrderSchema.path('orderItems').validate(function(items) {
  * Pre-save hook
  */
 OrderSchema.pre('save', function(next) {
-	// if (!this.isNew) { return next(); }
-	next();
+	if (this.isNew) {
+		return next();
+	}
 });
 
 /*

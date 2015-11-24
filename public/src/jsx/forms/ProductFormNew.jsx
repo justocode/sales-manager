@@ -86,6 +86,9 @@ module.exports = React.createClass({
 			this.getProductList(perPage, page, this.state.currentCat);
 		}
 	},
+	refreshProductList: function(id) {
+		this.getProductList(this.state.productsPerPage, this.state.currentPage, this.state.currentCat);
+	},
 	render: function() {
 		var formReturn = (
 			<div className='form-group col-xs-12 col-sm-12'>
@@ -107,7 +110,8 @@ module.exports = React.createClass({
 							</div>
 						</div>
 						<div className='table-responsive'>
-							<ProductList productListData={this.state.productListData} />
+							<ProductList productListData={this.state.productListData}
+									refreshProductList={this.refreshProductList}/>
 						</div>
 					</div>
 					<Pagination
@@ -116,7 +120,7 @@ module.exports = React.createClass({
 						moveToPage={this.moveToPage}/>
 				</div>
 				<div className='row col-xs-12 col-sm-12'>
-					<ProductAdding />
+					<ProductAdding refreshProductList={this.refreshProductList}/>
 				</div>
 			</div>
 		);

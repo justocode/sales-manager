@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
+		Order = mongoose.model('Order'),
 		Imager = require('imager'),
 		config = require('config'),
 		imagerConfig = require(config.root + '/config/imager.js');
@@ -10,10 +11,10 @@ var mongoose = require('mongoose'),
  * Product Schema
  */
 var ProductSchema = new Schema({
-	productName: { type : String, default : '', trim : true },
-	description: { type : String, default : '', trim : true },
-	price: { type : Number, default : 0 },
-	stock: { type : Number, default : 0 },
+	productName: { type: String, default: '', trim: true },
+	description: { type: String, default: '', trim: true },
+	price: { type: Number, default: 0 },
+	stock: { type: Number, default: 0 },
 	category: { type: Number, ref: 'Category' },
 	image: {
 		cdnUri: String,
@@ -50,18 +51,11 @@ ProductSchema.pre('remove', function (next) {
  * Pre-save hook
  */
 ProductSchema.pre('save', function (next) {
+	var product = this;
 	if (this.isNew) {
-		var findOne = this.findOne({ productName: this.productName });
-		findOne.then(function(product) {
-				if (product) {
-					next(new Error('This product was existed'));
-				}
-				next();
-			}, function(err) {
-				console.error(err);
-				next(err);
-			});
+		product.createdAt = new Date();
 	}
+	next();
 });
 
 /**

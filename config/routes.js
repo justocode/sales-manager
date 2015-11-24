@@ -32,6 +32,7 @@ module.exports = function (app, passport) {
 	app.get('/api/products/:perPage/:page/:catId', products.loadAllProductsByCat);
 	app.get('/api/products/:perPage/:page', products.loadAllProductsByCat);
 	app.post('/api/products', upload.single('image'), products.create);
+	app.delete('/api/products/:productId', products.delete);
 
 // routes category
 	app.get('/api/categories', categories.loadAllCategories);

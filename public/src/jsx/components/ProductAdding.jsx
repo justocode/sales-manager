@@ -28,7 +28,8 @@ module.exports = React.createClass({
 			$('#addProduct').ajaxSubmit({
 				success: function(response) {
 					console.log(response);
-				},
+					this.props.refreshProductList();
+				}.bind(this),
 				error: function(xhr, status, err) {
 					console.error('/api/products', status, err.toString());
 				}
@@ -133,7 +134,7 @@ module.exports = React.createClass({
 							styleClass='pull-right' placeholder='Quatity'/>
 					<InputElm _ref='image' title='Image' type='file'
 							styleClass='pull-left' placeholder='Choose image'/>
-						<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct} >Add Product</button>
+					<button id='btnAddProduct' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.addProduct} >Add Product</button>
 					<button id='btnCancel' className='btn btn-primary col-xs-6 col-sm-6' onClick={this.onCancel}>Cancel</button>
 				</fieldset>
 				</form>

@@ -3,9 +3,8 @@
 var mongoose = require('mongoose'),
 		promise = require('bluebird'),
 		mongoose = promise.promisifyAll(mongoose),
-		Product = mongoose.model('Product'),
-		utils = require('../../lib/utils'),
-		extend = require('util')._extend;
+		Order = mongoose.model('Order'),
+		Product = mongoose.model('Product');
 
 /**
  * Load all products
@@ -54,12 +53,23 @@ exports.loadAllProductsByCat = function (req, res, next) {
  * Upload an image
  */
 exports.create = function (req, res, next) {
-	var newProduct = new Product(req.body);
-	var images = req.file ? [req.file] : undefined;
+	// check conflict
+	var oldProduct = Product.load({ criteria: {productName: req.body.productName} });
+	oldProduct.then(function (product) {
+		if (product) {
+			next(new Error('This product was existed!'));
+		}
+		else {
+			var newProduct = new Product(req.body);
+			var images = req.file ? [req.file] : undefined;
 
-	var insertNew = newProduct.uploadAndSave(images);
-	insertNew.then(function (product) {
-		res.json({ product: product });
+			var insertNew = newProduct.uploadAndSave(images);
+			insertNew.then(function (product) {
+				res.json({ product: product });
+			}, function (err) {
+				next(err);
+			});
+		}
 	}, function (err) {
 		next(err);
 	});
@@ -68,34 +78,37 @@ exports.create = function (req, res, next) {
 /**
  * Update Product
  */
-exports.update = function (req, res) {
-	var Product = req.product;
-	var images = req.files.image ? [req.files.image] : undefined;
+exports.update = function (req, res, next) {
+	var product = new Product(req.body);
+	var images = req.file ? [req.file] : undefined;
 
-	// make sure no one changes the user
-	delete req.body.user;
-	Product = extend(Product, req.body);
-
-	Product.uploadAndSave(images, function (err) {
-		if (!err) {
-			return res.redirect('/Products/' + Product._id);
-		}
-
-		res.render('Products/edit', {
-			title: 'Edit Product',
-			Product: Product,
-			errors: utils.errors(err.errors || err)
-		});
+	var updateProduct = product.uploadAndSave(images);
+	updateProduct.then(function (product) {
+		res.json({ product: product });
+	}, function (err) {
+		next(err);
 	});
 };
 
 /**
  * Delete an Product
  */
-exports.destroy = function (req, res) {
-	var Product = req.product;
-	Product.remove(function (err) {
-		req.flash('info', 'Deleted successfully');
-		res.redirect('/products');
-	});
+exports.delete = function (req, res, next) {
+	var productId = req.body.productId;
+	var orderCheck = Order.findOne({ 'orderItems.product': productId });
+
+	orderCheck.then(function (order) {
+			if (order) {
+				next(new Error('This product has related with some Order'));
+			}
+			// return self.findByIdAndRemove(Schema.Types.ObjectId(productId));
+			return Product.remove({ _id: productId }).exec();
+		}, function (err) {
+			next(err);
+		})
+		.then(function (product) {
+			res.json({ product: product });
+		}, function (err) {
+			next(err);
+		});
 };

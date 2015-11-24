@@ -64,6 +64,15 @@ module.exports = function(app, passport) {
 		next();
 	});
 
+	app.use(function (req, res, next) {
+		if (req.url === '/favicon.ico') {
+			res.writeHead(200, {'Content-Type': 'image/x-icon'} );
+			res.end(/* icon content here */);
+		} else {
+			next();
+		}
+	});
+
 	// uncomment after placing your favicon in /public
 	// app.use(favicon(join(config.root, 'public', 'favicon.ico')));
 	app.use(bodyParser.json());

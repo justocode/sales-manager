@@ -30,18 +30,11 @@ CategorySchema.pre('remove', function (next) {
  * Pre-save hook
  */
 CategorySchema.pre('save', function (next) {
+	var category = this;
 	if (this.isNew) {
-		var findOne = this.findOne({ categoryName: this.categoryName });
-		findOne.then(function(product) {
-				if (product) {
-					next(new Error('This category was existed'));
-				}
-				next();
-			}, function(err) {
-				console.error(err);
-				next(err);
-			});
+		category.createdAt = new Date();
 	}
+	next();
 });
 
 /**
