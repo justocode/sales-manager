@@ -8,7 +8,7 @@ module.exports = React.createClass({
 	getInitialState: function() {
 		return ({
 			categories: [],
-			productList: []
+			products: []
 		});
 	},
 	componentWillMount: function() {
@@ -33,40 +33,51 @@ module.exports = React.createClass({
 	},
 	getProductsByCat: function(catId) {
 		// Get products by Category
-		var url = '/api/products/50/1';
-		url += catId ? '/'+ catId : '';
-		var getProducts = $.get(url);
+		if (catId !== '') {
+			var url = '/api/products/50/1';
+			url += '/'+ catId;
+			var getProducts = $.get(url);
 
-		getProducts.done(function(data) {
-				var newProductList = [{}];
-				newProductList = newProductList.concat(data.products);
-				this.setState({ productList: newProductList });
-			}.bind(this));
+			getProducts.done(function(data) {
+					var newProducts = [{}];
+					newProducts = newProducts.concat(data.products);
+					this.setState({ products: newProducts });
+				}.bind(this));
 
-		getProducts.fail(function(xhr, status, err) {
-				console.error('/api/products', status, err.toString());
-			}.bind(this));
+			getProducts.fail(function(xhr, status, err) {
+					console.error('/api/products', status, err.toString());
+				}.bind(this));
+		}
+		else {
+			this.setState({ products: [] });
+			this.resetInput();
+		}
 	},
 	onChangeCategory: function(catId) {
-		// update productList
+		// update products
 		this.getProductsByCat(catId);
 	},
 	onChangeProduct: function(productId) {
 		var price = 0;
-		var index = this.state.productList.map(function(product) {
+		var index = this.state.products.map(function(product) {
 			return product._id;
 		}).indexOf(productId);
 
 		if(index > -1) {
-			price = this.state.productList[index].price;
+			price = parseInt(this.state.products[index].price);
 		}
+		$('#inputPrice').val(price.toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 
-		$('#inputPrice').val(parseInt(price).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
+		var quantity = parseInt($('#inputQuantity').val());
+		var discount = parseInt($('#inputDiscount').val());
 
 		// and calculate amount
-		var quantity = parseInt($('#inputQuantity').val());
 		if (quantity && quantity >= 0) {
-			$('#inputAmount').val(parseInt(quantity * parseInt(price)).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
+			var amount = quantity * price;
+			if (discount > 0 && discount <= 100) {
+				amount = amount - (amount * discount) / 100;
+			}
+			$('#inputAmount').val(amount.toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 		} else {
 			$('#inputAmount').val(0);
 		}
@@ -74,24 +85,55 @@ module.exports = React.createClass({
 	onChangePrice: function(e) {
 		e.preventDefault();
 
-		var price = parseInt($('#inputPrice').val());
+		var price = $('#inputPrice').val();
+		price = parseInt(this.removeComma(price));
+		var quantity = parseInt($('#inputQuantity').val());
+		var discount = parseInt($('#inputDiscount').val());
 
 		// Calculate amount
-		var quantity = parseInt($('#inputQuantity').val());
 		if (quantity >= 0 && price >= 0) {
-			$('#inputAmount').val(parseInt(quantity * price).toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
+			var amount = quantity * price;
+			if (discount > 0 && discount <= 100) {
+				amount = amount - (amount * discount) / 100;
+			}
+			$('#inputAmount').val(amount.toLocaleString('en-IN', { maximumSignificantDigits: 3 }));
 		}
 	},
 	pushOrderItem: function(e) {
 		e.preventDefault();
+
+		var _categoryId = React.findDOMNode(this.refs.inputCategory).value || '',
+				_catName = '';
+		for (var i = 0; i < this.state.categories.length; i++) {
+			if (this.state.categories[i]._id == _categoryId) {
+				_catName = this.state.categories[i].categoryName;
+				break;
+			}
+		}
+		var _productId = React.findDOMNode(this.refs.inputProduct).value || '',
+				_productName = '';
+		for (var j = 0; j < this.state.products.length; j++) {
+			if (this.state.products[j]._id === _productId) {
+				_productName = this.state.products[j].productName;
+				break;
+			}
+		}
+		var _quantity = this.removeComma($('#inputQuantity').val()) || 0;
+		var _price = this.removeComma($('#inputPrice').val()) || 0;
+		var _discount = this.removeComma($('#inputDiscount').val()) || 0;
+		var _amount = this.removeComma($('#inputAmount').val()) || 0;
+		var _note = $('#inputNote').val();
+
 		// Push new orderItem to orderItemList
 		var newOrderItem = {
-			product: React.findDOMNode(this.refs.inputProduct).value || '',
-			quantity: parseInt($('#inputQuantity').val()) || 0,
-			price: $('#inputPrice').val() || 0,
-			discount: $('#inputDiscount').val() || 0,
-			amount: $('#inputAmount').val() || 0,
-			note: $('#inputNote').val()
+			category: _catName,
+			productName: _productName,
+			product: _productId,
+			quantity: _quantity,
+			price: _price,
+			discount: _discount,
+			amount: _amount,
+			note: _note
 		};
 
 		if (this.checkOrderItem(newOrderItem)) {
@@ -114,6 +156,9 @@ module.exports = React.createClass({
 		$('#inputAmount').val(0);
 		$('#inputNote').val('');
 	},
+	removeComma: function (str) {
+		return str.replace(/[^0-9.]/g, '');
+	},
 	render: function() {
 		return (
 			<div id='newOrderItemList' className='panel panel-default'>
@@ -127,7 +172,7 @@ module.exports = React.createClass({
 							<th>Quatity</th>
 							<th>Price out</th>
 							<th>Amount</th>
-							<th>Discount</th>
+							<th>Discount(%)</th>
 							<th>Note</th>
 							<th></th>
 						</tr>
@@ -144,22 +189,21 @@ module.exports = React.createClass({
 						<tr>
 							<td></td>
 							<td>
-								<DropDownList
+								<DropDownList ref='inputCategory'
 									dataList={this.state.categories}
 									onChangeData={this.onChangeCategory}
 									_key='_id' _value='categoryName'/>
 							</td>
 							<td>
-								<DropDownList
-									dataList={this.state.productList}
+								<DropDownList ref='inputProduct'
+									dataList={this.state.products}
 									onChangeData={this.onChangeProduct}
-									_key='_id' _value='productName'
-									ref='inputProduct'/>
+									_key='_id' _value='productName'/>
 							</td>
-							<td><input type='number' className='form-control' id='inputQuantity' placeholder='quatity' onChange={this.onChangePrice}/></td>
-							<td><input type='number' className='form-control' id='inputPrice' placeholder='price' onChange={this.onChangePrice}/></td>
-							<td><input className='form-control' id='inputAmount' disabled></input></td>
-							<td><input type='number' className='form-control' id='inputDiscount' placeholder='discount'/></td>
+							<td><input type='number' className='form-control' id='inputQuantity' placeholder='0' onChange={this.onChangePrice}/></td>
+							<td><input type='text' className='form-control' id='inputPrice' disabled placeholder='0' onChange={this.onChangePrice}/></td>
+							<td><input type='text' className='form-control' id='inputAmount' disabled></input></td>
+							<td><input type='number' className='form-control' id='inputDiscount' placeholder='0' onChange={this.onChangePrice}/></td>
 							<td><input type='text' className='form-control' id='inputNote' placeholder='note'/></td>
 							<td><button id='btnPushOrderItem' className='btn btn-primary col-xs-12 col-sm-12' onClick={this.pushOrderItem}>Add</button></td>
 						</tr>

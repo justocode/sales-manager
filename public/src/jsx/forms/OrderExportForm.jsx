@@ -77,8 +77,11 @@ module.exports = React.createClass({
 
 		// get total amount from orderItems
 		var amountTotal = 0;
-		for (var i = 0; i < this.state.orderItems.length; i++) {
-			amountTotal += parseInt(this.state.orderItems[i].amount);
+		var newOrderList = this.state.orderItems;
+		for (var i = 0; i < newOrderList.length; i++) {
+			delete newOrderList[i].category;
+			delete newOrderList[i].productName;
+			amountTotal += parseInt(newOrderList[i].amount);
 		}
 
 		// create new object Order
@@ -92,7 +95,7 @@ module.exports = React.createClass({
 			customerPhone: $('#inputCustomerPhone').val(),
 			customerAddress: $('#inputCustomerAddress').val(),
 			customerNote: $('#inputCustomerNote').val(),
-			orderItems: this.state.orderItems
+			orderItems: newOrderList
 		};
 
 		// convert type Date

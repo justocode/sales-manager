@@ -20,11 +20,11 @@ module.exports = React.createClass({
 		return (
 			<tr>
 				<td>{this.props.index + 1}</td>
-				<td>{rowData.category.categoryName}</td>
-				<td>{rowData.product.productName}</td>
-				<td>{this.formatCurrency(orderItem.quantity)}</td>
-				<td>{this.formatCurrency(orderItem.price)}</td>
-				<td>{this.formatCurrency(orderItem.amount)}</td>
+				<td>{rowData.category}</td>
+				<td>{rowData.productName}</td>
+				<td>{this.formatCurrency(rowData.quantity)}</td>
+				<td>{this.formatCurrency(rowData.price)}</td>
+				<td>{this.formatCurrency(rowData.amount)}</td>
 				<td>{rowData.discount}</td>
 				<td>{rowData.note}</td>
 				<td><a href='#' onClick={this.deleteRow}>delete</a></td>

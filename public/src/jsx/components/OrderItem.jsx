@@ -91,7 +91,7 @@ var OrderDetailItemList = React.createClass({
 		var content = this.props.orderItems.map(function(orderItem, index) {
 			totalAmount += parseInt(orderItem.amount);
 			return (
-				<tr>
+				<tr key={'orderItem-'+orderItem._id}>
 					<td>{index + 1}</td>
 					<td>{orderItem.category}</td>
 					<td>{orderItem.product.productName}</td>

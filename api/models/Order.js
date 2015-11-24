@@ -4,7 +4,6 @@ var mongoose = require('mongoose'),
 		Schema = mongoose.Schema;
 
 var OrderSchema = new Schema({
-	_id: { type: Schema.Types.ObjectId },
 	orderStatus: { type: String, default: 'opening' },
 	createdAt: { type: Date, default: Date.now },
 	billingDate: { type: Date, default: Date.now },
@@ -15,7 +14,7 @@ var OrderSchema = new Schema({
 	customerAddress: { type: String, default: '', trim : true },
 	customerNote: { type: String, default: '', trim : true },
 	orderItems:[{
-		product: { type: Schema.Types.ObjectId, ref: 'Product' },
+		product: { type: String, ref: 'Product' },
 		quantity: { type: Number, default: 0 },
 		price: { type: Number, default: 0 },
 		discount: { type: Number, min: 0, max: 100 },

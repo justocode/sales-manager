@@ -10,6 +10,7 @@ var mongoose = require('mongoose'),
  * Product Schema
  */
 var ProductSchema = new Schema({
+	_id: { type: Schema.Types.ObjectId },
 	productName: { type: String, default: '', trim: true },
 	description: { type: String, default: '', trim: true },
 	price: { type: Number, default: 0 },
