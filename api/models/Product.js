@@ -2,6 +2,7 @@
 
 var mongoose = require('mongoose'),
 		Schema = mongoose.Schema,
+		ObjectId = Schema.Types.ObjectId,
 		Imager = require('imager'),
 		config = require('config'),
 		imagerConfig = require(config.root + '/config/imager.js');
@@ -10,7 +11,7 @@ var mongoose = require('mongoose'),
  * Product Schema
  */
 var ProductSchema = new Schema({
-	_id: { type: Schema.Types.ObjectId },
+	_id: { type: ObjectId, default: mongoose.Types.ObjectId() },
 	productName: { type: String, default: '', trim: true },
 	description: { type: String, default: '', trim: true },
 	price: { type: Number, default: 0 },
@@ -51,9 +52,8 @@ ProductSchema.pre('remove', function (next) {
  * Pre-save hook
  */
 ProductSchema.pre('save', function (next) {
-	var product = this;
 	if (this.isNew) {
-		product.createdAt = new Date();
+		// TODO something new
 	}
 	next();
 });

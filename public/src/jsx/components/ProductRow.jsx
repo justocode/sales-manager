@@ -26,7 +26,7 @@ module.exports = React.createClass({
 				url: '/api/products/' + this.props.product._id,
 				success: function(product) {
 					if(!$.isEmptyObject(product)) {
-						console.log('Delete product.id='+ product._id +' successfully!');
+						console.log('Delete product successfully!');
 						this.props.refreshProductList();
 					}
 				}.bind(this),
