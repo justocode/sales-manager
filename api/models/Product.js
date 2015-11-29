@@ -5,13 +5,14 @@ var mongoose = require('mongoose'),
 		ObjectId = Schema.Types.ObjectId,
 		Imager = require('imager'),
 		config = require('config'),
+		fs = require('fs'),
 		imagerConfig = require(config.root + '/config/imager.js');
 
 /**
  * Product Schema
  */
 var ProductSchema = new Schema({
-	_id: { type: ObjectId, default: mongoose.Types.ObjectId() },
+	_id: { type: ObjectId },
 	productName: { type: String, default: '', trim: true },
 	description: { type: String, default: '', trim: true },
 	price: { type: Number, default: 0 },
@@ -37,13 +38,20 @@ ProductSchema.path('price').validate(function (price) {
  * Pre-remove hook
  */
 ProductSchema.pre('remove', function (next) {
-	var imager = new Imager(imagerConfig, 'S3');
+	// var imager = new Imager(imagerConfig, 'S3');
 	var files = this.image.files;
 
 	// if there are files associated with the item, remove from the cloud too
-	imager.remove(files, function (err) {
-		if (err) { return next(err); }
-	}, 'product');
+	var filePath = '';
+
+	files.forEach(function(file) {
+		filePath = 'uploads/' + file.fileName;
+		fs.unlinkSync(filePath);
+	});
+
+	// imager.remove(files, function (err) {
+	// 	if (err) { return next(err); }
+	// }, 'product');
 
 	next();
 });
@@ -52,8 +60,10 @@ ProductSchema.pre('remove', function (next) {
  * Pre-save hook
  */
 ProductSchema.pre('save', function (next) {
+	var self = this;
 	if (this.isNew) {
 		// TODO something new
+		self._id = new mongoose.Types.ObjectId();
 	}
 	next();
 });
