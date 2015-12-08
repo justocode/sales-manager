@@ -25,9 +25,9 @@ mongoose.connection.on('error', console.log);
 mongoose.connection.on('disconnected', connect);
 
 // setup bootstrap models
-fs.readdirSync(join(__dirname, 'api/models')).forEach(function(file) {
-	if(~file.indexOf('.js')) { require(join(__dirname, 'api/models', file)); }
-});
+// fs.readdirSync(join(__dirname, 'api/models')).forEach(function(file) {
+// 	if(~file.indexOf('.js')) { require(join(__dirname, 'api/models', file)); }
+// });
 
 // Bootstrap passport config
 require('./config/passport')(passport);
@@ -38,8 +38,12 @@ require('./config/express')(app, passport);
 // Bootstrap swagger config
 require('./config/swagger')(app);
 
+// app.use('/', app.router);
 // Bootstrap routes
 require('./config/routes')(app, passport);
+	// var productRouter = express.Router();
+	// require('./config/routes/products')(productRouter);
+	// app.use('/api/products', productRouter);
 
 // setup Server
 app.listen(port, function() {

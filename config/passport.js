@@ -1,9 +1,7 @@
 'use strict';
 
-var mongoose = require('mongoose'),
-		User = mongoose.model('User');
-
-var local = require('./passport/local');
+var User = require('../api/models/User'),
+		local = require('./passport/local');
 
 module.exports = function (passport) {
 	// serialize sessions

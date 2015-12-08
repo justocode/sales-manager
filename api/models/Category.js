@@ -71,4 +71,4 @@ CategorySchema.statics = {
 	}
 };
 
-mongoose.model('Category', CategorySchema);
+module.exports = mongoose.model('Category', CategorySchema);

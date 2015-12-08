@@ -77,19 +77,19 @@ module.exports = function(app, passport) {
 	// app.use(favicon(join(config.root, 'public', 'favicon.ico')));
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-	app.use(multer({
-		dest: join(config.root, 'public', 'uploads'),
-		rename: function (fieldname, filename) {
-				return filename + Date.now();
-		},
-		onFileUploadStart: function (file) {
-				console.log(file.originalname + ' is starting ...');
-		},
-		onFileUploadComplete: function (file) {
-				console.log(file.fieldname + ' uploaded to ' + file.path);
-		}
-	}));
-	app.use(methodOverride(function (req, res) {
+	// app.use(multer({
+	// 	dest: join(config.root, 'public', 'uploads'),
+	// 	rename: function (fieldname, filename) {
+	// 			return filename + Date.now();
+	// 	},
+	// 	onFileUploadStart: function (file) {
+	// 			console.log(file.originalname + ' is starting ...');
+	// 	},
+	// 	onFileUploadComplete: function (file) {
+	// 			console.log(file.fieldname + ' uploaded to ' + file.path);
+	// 	}
+	// }));
+	app.use(methodOverride(function (req) {
 		if (req.body && typeof req.body === 'object' && '_method' in req.body) {
 			// look in urlencoded POST bodies and delete it
 			var method = req.body._method;

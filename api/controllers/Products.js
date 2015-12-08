@@ -3,8 +3,8 @@
 var mongoose = require('mongoose'),
 		promise = require('bluebird'),
 		mongoose = promise.promisifyAll(mongoose),
-		Order = mongoose.model('Order'),
-		Product = mongoose.model('Product');
+		Order = require('./../models/Order'),
+		Product = require('./../models/Product');
 
 /**
  * Load all products

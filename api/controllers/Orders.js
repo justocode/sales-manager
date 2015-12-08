@@ -3,7 +3,7 @@
 var mongoose = require('mongoose'),
 		promise = require('bluebird'),
 		mongoose = promise.promisifyAll(mongoose),
-		Order = mongoose.model('Order');
+		Order = require('./../models/Order');
 
 /**
  * Load all Orders

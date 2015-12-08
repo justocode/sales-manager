@@ -3,7 +3,7 @@
 var mongoose = require('mongoose'),
 		promise = require('bluebird'),
 		mongoose = promise.promisifyAll(mongoose),
-		Category = mongoose.model('Category'),
+		Category = require('./../models/Category'),
 		utils = require('utils');
 
 /**
