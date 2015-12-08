@@ -20,7 +20,7 @@
     "cookie-parser": "~1.3.5",
     "cookie-session": "^1.2.0",
     "crypto-js": "^3.1.5",
-    "express": "^3.x",
+    "express": "^4.13.3",
     "express-session": "^1.12.1",
     "imager": "^0.4.0",
     "lodash": "^3.10.1",
