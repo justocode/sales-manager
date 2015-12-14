@@ -1,95 +1,32 @@
 'use strict';
 
-var React = require('react'),
+var AppActions = require('./../actions/AppActions'),
+		ProductStore = require('./../stores/ProductStore'),
+		React = require('react'),
 		ProductList = require('./../components/ProductList'),
 		ProductAdding = require('./../components/ProductAdding'),
 		Pagination = require('./../components/Pagination'),
 		DropDownList = require('./../components/DropDownList');
 
 module.exports = React.createClass({
-	getInitialState: function() {
-		return ({
-			productListData: [],
-			categories: [],
-			currentCat: '',
-			pages: 1,
-			currentPage: 1,
-			productsPerPage: 5
-		});
-	},
-	componentWillMount: function() {
-		// get categories
-		this.getCategoies();
-		// get products
-		this.getProductList(this.state.productsPerPage, this.state.currentPage);
-	},
-	getProductList: function(perPage, page, catId) {
-		// Request get products list
-		var url = '/api/products/'+ perPage +'/'+ page;
-		url += catId ? '/'+ catId : '';
-		var getProducts = $.get(url);
 
-		getProducts.done(function(data) {
-				var _pages = Math.floor(data.total/perPage);
-				_pages += (data.total%perPage > 0) ? 1 : 0;
-				this.setState({
-					productListData: data.products,
-					pages: _pages
-				});
-			}.bind(this));
+	getInitialState: function () {
+		return ProductStore._getState();
+	},
 
-		getProducts.fail(function(xhr, status, err) {
-				console.error('/api/products', status, err.toString());
-			}.bind(this));
+	componentWillMount: function () {
+		AppActions.loadData(ProductStore._getState());
 	},
-	getCategoies: function() {
-		var getCats = $.get('/api/categories');
 
-		getCats.done(function(data) {
-				var cats = data.categories;
-				cats.splice(0, 0, { _id: '', categoryName: 'All' });
-				this.setState({ categories: cats });
-			}.bind(this));
+	componentDidMount: function () {
+		ProductStore.addChangeListener(this._onChange);
+	},
 
-		getCats.fail(function(xhr, status, err) {
-				console.error('/api/catigories', status, err.toString());
-			}.bind(this));
+	componentWillUnmount: function () {
+		ProductStore.removeChangeListener(this._onChange);
 	},
-	getPageSizes: function() {
-		return [
-			{ key: 5, value: 5 },
-			{ key: 10, value: 10 },
-			{ key: 15, value: 15 },
-			{ key: 20, value: 20 },
-			{ key: 25, value: 25 }
-		];
-	},
-	changeCategory: function(catId) {
-		this.getProductList(this.state.productsPerPage, 1, catId);
-		this.setState({currentCat: catId, currentPage: 1});
-	},
-	changeProductsPerPage: function(perPage) {
-		// Update products list
-		this.getProductList(perPage, 1, this.state.currentCat);
-		// update this.state
-		this.setState({productsPerPage: perPage, currentPage: 1});
-	},
-	moveToPage: function(pageIndex) {
-		if(this.state.currentPage !== pageIndex) {
-			this.setState({currentPage: pageIndex});
 
-			// Options default
-			var perPage = this.state.productsPerPage,
-					page  = pageIndex;
-
-			// Update data list
-			this.getProductList(perPage, page, this.state.currentCat);
-		}
-	},
-	refreshProductList: function(id) {
-		this.getProductList(this.state.productsPerPage, this.state.currentPage, this.state.currentCat);
-	},
-	render: function() {
+	render: function () {
 		var formReturn = (
 			<div className='form-group col-xs-12 col-sm-12'>
 				<div className='panel panel-default'>
@@ -98,33 +35,58 @@ module.exports = React.createClass({
 						<div className='row'>
 							<div className='col-sm-6'>
 								<label><DropDownList
-									dataList={this.getPageSizes()}
-									onChangeData={this.changeProductsPerPage}
+									dataList={ProductStore.getPageSizes()}
+									value={this.state.perPage}
+									onChangeData={this._changeProductsPerPage}
 									_class='input-sm'/></label>
 							</div>
 							<div className="col-sm-6">
 								<DropDownList
 									dataList={this.state.categories}
-									onChangeData={this.changeCategory}
+									value={this.state.currentCat}
+									onChangeData={this._changeCategory}
 									_key='_id' _value='categoryName' _class='input-sm'/>
 							</div>
 						</div>
 						<div className='table-responsive'>
-							<ProductList productListData={this.state.productListData}
-									refreshProductList={this.refreshProductList}/>
+							<ProductList products={this.state.products}
+									refreshProductList={this._refreshProductList}/>
 						</div>
 					</div>
 					<Pagination
 						pages={this.state.pages}
 						currentPage={this.state.currentPage}
-						moveToPage={this.moveToPage}/>
+						moveToPage={this._moveToPage}/>
 				</div>
 				<div className='row col-xs-12 col-sm-12'>
-					<ProductAdding refreshProductList={this.refreshProductList}/>
+					<ProductAdding refreshProductList={this._refreshProductList}/>
 				</div>
 			</div>
 		);
 
 		return formReturn;
+	},
+
+	_onChange: function () {
+		this.setState(ProductStore._getState());
+	},
+
+	_changeCategory: function (catId) {
+		AppActions.getProducts(this.state.perPage, 1, catId);
+	},
+
+	_changeProductsPerPage: function (perPage) {
+		AppActions.getProducts(perPage, 1, this.state.currentCat);
+	},
+
+	_moveToPage: function (pageIndex) {
+		if(this.state.currentPage !== pageIndex) {
+			AppActions.getProducts(this.state.perPage, pageIndex, this.state.currentCat);
+		}
+	},
+
+	_refreshProductList: function (id) {
+		AppActions.getProducts(this.state.perPage, this.state.currentPage, this.state.currentCat);
 	}
+
 });

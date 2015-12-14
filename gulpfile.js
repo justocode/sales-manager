@@ -18,7 +18,7 @@ var buildDir = rootDir + '/build';
 
 // clean all old-sourcecode JS
 gulp.task('clean', function() {
-	return gulp.src( [buildDir + '/js/**/*.js', buildDir + '/css'], {read: false} )
+	return gulp.src( [buildDir + '/**/**/*.js', buildDir + '/css'], {read: false} )
 		.pipe( clean() );
 });
 
@@ -29,8 +29,13 @@ gulp.task('jsx', ['clean'], function() {
 		.pipe( gulp.dest(buildDir + '/js') );
 });
 
+gulp.task('copy', ['jsx','clean'], function(){
+	return gulp.src( srcDir + '/jsx/**/*.js' )
+		.pipe( gulp.dest(buildDir + '/js') )
+});
+
 // browserify to help client-side require/load all lib/module
-gulp.task('browserify', ['jsx'], function() {
+gulp.task('browserify', ['jsx','copy'], function() {
 	return gulp.src( [buildDir + '/js/app.js', buildDir + '/js/admin.js'] )
 		.pipe( browserify() )
 		.pipe( gulp.dest(buildDir) );

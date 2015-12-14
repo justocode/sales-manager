@@ -20,14 +20,19 @@ module.exports = React.createClass({
 		this.props.onChangeData(value);
 	},
 	render: function() {
-		var propKey = this.props._key;
-		var propValue = this.props._value;
+		var props = this.props;
+		var propKey = props._key;
+		var propValue = props._value;
 		return (
-			<select className={'form-control '+ this.props._class} id={this.props._ref}
-							name={this.props._ref} value={this.props.value} onChange={this.onChangeData}>
+			<select className={'form-control '+ props._class} id={props._ref}
+							name={props._ref} value={props.value} onChange={this.onChangeData}>
 			{
-				this.props.dataList.map(function(data) {
-					return (<option key={'opt-'+data[propKey]+propKey} value={data[propKey]}>{data[propValue]}</option>);
+				props.dataList.map(function(data) {
+					return (
+						<option key={'opt-'+ data[propKey] + propKey} value={data[propKey]}>
+							{data[propValue]}
+						</option>
+					);
 				})
 			}
 			</select>

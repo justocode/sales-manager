@@ -20,7 +20,7 @@ module.exports = React.createClass({
 				</thead>
 				<tbody>
 					{
-						this.props.productListData.map(function(product, index) {
+						this.props.products.map( function (product, index) {
 							return (
 								<ProductRow
 									key={'product-'+product._id}
