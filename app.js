@@ -1,22 +1,22 @@
 'use strict';
 
 var join = require('path').join,
-		express = require('express'),
-		mongoose = require('mongoose'),
-		passport = require('passport'),
-		promise = require('bluebird'),
-		mongoose = promise.promisifyAll(mongoose),
-		config = require('config');
+    express = require('express'),
+    mongoose = require('mongoose'),
+    passport = require('passport'),
+    promise = require('bluebird'),
+    mongoose = promise.promisifyAll(mongoose),
+    config = require('config');
 
 var app = express();
 var port = process.env.PORT || 3000;
 
 // setup connect to mongodb
 var connect = function() {
-	var options = { server: { socketOptions: { keepAlive: 1 } } };
-	mongoose.connect(config.db.mongodb, options, function() {
-		console.log('connect to mongodb successfully');
-	});
+  var options = { server: { socketOptions: { keepAlive: 1 } } };
+  mongoose.connect(config.db.mongodb, options, function() {
+    console.log('connect to mongodb successfully');
+  });
 };
 connect();
 
@@ -38,8 +38,8 @@ require('./config/routes')(app, passport);
 
 // setup Server
 app.listen(port, function() {
-	console.log('Server started at http://localhost:%d', port);
-	console.log('Swagger-ui is available on http://localhost:%d/docs', port);
+  console.log('Server started at http://localhost:%d', port);
+  console.log('Swagger-ui is available on http://localhost:%d/docs', port);
 });
 
 module.exports = app;
