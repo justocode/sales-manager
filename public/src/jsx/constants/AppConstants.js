@@ -11,6 +11,7 @@ module.exports = keyMirror({
   ADD_ORDER_ITEM: null,
   REMOVE_ORDER_ITEM: null,
 
+  GET_ORDERS: null,
   GET_CATS_FOR_ORDER: null,
   GET_PRODUCTS_FOR_ORDER: null
 });

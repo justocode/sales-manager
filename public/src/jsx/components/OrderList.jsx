@@ -19,13 +19,12 @@ module.exports = React.createClass({
         </thead>
         <tbody>
           {
-            this.props.orderListData.map(function(order, index) {
+            this.props.orders.map(function(order, index) {
               return (
                 <OrderItem
                   key={'order-'+order._id}
                   index={index}
-                  order={order}
-                  {...this.props}/>
+                  order={order}/>
               );
             }, this)
           }

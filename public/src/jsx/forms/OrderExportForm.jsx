@@ -33,7 +33,7 @@ module.exports = React.createClass({
             <div className='input-group col-xs-6 col-sm-6 pull-left'>
               <span className='input-group-addon w20'>Shop Name</span>
               <DropDownList
-                dataList={OrderStore.getShops()}
+                dataList={OrderStore.getShops({ key: '', value: '' })}
                 onChangeData={this._onChangeShop}
                 ref='inputShopName'/>
             </div>

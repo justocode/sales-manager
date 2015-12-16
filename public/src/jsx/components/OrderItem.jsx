@@ -4,26 +4,49 @@ var React = require('react'),
     OrderExportItemRow = require('./../components/OrderExportItemRow');
 
 module.exports = React.createClass({
+
   getInitialState: function () {
     return ({
       isShowDetail: false
     });
   },
-  showDetail: function () {
-    $('tr#'+this.props.order._id).slideToggle().slideToggle();
-    this.setState({ isShowDetail: !this.state.isShowDetail });
-  },
+
   render: function () {
     return (
       this.state.isShowDetail ?
-        <OrderDetail showDetail={this.showDetail} order={this.props.order}/>
+        <OrderDetail showDetail={this._showDetail} order={this.props.order}/>
         :
-        <OrderInfo showDetail={this.showDetail} order={this.props.order}/>
+        <OrderInfo showDetail={this._showDetail} order={this.props.order}/>
+    );
+  },
+
+  _showDetail: function () {
+    $('tr#'+this.props.order._id).slideToggle();
+    this.setState({ isShowDetail: !this.state.isShowDetail });
+  }
+
+});
+
+var OrderInfo = React.createClass({
+
+  render: function () {
+    var order = this.props.order;
+    return (
+      <tr id={order._id} onClick={this.props.showDetail}>
+        <td>{this.props.index}</td>
+        <td>{new Date(order.createdAt).toLocaleDateString()}</td>
+        <td>{order.shopName}</td>
+        <td>{order.orderStatus}</td>
+        <td>{parseInt(order.amount).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
+        <td>{order.customerNote}</td>
+      </tr>
     );
   }
+
 });
 
 var OrderDetail = React.createClass({
+
   render: function () {
     var order = this.props.order;
     return (
@@ -52,25 +75,11 @@ var OrderDetail = React.createClass({
       </tr>
     );
   }
-});
 
-var OrderInfo = React.createClass({
-  render: function () {
-    var order = this.props.order;
-    return (
-      <tr id={order._id} onClick={this.props.showDetail}>
-        <td>{this.props.index}</td>
-        <td>{new Date(order.createdAt).toLocaleDateString()}</td>
-        <td>{order.shopName}</td>
-        <td>{order.orderStatus}</td>
-        <td>{parseInt(order.amount).toLocaleString('en-IN', { maximumSignificantDigits: 3 })}</td>
-        <td>{order.customerNote}</td>
-      </tr>
-    );
-  }
 });
 
 var TextInfo = React.createClass({
+
   render: function () {
     return (
       <div className={'input-group col-xs-6 col-sm-6 '+this.props.styleClass}>
@@ -79,15 +88,14 @@ var TextInfo = React.createClass({
       </div>
     )
   }
+
 });
 
 var OrderDetailItemList = React.createClass({
-  formatCurrency: function (number) {
-    number = number ? number : 0;
-    return parseInt(number).toLocaleString('en-IN', { maximumSignificantDigits: 3 });
-  },
+
   render: function () {
     var totalAmount = 0;
+
     var content = this.props.orderItems.map(function(orderItem, index) {
       totalAmount += parseInt(orderItem.amount);
       return (
@@ -95,14 +103,15 @@ var OrderDetailItemList = React.createClass({
           <td>{index + 1}</td>
           <td>{orderItem.category}</td>
           <td>{orderItem.product.productName}</td>
-          <td>{this.formatCurrency(orderItem.quantity)}</td>
-          <td>{this.formatCurrency(orderItem.price)}</td>
-          <td>{this.formatCurrency(orderItem.amount)}</td>
+          <td>{this._formatCurrency(orderItem.quantity)}</td>
+          <td>{this._formatCurrency(orderItem.price)}</td>
+          <td>{this._formatCurrency(orderItem.amount)}</td>
           <td>{orderItem.discount}</td>
           <td>{orderItem.note}</td>
         </tr>
       )}.bind(this)
     );
+
     return (
       <table className='table table-bordered table-striped menu-items'>
         <thead>
@@ -121,11 +130,17 @@ var OrderDetailItemList = React.createClass({
           { content }
           <tr>
             <td colSpan='5'>Total: </td>
-            <td>{ this.formatCurrency(totalAmount) }</td>
+            <td>{ this._formatCurrency(totalAmount) }</td>
             <td colSpan='2'></td>
           </tr>
         </tbody>
       </table>
-    )
+    );
+  },
+
+  _formatCurrency: function (number) {
+    number = number ? number : 0;
+    return parseInt(number).toLocaleString('en-IN', { maximumSignificantDigits: 3 });
   }
+
 });

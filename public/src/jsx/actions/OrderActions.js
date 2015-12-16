@@ -9,6 +9,18 @@ var Promise = require('bluebird');
 
 var OrderActions = {
 
+  getOrders: function(perPage, page, shopId, status) {
+    var getOrders = OrderAPI.getOrders(perPage, page, shopId, status);
+    getOrders.then(function(data) {
+      AppDispatcher.handleServerAction({
+        actionType: AppConstants.GET_ORDERS,
+        data: data
+      });
+    }).catch(function(err) {
+      console.error(err.toString());
+    });
+  },
+
   getCategories: function() {
     var getCats = ProductAPI.getCategories();
     getCats.then(function(data) {

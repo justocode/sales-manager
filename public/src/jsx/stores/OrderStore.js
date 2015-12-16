@@ -5,13 +5,27 @@ var AppDispatcher = require('./../dispatcher/AppDispatcher'),
     EventEmitter = require('events').EventEmitter,
     _ = require('lodash');
 
-var CHANGE_EVENT = 'change';
-var ADD_ORDER_SUCCESS_EVENT = 'add order success';
+var CHANGE_EVENT = 'change',
+    ADD_ORDER_SUCCESS_EVENT = 'add order success',
+    ORDERS_CHANGE_EVENT = 'update orders';
 
-var _orderItems = [], _shops = [], _currentShop = '',
-    _products = [], _cats = [];
+var _orders = [], _orderItems = [], _cats = [], _products = [], _shops = [],
+    _currentStatus = 'all', _currentShop = 'all',
+    _pages = 1, _perPage = 5, _currentPage = 1;
 
 var OrderStore = _.extend({}, EventEmitter.prototype, {
+
+  getState: function() {
+    return {
+      orders: _orders,
+      shops: _shops,
+      currentShop: _currentShop,
+      currentStatus: _currentStatus,
+      pages: _pages,
+      currentPage: _currentPage,
+      perPage: _perPage
+    };
+  },
 
   getOrderItems: function() {
     return _orderItems;
@@ -25,13 +39,10 @@ var OrderStore = _.extend({}, EventEmitter.prototype, {
     return _products;
   },
 
-  getShops: function() {
+  getShops: function(defaultShop) {
     // shops were got from database
     _shops = [
       {
-        key: '',
-        value: ''
-      },{
         key: 'danang',
         value: 'Da Nang'
       },{
@@ -42,10 +53,11 @@ var OrderStore = _.extend({}, EventEmitter.prototype, {
         value: 'Ho Chi Minh'
       }
     ];
+    _shops = defaultShop ? [defaultShop].concat(_shops) : _shops;
     return _shops;
   },
 
-  getOrderStatusList: function() {
+  getOrderStatusList: function(defaultStatus) {
     var orderStatus = [
       {
         key: 'opening',
@@ -64,6 +76,7 @@ var OrderStore = _.extend({}, EventEmitter.prototype, {
         value: 'Fail'
       }
     ];
+    orderStatus = defaultStatus ? [defaultStatus].concat(orderStatus) : orderStatus;
     return orderStatus;
   },
 
@@ -74,9 +87,19 @@ var OrderStore = _.extend({}, EventEmitter.prototype, {
   },
 
   onReceiveProducts: function(data) {
-    _products = [{}];
-    _products = (data.products.length > 0) ? _products.concat(data.products) : [];
+    _products = (data.products.length > 0) ? [{}].concat(data.products) : [];
     this.emitChange();
+  },
+
+  onReceiveOrders: function(data) {
+    _orders = data.orders;
+    _pages = data.pages;
+    _perPage = data.perPage;
+    _currentPage = data.page;
+    _currentShop = data.shopId;
+    _currentStatus = data.status;
+
+    this.emit(ORDERS_CHANGE_EVENT);
   },
 
   onAddOrderSuccess: function(order) {
@@ -115,6 +138,14 @@ var OrderStore = _.extend({}, EventEmitter.prototype, {
 
   removeSuccessListener: function(callback) {
     this.removeListener(ADD_ORDER_SUCCESS_EVENT, callback);
+  },
+
+  addOrdersChangeListener: function(callback) {
+    this.on(ORDERS_CHANGE_EVENT, callback);
+  },
+
+  removeOrdersChangeListener: function(callback) {
+    this.removeListener(ORDERS_CHANGE_EVENT, callback);
   }
 
 });
@@ -142,6 +173,10 @@ AppDispatcher.register(function(payload) {
 
     case AppConstants.GET_PRODUCTS_FOR_ORDER:
       OrderStore.onReceiveProducts(action.data);
+      break;
+
+    case AppConstants.GET_ORDERS:
+      OrderStore.onReceiveOrders(action.data);
       break;
 
     default:

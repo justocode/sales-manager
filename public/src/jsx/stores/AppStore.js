@@ -8,7 +8,7 @@ var AppConstants = require('./../constants/AppConstants'),
     OrderForm = require('./../forms/OrderForm'),
     OrderOutForm = require('./../forms/OrderExportForm'),
     LoginForm = require('./../forms/LoginForm'),
-    ProductForm = require('./../forms/ProductFormNew');
+    ProductForm = require('./../forms/ProductForm');
 
 var CHANGE_EVENT = 'change';
 

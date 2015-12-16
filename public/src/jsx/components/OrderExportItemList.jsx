@@ -1,7 +1,6 @@
 'use strict';
 
-var AppActions = require('./../actions/AppActions'),
-    OrderStore = require('./../stores/OrderStore'),
+var OrderStore = require('./../stores/OrderStore'),
     React = require('react'),
     OrderExportItemRow = require('./../components/OrderExportItemRow');
 
