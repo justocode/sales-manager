@@ -30,16 +30,16 @@ var _tabs =  [
 var DEFAULT_TAB = _tabs[0];
 var _currentTab = DEFAULT_TAB;
 
-var AppStore = _.extend(EventEmitter.prototype, {
+var AppStore = _.extend({}, EventEmitter.prototype, {
 
-	getState: function () {
+	getState: function() {
 		return {
 			tabs: _tabs,
 			currentTab: _currentTab
 		};
 	},
 
-	changeTab: function (tabKey) {
+	changeTab: function(tabKey) {
 		var tabObj = _tabs.filter(function(tab) {
 			return tab.key === tabKey;
 		})[0];
@@ -49,15 +49,15 @@ var AppStore = _.extend(EventEmitter.prototype, {
 		this.emitChange();
 	},
 
-	emitChange: function () {
+	emitChange: function() {
 		this.emit(CHANGE_EVENT);
 	},
 
-	addChangeListener: function (callback) {
+	addChangeListener: function(callback) {
 		this.on(CHANGE_EVENT, callback);
 	},
 
-	removeChangeListener: function (callback) {
+	removeChangeListener: function(callback) {
 		this.removeListener(CHANGE_EVENT, callback);
 	},
 

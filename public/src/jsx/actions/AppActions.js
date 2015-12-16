@@ -8,10 +8,10 @@ var Promise = require('bluebird');
 
 var AppActions = {
 
-	loadData: function (state) {
+	loadData: function(state) {
 		Promise.all([
 				this.getCategories(),
-				this.getProducts(state.perPage, state.currentPage, state.currentCat)
+				this.getProducts(state.currentCat, state.perPage, state.currentPage)
 			]).then(function() {
 				console.log('Load data success');
 				// AppDispatcher.handleServerAction({
@@ -20,7 +20,7 @@ var AppActions = {
 			});
 	},
 
-	getCategories: function () {
+	getCategories: function() {
 		var getCats = ProductAPI.getCategories();
 		getCats.then(function(data) {
 			AppDispatcher.handleServerAction({
@@ -32,8 +32,8 @@ var AppActions = {
 		});
 	},
 
-	getProducts: function (perPage, page, catId) {
-		var getProducts = ProductAPI.getProducts(perPage, page, catId);
+	getProducts: function(catId, perPage, page) {
+		var getProducts = ProductAPI.getProducts(catId, perPage, page);
 		getProducts.then(function(data) {
 			AppDispatcher.handleServerAction({
 				actionType: AppConstants.GET_PRODUCTS_FROM_SERVER,

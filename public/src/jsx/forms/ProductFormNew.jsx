@@ -10,23 +10,23 @@ var AppActions = require('./../actions/AppActions'),
 
 module.exports = React.createClass({
 
-	getInitialState: function () {
+	getInitialState: function() {
 		return ProductStore._getState();
 	},
 
-	componentWillMount: function () {
+	componentWillMount: function() {
 		AppActions.loadData(ProductStore._getState());
 	},
 
-	componentDidMount: function () {
+	componentDidMount: function() {
 		ProductStore.addChangeListener(this._onChange);
 	},
 
-	componentWillUnmount: function () {
+	componentWillUnmount: function() {
 		ProductStore.removeChangeListener(this._onChange);
 	},
 
-	render: function () {
+	render: function() {
 		var formReturn = (
 			<div className='form-group col-xs-12 col-sm-12'>
 				<div className='panel panel-default'>
@@ -67,26 +67,26 @@ module.exports = React.createClass({
 		return formReturn;
 	},
 
-	_onChange: function () {
+	_onChange: function() {
 		this.setState(ProductStore._getState());
 	},
 
-	_changeCategory: function (catId) {
-		AppActions.getProducts(this.state.perPage, 1, catId);
+	_changeCategory: function(catId) {
+		AppActions.getProducts(catId, this.state.perPage, 1);
 	},
 
-	_changeProductsPerPage: function (perPage) {
-		AppActions.getProducts(perPage, 1, this.state.currentCat);
+	_changeProductsPerPage: function(perPage) {
+		AppActions.getProducts(this.state.currentCat, perPage, 1);
 	},
 
-	_moveToPage: function (pageIndex) {
+	_moveToPage: function(pageIndex) {
 		if(this.state.currentPage !== pageIndex) {
-			AppActions.getProducts(this.state.perPage, pageIndex, this.state.currentCat);
+			AppActions.getProducts(this.state.currentCat, this.state.perPage, pageIndex);
 		}
 	},
 
-	_refreshProductList: function (id) {
-		AppActions.getProducts(this.state.perPage, this.state.currentPage, this.state.currentCat);
+	_refreshProductList: function(id) {
+		AppActions.getProducts(this.state.currentCat, this.state.perPage, this.state.currentPage);
 	}
 
 });

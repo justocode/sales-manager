@@ -5,7 +5,7 @@ var Promise = require('bluebird');
 
 module.exports = {
 
-	getCategories: function () {
+	getCategories: function() {
 		return new Promise(function(fulfill, reject) {
 			request.get('/api/categories')
 				.set('Accept', 'application/json')
@@ -18,13 +18,13 @@ module.exports = {
 		});
 	},
 
-	getProducts: function (perPage, page, catId) {
+	getProducts: function(catId, perPage, page) {
 		// Request get products
 		perPage = perPage || 5;
 		page = page || 1;
 
-		var url = '/api/products/'+ perPage +'/'+ page;
-		url += catId ? '/'+ catId : '';
+		var url = '/api/products/'+ ( catId ? catId +'/' : '' );
+		url += perPage +'/'+ page;
 
 		return new Promise(function(fulfill, reject) {
 			request.get(url)

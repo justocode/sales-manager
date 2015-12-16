@@ -11,9 +11,9 @@ var _products = [], _cats = [],
 		_currentCat = '', _pages = 1,
 		_perPage = 5, _currentPage = 1;
 
-var ProductStore = _.extend(EventEmitter.prototype, {
+var ProductStore = _.extend({}, EventEmitter.prototype, {
 
-	_getState: function () {
+	_getState: function() {
 		return {
 			categories: _cats,
 			products: _products,
@@ -34,12 +34,12 @@ var ProductStore = _.extend(EventEmitter.prototype, {
 		];
 	},
 
-	onReceiveCategories: function (data) {
+	onReceiveCategories: function(data) {
 		_cats = data.categories;
 		_cats.splice(0, 0, { _id: '', categoryName: 'All' });
 	},
 
-	onReceiveProducts: function (data) {
+	onReceiveProducts: function(data) {
 		_products = data.products;
 		_pages = data.pages;
 		_perPage = data.perPage;
@@ -48,23 +48,23 @@ var ProductStore = _.extend(EventEmitter.prototype, {
 		this.emitChange();
 	},
 
-	emitChange: function () {
+	emitChange: function() {
 		this.emit(CHANGE_EVENT);
 	},
 
-	addChangeListener: function (callback) {
+	addChangeListener: function(callback) {
 		this.on(CHANGE_EVENT, callback);
 	},
 
-	removeChangeListener: function (callback) {
+	removeChangeListener: function(callback) {
 		this.removeListener(CHANGE_EVENT, callback);
 	},
 
-	getCategories: function () {
+	getCategories: function() {
 		return _cats;
 	},
 
-	getProducts: function () {
+	getProducts: function() {
 		return _products;
 	}
 

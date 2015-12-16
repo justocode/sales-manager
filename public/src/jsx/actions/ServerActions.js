@@ -12,7 +12,7 @@ module.exports = {
 		});
 	},
 
-	receiveProducts: function (data) {
+	receiveProducts: function(data) {
 		AppDispatcher.handleServerAction({
 			actionType: AppConstants.GET_PRODUCT_FROM_SERVER,
 			data: data

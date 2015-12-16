@@ -25,8 +25,10 @@ exports.loadAllProducts = function (req, res, next) {
  */
 exports.loadAllProductsByCat = function (req, res, next) {
 	var _criteria = req.params.catId ? { category: req.params.catId } : '';
-	var _page = (req.params.page > 0 ? req.params.page : 1) - 1;
-	var _perPage = req.params.perPage > 0 ? req.params.perPage : 20;
+	var _page = req.params.page ? req.params.page : 0;
+	_page = _page > 0 ? _page - 1 : 0;
+	var _perPage = req.params.perPage ? req.params.perPage : 20;
+	_perPage = req.params.perPage > 0 ? req.params.perPage : 20;
 	var options = {
 		criteria: _criteria,
 		select: '_id productName category price stock description image createdAt',
