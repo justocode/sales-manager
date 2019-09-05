@@ -84,7 +84,7 @@ export type QueryUserArgs = {
 export type User = {
   __typename?: 'User',
   id: Scalars['ID'],
-  username?: Maybe<Scalars['String']>,
+  email?: Maybe<Scalars['String']>,
   posts?: Maybe<Array<Maybe<Post>>>,
 };
 
@@ -95,6 +95,6 @@ export type UserPostsArgs = {
 };
 
 export type UserInput = {
-  username: Scalars['String'],
+  email: Scalars['String'],
   password: Scalars['String'],
 };
