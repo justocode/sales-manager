@@ -22,7 +22,7 @@ function Layout({ children }: Props) {
         <title>Sales manager</title>
         <meta
           name="description"
-          content="A Shopping Cart built with TypeScript, NextJS, React, Redux, Apollo Client, GraphQL API, ... and Material UI."
+          content="The Sales manager app built with TypeScript, NextJS, React, Redux, Apollo Client, GraphQL API, ... and Material UI."
         />
       </Head>
       <AppBar />

@@ -59,9 +59,9 @@ export type PostInput = {
 
 export type Query = {
   __typename?: 'Query',
+  _empty?: Maybe<Scalars['String']>,
   post?: Maybe<Post>,
   posts?: Maybe<Array<Maybe<Post>>>,
-  _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
 };
 
