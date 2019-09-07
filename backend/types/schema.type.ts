@@ -62,9 +62,9 @@ export type PostInput = {
 
 export type Query = {
   __typename?: 'Query',
+  _empty?: Maybe<Scalars['String']>,
   post?: Maybe<Post>,
   posts?: Maybe<Array<Maybe<Post>>>,
-  _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
 };
 
@@ -174,9 +174,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
+  String: ResolverTypeWrapper<Scalars['String']>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Post: ResolverTypeWrapper<Post>,
-  String: ResolverTypeWrapper<Scalars['String']>,
   User: ResolverTypeWrapper<User>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Mutation: ResolverTypeWrapper<{}>,
@@ -188,9 +188,9 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Query: {},
+  String: Scalars['String'],
   ID: Scalars['ID'],
   Post: Post,
-  String: Scalars['String'],
   User: User,
   Int: Scalars['Int'],
   Mutation: {},
@@ -216,9 +216,9 @@ export type PostResolvers<ContextType = Context, ParentType extends ResolversPar
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>,
   posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, QueryPostsArgs>,
-  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>,
 }>;
 
