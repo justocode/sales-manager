@@ -1,6 +1,6 @@
 import App from 'next/app';
 import { withMuiApp } from '~/frontend/hocs/withMui';
-import withRedux from '~/frontend/hocs/withRedux';
+import withApolloClientHook from '~/frontend/hocs/withApolloClientHook';
 
 class MyApp extends App {
   public static async getInitialProps({ Component, ctx }) {
@@ -10,4 +10,4 @@ class MyApp extends App {
   }
 }
 
-export default withRedux(withMuiApp(MyApp));
+export default withApolloClientHook(withMuiApp(MyApp));
