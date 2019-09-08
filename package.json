@@ -8,10 +8,10 @@
   "license": "MIT",
   "scripts": {
     "dev": "concurrently next nodemon",
-    "build": "next build",
     "start": "next start",
+    "build": "next build",
+    "prebuild": "graphql-codegen",
     "typeorm": "typeorm",
-    "codegen": "graphql-codegen",
     "eslint": "eslint --ext .js,.jsx,.ts,.tsx .",
     "stylelint": "stylelint 'frontend/**/*.{css,scss}'"
   },
