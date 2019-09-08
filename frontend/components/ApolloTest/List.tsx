@@ -2,12 +2,12 @@ import _ from 'lodash';
 import React from 'react';
 import { useQuery } from '@apollo/react-hooks';
 import { MOCKUPS_QUERY } from '~/frontend/operations/mockup.operation';
-import { MockupFragment } from '~/frontend/types/operations.type';
+import { MockupsQuery, MockupsQueryVariables } from '~/frontend/types/operations.type';
 
 function List() {
-  const { data, loading, error } = useQuery(MOCKUPS_QUERY);
+  const { data, loading, error } = useQuery<MockupsQuery, MockupsQueryVariables>(MOCKUPS_QUERY);
 
-  const mockups: MockupFragment[] = _.get(data, 'mockups') || [];
+  const mockups = _.get(data, 'mockups') || [];
 
   return (
     <ul>
