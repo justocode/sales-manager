@@ -85,6 +85,7 @@ export type Query = {
   posts?: Maybe<Array<Maybe<Post>>>,
   _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
+  mockups?: Maybe<Array<Maybe<Mockup>>>,
 };
 
 
@@ -197,12 +198,12 @@ export type ResolversTypes = {
   String: ResolverTypeWrapper<Scalars['String']>,
   User: ResolverTypeWrapper<User>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
+  Mockup: ResolverTypeWrapper<Mockup>,
   Mutation: ResolverTypeWrapper<{}>,
   PostInput: PostInput,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   UserInput: UserInput,
   MockupInput: MockupInput,
-  Mockup: ResolverTypeWrapper<Mockup>,
 };
 
 /** Mapping between all available schema types and the resolvers parents */
@@ -213,12 +214,12 @@ export type ResolversParentTypes = {
   String: Scalars['String'],
   User: User,
   Int: Scalars['Int'],
+  Mockup: Mockup,
   Mutation: {},
   PostInput: PostInput,
   Boolean: Scalars['Boolean'],
   UserInput: UserInput,
   MockupInput: MockupInput,
-  Mockup: Mockup,
 };
 
 export type MockupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mockup'] = ResolversParentTypes['Mockup']> = {
@@ -249,6 +250,7 @@ export type QueryResolvers<ContextType = Context, ParentType extends ResolversPa
   posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, QueryPostsArgs>,
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>,
+  mockups?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mockup']>>>, ParentType, ContextType>,
 };
 
 export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
