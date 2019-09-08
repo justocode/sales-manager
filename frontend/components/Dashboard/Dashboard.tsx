@@ -3,9 +3,6 @@ import clsx from 'clsx';
 import { createStyles, lighten, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import { Order } from '../DataTable/DataInterface';
 
-import { useQuery } from '@apollo/react-hooks';
-import gql from 'graphql-tag';
-
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
 import TableRow from '@material-ui/core/TableRow';
@@ -61,15 +58,6 @@ import {
 // import tShirt from '../../assets/img/tshirt.webp';
 // const demoImg = 'https://cdn.shopify.com/s/files/1/1312/0893/products/004.jpg?v=1491851162';
 // const demoImg = tShirt;
-
-const GET_DATA = gql`
-  {
-    mockups @client {
-      id
-      name
-    }
-  }
-`;
 
 type KeySortable = {
   sku: string;
@@ -210,8 +198,6 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const Dashboard = () => {
-  console.log('Dashboard initial');
-
   const theme = useTheme();
   const classes = useStyles(theme);
   const [order, setOrder] = useState<Order>('asc');
@@ -219,28 +205,9 @@ const Dashboard = () => {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-
-  // const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
-  // const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
-  // const [mugs] = utils.useStateWithLocalStorage('mugs', {});
-
-  const { loading, error, data, client } = useQuery(GET_DATA);
-  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 2, name: 'mockup-2' } } });
-  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 3, name: 'mockup-3' } } });
-  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 4, name: 'mockup-4' } } });
-
-  console.log('Dashboard data', data);
-  // client.query(gql`
-  //   query Query {
-  //     mockups @client {
-  //       id, name
-  //     },
-  //   }
-  // `);
-  // const result = client.extract();
-  // console.log('result', result);
-  console.log('Dashboard client.cache', client.cache);
-
+  const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
+  const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
+  const [mugs] = utils.useStateWithLocalStorage('mugs', {});
   const [rows, setRows] = useState<RowData[]>(loadData());
   const [selectedMugPatterns, setSelectedMugPatterns] = useState<MUG_PATTERN[]>([]);
   const [emptyRows, setEmptyRows] = useState(loadRowPerPage());
@@ -320,14 +287,14 @@ const Dashboard = () => {
   function loadData() {
     let rowdata = [];
 
-    for (const mugId in data.mugs) {
-      const mug = data.mugs[mugId];
+    for (const mugId in mugs) {
+      const mug = mugs[mugId];
 
       if (!mug.recycledAt) {
         mug.patterns.map((mugPattern: MUG_PATTERN) => {
           if (mugPattern.colors.length) {
-            const design: DESIGN = data.designs[mug.designName];
-            const filterdMockups: MOCKUP[] = data.mockups.filter((mockup: MOCKUP) => {
+            const design: DESIGN = designs[mug.designName];
+            const filterdMockups: MOCKUP[] = mockups.filter((mockup: MOCKUP) => {
               // Get all mockups belong to this mugPattern.
               if (mockup && mockup.patternName === mugPattern.name && mockup.designName === mug.designName) {
                 return mockup;
@@ -377,7 +344,7 @@ const Dashboard = () => {
   function reSyncMockup(event: React.MouseEvent, row: RowData) {
     event.stopPropagation();
 
-    const filterdMockups: MOCKUP[] = data.mockups.filter((mockup: MOCKUP) => {
+    const filterdMockups: MOCKUP[] = mockups.filter((mockup: MOCKUP) => {
       // Get all mockups belong to this mugPattern.
       return (
         mockup && mockup.patternName === row.patternName && mockup.designName === row.designName && !mockup.sharedLink
@@ -392,7 +359,7 @@ const Dashboard = () => {
 
     Promise.all(promises).then(res => {
       // Update mockups store.
-      let newMockups = [...data.mockups];
+      let newMockups = [...mockups];
 
       res.map(info => {
         let mockupInfo = info.mockup;
@@ -408,7 +375,7 @@ const Dashboard = () => {
         }
       });
 
-      client.writeData({ data: { mockups: newMockups } });
+      setMockups(newMockups);
       setRows(loadData());
     });
   }
@@ -481,7 +448,7 @@ const Dashboard = () => {
 
       // NOTE: Generate Row child
       mugPattern.colors.map((color: COLOR, cidx: number) => {
-        const mockup: MOCKUP = data.mockups.find((mockup: MOCKUP) => {
+        const mockup: MOCKUP = mockups.find((mockup: MOCKUP) => {
           return mockup.patternName === mugPattern.name && mockup.color.name === color.name;
         });
 
