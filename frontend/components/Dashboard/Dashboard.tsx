@@ -3,8 +3,8 @@ import clsx from 'clsx';
 import { createStyles, lighten, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import { Order } from '../DataTable/DataInterface';
 
-import { useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+import { useQuery } from '@apollo/react-hooks';
+import gql from 'graphql-tag';
 
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -65,8 +65,9 @@ import {
 const GET_DATA = gql`
   {
     mockups @client {
-      id, name
-    },
+      id
+      name
+    }
   }
 `;
 
@@ -224,9 +225,9 @@ const Dashboard = () => {
   // const [mugs] = utils.useStateWithLocalStorage('mugs', {});
 
   const { loading, error, data, client } = useQuery(GET_DATA);
-  client.writeData({ data: {mockup: {__typename: 'Mockup', id: 2, name: 'mockup-2'}} });
-  client.writeData({ data: {mockup: {__typename: 'Mockup', id: 3, name: 'mockup-3'}} });
-  client.writeData({ data: {mockup: {__typename: 'Mockup', id: 4, name: 'mockup-4'}} });
+  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 2, name: 'mockup-2' } } });
+  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 3, name: 'mockup-3' } } });
+  client.writeData({ data: { mockup: { __typename: 'Mockup', id: 4, name: 'mockup-4' } } });
 
   console.log('Dashboard data', data);
   // client.query(gql`

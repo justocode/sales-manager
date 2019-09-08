@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-import { useApolloClient, useQuery } from "@apollo/react-hooks";
-import gql from "graphql-tag";
+// import { useApolloClient, useQuery } from '@apollo/react-hooks';
+// import gql from 'graphql-tag';
 
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
@@ -46,11 +46,11 @@ const GET_DATA = gql`
   {
     designs @client {
       id
-    },
+    }
     mugs @client {
       id
-    },
-    mockups @client,
+    }
+    mockups @client
   }
 `;
 
