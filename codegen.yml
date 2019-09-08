@@ -1,0 +1,35 @@
+---
+overwrite: true
+schema:
+  "./backend/schema/**/*.typedef.ts":
+    noRequire: true
+
+generates:
+  backend/types/schema.type.ts:
+    # documents: "backend/schema/**/*.typedef.ts"
+    config:
+      contextType: "./context.type#Context"
+      useIndexSignature: true
+    plugins:
+    - typescript
+    - typescript-resolvers
+
+  frontend/types/schema.type.ts:
+    schema:
+      "./frontend/schema/**/*.typedef.ts":
+        noRequire: true
+    # documents: "frontend/schema/**/*.typedef.ts"
+    config:
+      contextType: "./context.type#Context"
+    plugins:
+    - typescript
+    - typescript-resolvers
+
+  frontend/types/operations.type.ts:
+    schema:
+      "./frontend/schema/**/*.typedef.ts":
+        noRequire: true
+    documents: "frontend/operations/**/*.operation.ts"
+    plugins:
+    - typescript
+    - typescript-operations

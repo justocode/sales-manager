@@ -1,0 +1,4 @@
+{
+  "extends": ["react-app", "plugin:css-modules/recommended", "plugin:prettier/recommended"],
+  "plugins": ["css-modules"]
+}

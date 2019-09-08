@@ -1,0 +1,6 @@
+.next
+node_modules
+
+backend/types/schema.type.ts
+frontend/types/schema.type.ts
+frontend/types/operations.type.ts
