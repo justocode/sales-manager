@@ -11,6 +11,7 @@ function List() {
 
   return (
     <ul>
+      <h3>Mockups</h3>
       {mockups.map(({ id, name }) => (
         <li key={id}>{name}</li>
       ))}
