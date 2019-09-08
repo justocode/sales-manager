@@ -1,5 +1,6 @@
 import { Resolvers } from '~/frontend/types/schema.type';
 import { MOCKUPS_QUERY } from '~/frontend/operations/mockup.operation';
+import { MockupsQuery } from '~/frontend/types/operations.type';
 
 export const resolvers: Resolvers = {
   Mutation: {
@@ -12,12 +13,14 @@ export const resolvers: Resolvers = {
         ...args.input
       };
 
-      try {
-        const { mockups } = cache.readQuery({ query: MOCKUPS_QUERY });
+      const query = MOCKUPS_QUERY;
 
-        cache.writeData({ data: { mockups: [...mockups, mockup] } });
+      try {
+        const { mockups }: MockupsQuery = cache.readQuery({ query });
+
+        cache.writeQuery({ query, data: { mockups: [...mockups, mockup] } });
       } catch (error) {
-        cache.writeData({ data: { mockups: [mockup] } });
+        cache.writeQuery({ query, data: { mockups: [mockup] } });
       }
 
       return mockup;
@@ -26,7 +29,7 @@ export const resolvers: Resolvers = {
   Query: {
     mockups: async (parent, args, context) => {
       try {
-        const { mockups } = context.cache.readQuery({ query: MOCKUPS_QUERY });
+        const { mockups }: MockupsQuery = context.cache.readQuery({ query: MOCKUPS_QUERY });
         return mockups;
       } catch (error) {
         return null;
