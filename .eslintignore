@@ -2,4 +2,5 @@
 node_modules
 
 backend/types/schema.type.ts
-frontend/types/graphql.type.ts
+frontend/types/schema.type.ts
+frontend/types/operations.type.ts

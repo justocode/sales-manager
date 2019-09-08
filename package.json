@@ -16,6 +16,7 @@
     "stylelint": "stylelint 'frontend/**/*.{css,scss}'"
   },
   "dependencies": {
+    "@apollo/react-hooks": "^3.1.0",
     "apollo-boost": "^0.4.4",
     "apollo-datasource": "^0.6.1",
     "apollo-modulizer": "^0.2.3",
@@ -38,7 +39,6 @@
     "next-images": "^1.1.2",
     "query-string": "^6.8.3",
     "react": "^16.9.0",
-    "react-apollo": "^3.1.0",
     "react-dom": "^16.9.0",
     "react-redux": "^7.1.1",
     "react-spring": "^8.0.27",
@@ -48,7 +48,6 @@
     "xlsx": "^0.15.1"
   },
   "devDependencies": {
-    "@apollo/react-hooks": "^3.0.1",
     "@graphql-codegen/cli": "^1.6.1",
     "@graphql-codegen/typescript": "^1.6.1",
     "@graphql-codegen/typescript-operations": "^1.6.1",
@@ -57,6 +56,7 @@
     "@material-ui/icons": "^4.2.1",
     "@sentry/browser": "^5.6.3",
     "@types/bcrypt": "^3.0.0",
+    "@types/detect-node": "^2.0.0",
     "@types/dotenv": "^6.1.1",
     "@types/jsonwebtoken": "^8.3.3",
     "@types/lodash": "^4.14.137",
