@@ -16,4 +16,8 @@ export const typeDef = gql`
   extend type Mutation {
     createMockup(input: MockupInput): Mockup
   }
+
+  extend type Query {
+    mockups: [Mockup]
+  }
 `;

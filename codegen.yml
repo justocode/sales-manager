@@ -6,6 +6,7 @@ schema:
 
 generates:
   backend/types/schema.type.ts:
+    # documents: "backend/schema/**/*.typedef.ts"
     config:
       contextType: "./context.type#Context"
       useIndexSignature: true
@@ -17,6 +18,7 @@ generates:
     schema:
       "./frontend/schema/**/*.typedef.ts":
         noRequire: true
+    # documents: "frontend/schema/**/*.typedef.ts"
     config:
       contextType: "./context.type#Context"
     plugins:
@@ -27,6 +29,7 @@ generates:
     schema:
       "./frontend/schema/**/*.typedef.ts":
         noRequire: true
+    documents: "frontend/operations/**/*.operation.ts"
     plugins:
     - typescript
     - typescript-operations

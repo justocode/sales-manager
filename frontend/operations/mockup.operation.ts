@@ -8,10 +8,22 @@ export const MOCKUP_FRAGMENT = gql`
   }
 `;
 
+export const CREATE_MOCKUP_MUATION = gql`
+  ${MOCKUP_FRAGMENT}
+
+  mutation createMockup($input: MockupInput!) {
+    createMockup(input: $input) @client {
+      ...mockup
+    }
+  }
+`;
+
 export const MOCKUPS_QUERY = gql`
   ${MOCKUP_FRAGMENT}
 
-  query mockups on Mockup {
-    ...mockup
+  query mockups {
+    mockups @client {
+      ...mockup
+    }
   }
 `;
