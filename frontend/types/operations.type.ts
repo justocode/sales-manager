@@ -80,8 +80,8 @@ export type Query = {
    __typename?: 'Query',
   post?: Maybe<Post>,
   posts?: Maybe<Array<Maybe<Post>>>,
-  user?: Maybe<User>,
   _empty?: Maybe<Scalars['String']>,
+  user?: Maybe<User>,
   mockups?: Maybe<Array<Maybe<Mockup>>>,
 };
 
