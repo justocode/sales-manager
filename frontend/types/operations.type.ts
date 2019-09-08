@@ -24,12 +24,22 @@ export type MockupInput = {
 export type Mutation = {
    __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
+  signUpToGetToken?: Maybe<Scalars['String']>,
+  signInToGetToken?: Maybe<Scalars['String']>,
   createPost?: Maybe<Post>,
   updatePost?: Maybe<Post>,
   deletePost?: Maybe<Scalars['Boolean']>,
-  signUpToGetToken?: Maybe<Scalars['String']>,
-  signInToGetToken?: Maybe<Scalars['String']>,
   createMockup?: Maybe<Mockup>,
+};
+
+
+export type MutationSignUpToGetTokenArgs = {
+  input?: Maybe<UserInput>
+};
+
+
+export type MutationSignInToGetTokenArgs = {
+  input?: Maybe<UserInput>
 };
 
 
@@ -46,16 +56,6 @@ export type MutationUpdatePostArgs = {
 
 export type MutationDeletePostArgs = {
   id: Scalars['ID']
-};
-
-
-export type MutationSignUpToGetTokenArgs = {
-  input?: Maybe<UserInput>
-};
-
-
-export type MutationSignInToGetTokenArgs = {
-  input?: Maybe<UserInput>
 };
 
 
@@ -78,11 +78,16 @@ export type PostInput = {
 
 export type Query = {
    __typename?: 'Query',
-  post?: Maybe<Post>,
-  posts?: Maybe<Array<Maybe<Post>>>,
   _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
+  post?: Maybe<Post>,
+  posts?: Maybe<Array<Maybe<Post>>>,
   mockups?: Maybe<Array<Maybe<Mockup>>>,
+};
+
+
+export type QueryUserArgs = {
+  id: Scalars['ID']
 };
 
 
@@ -94,11 +99,6 @@ export type QueryPostArgs = {
 export type QueryPostsArgs = {
   take?: Maybe<Scalars['Int']>,
   skip?: Maybe<Scalars['Int']>
-};
-
-
-export type QueryUserArgs = {
-  id: Scalars['ID']
 };
 
 export type User = {
@@ -142,5 +142,24 @@ export type MockupsQuery = (
   { __typename?: 'Query' }
   & { mockups: Maybe<Array<Maybe<{ __typename?: 'Mockup' }
     & MockupFragment
+  >>> }
+);
+
+export type PostFragment = (
+  { __typename?: 'Post' }
+  & Pick<Post, 'id' | 'title' | 'content'>
+  & { author: Maybe<(
+    { __typename?: 'User' }
+    & Pick<User, 'id' | 'email'>
+  )> }
+);
+
+export type PostsQueryVariables = {};
+
+
+export type PostsQuery = (
+  { __typename?: 'Query' }
+  & { posts: Maybe<Array<Maybe<{ __typename?: 'Post' }
+    & PostFragment
   >>> }
 );
