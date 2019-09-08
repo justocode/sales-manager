@@ -2,9 +2,6 @@ import React, { useState } from 'react';
 import { createStyles, makeStyles, useTheme, Theme } from '@material-ui/core/styles';
 import clsx from 'clsx';
 
-// import { useApolloClient, useQuery } from '@apollo/react-hooks';
-// import gql from 'graphql-tag';
-
 import Typography from '@material-ui/core/Typography';
 import Button from '@material-ui/core/Button';
 
@@ -37,22 +34,10 @@ import {
 } from '../../types/amz-shirt.type';
 
 import mergeImages from 'merge-images';
-// import { saveAs } from 'file-saver';
+import { saveAs } from 'file-saver';
 
 import { services } from '../../services';
 import { utils } from '../../utils';
-
-const GET_DATA = gql`
-  {
-    designs @client {
-      id
-    }
-    mugs @client {
-      id
-    }
-    mockups @client
-  }
-`;
 
 // Rough implementation. Untested.
 function timeout(ms, promise) {
@@ -110,19 +95,12 @@ const useStyles = makeStyles((theme: Theme) =>
 );
 
 const NewProductPage = () => {
-  console.log('NewProductPage initial');
-
   const theme = useTheme();
   const classes = useStyles(theme);
-
-  // const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
-  // const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', {});
-  // const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
-  // const [mugs, setMugs] = utils.useStateWithLocalStorage('mugs', {});
-
-  const { data, client } = useQuery(GET_DATA);
-  console.log('NewProductPage data.designs', data.designs);
-
+  const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
+  const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', {});
+  const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
+  const [mugs, setMugs] = utils.useStateWithLocalStorage('mugs', {});
   const [currentDesigns, setcurrentDesigns] = React.useState<DESIGN[]>([]);
   const [currentPatterns, setcurrentPatterns] = React.useState<PATTERN[]>([]);
   const [currentMugs, setCurrentMugs] = useState({});
@@ -158,8 +136,8 @@ const NewProductPage = () => {
       case 0:
         return (
           <StepUploadDesigns
-            designs={data.designs}
-            setDesigns={client.writeData({ data: { designs: [] } })}
+            designs={designs}
+            setDesigns={setDesigns}
             currentDesigns={currentDesigns}
             setcurrentDesigns={setcurrentDesigns}
             currentMugs={currentMugs}
@@ -169,8 +147,8 @@ const NewProductPage = () => {
       case 1:
         return (
           <StepUploadPatterns
-            patterns={data.patterns}
-            setPatterns={client.writeData({ data: { patterns: [] } })}
+            patterns={patterns}
+            setPatterns={setPatterns}
             currentPatterns={currentPatterns}
             setcurrentPatterns={setcurrentPatterns}
           />
@@ -178,12 +156,12 @@ const NewProductPage = () => {
       case 2:
         return (
           <StepAddProperties
-            designs={data.designs}
-            patterns={data.patterns}
+            designs={designs}
+            patterns={patterns}
             currentDesigns={currentDesigns}
             currentPatterns={currentPatterns}
-            mugs={data.mugs}
-            setMugs={client.writeData({ data: { mugs: {} } })}
+            mugs={mugs}
+            setMugs={setMugs}
             currentMugs={currentMugs}
             setCurrentMugs={setCurrentMugs}
           />
@@ -223,11 +201,11 @@ const NewProductPage = () => {
 
         if (newMug.patterns.length) {
           // NOTE: Save Mug to History
-          newMug.id = data.mugs.length + 1; // async cannot assign id like this
+          newMug.id = mugs.length + 1; // async cannot assign id like this
           newMug.addedAt = Date.now();
           newMug.name = 'mug-' + designName.replace('.png', '-') + newMug.addedAt;
 
-          client.writeData({ data: { mugs: { ...data.mugs, [newMug.name]: newMug } } });
+          setMugs({ ...mugs, [newMug.name]: newMug });
 
           newMug.patterns.map((mugPattern: MUG_PATTERN) => {
             // NOTE: If the Mug have color then create Mockup
@@ -241,7 +219,7 @@ const NewProductPage = () => {
                   '.png';
 
                 const newMockup = {
-                  id: data.mockups.length + 1,
+                  id: mockups.length + 1,
                   name: fileName,
                   addedAt: Date.now(),
                   mugId: newMug.id,
@@ -256,7 +234,7 @@ const NewProductPage = () => {
                   sharedLink: null
                 } as MOCKUP;
 
-                client.writeData({ data: { mockups: [...data.mockups, newMockup] } });
+                setMockups([...mockups, newMockup]);
 
                 // NOTE: Merge design with color to pattern and then upload to Dropbox to get the public link.
                 genMockupPromises.push(timeout(cidx * REQUEST_TIME++, generateMockupImage(newMockup)));
@@ -268,7 +246,7 @@ const NewProductPage = () => {
     }
 
     Promise.all(genMockupPromises).then(res => {
-      let newMockups = [...data.mockups];
+      let newMockups = [...mockups];
 
       res.map(info => {
         let newMockup = info.newMockup;
@@ -282,7 +260,7 @@ const NewProductPage = () => {
         newMockups.push(newMockup);
       });
 
-      client.writeData({ data: { mockups: newMockups } });
+      setMockups(newMockups);
       setCompleted(100);
 
       setTimeout(() => {
@@ -293,8 +271,8 @@ const NewProductPage = () => {
   }
 
   function generateMockupImage(newMockup: MOCKUP): Promise<any> {
-    const designSrc = data.designs[newMockup.designName].src;
-    const patternSrc = data.patterns[newMockup.patternName].src;
+    const designSrc = designs[newMockup.designName].src;
+    const patternSrc = patterns[newMockup.patternName].src;
 
     var canvas = document.createElement('canvas') as HTMLCanvasElement;
     var ctx = canvas.getContext('2d');
