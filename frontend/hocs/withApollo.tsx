@@ -11,8 +11,8 @@ const client = new ApolloClient({
   link: new HttpLink({
     uri: '/api'
   }),
-  typeDefs: isServer ? typeDefs : [],
-  resolvers: isServer ? resolvers : {}
+  typeDefs: isServer ? [] : typeDefs,
+  resolvers: isServer ? {} : resolvers
 });
 
 function withApollo<T>(WrappedComponent: ComponentType<T>) {
