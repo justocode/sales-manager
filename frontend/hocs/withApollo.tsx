@@ -1,10 +1,9 @@
 import 'isomorphic-unfetch';
+import isServer from 'detect-node';
 import React, { ComponentType } from 'react';
 import { ApolloClient, InMemoryCache, HttpLink } from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
-import { getSchema } from '~/frontend/schema';
-
-const { typeDefs, resolvers } = getSchema();
+import { typeDefs, resolvers } from '~/frontend/schema';
 
 const client = new ApolloClient({
   ssrMode: true,
@@ -12,8 +11,8 @@ const client = new ApolloClient({
   link: new HttpLink({
     uri: '/api'
   }),
-  typeDefs,
-  resolvers
+  typeDefs: isServer ? typeDefs : [],
+  resolvers: isServer ? resolvers : {}
 });
 
 function withApollo<T>(WrappedComponent: ComponentType<T>) {
