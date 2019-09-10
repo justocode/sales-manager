@@ -300,8 +300,19 @@ const NewProductPage = () => {
 
             // const canvas = createCanvas(1000, 1000, 'pdf');
             // const img = new Image();
-            // resolve(saveAs(b64, designName + patternName));
-            return resolve(uploadMockupToDropbox(b64, newMockup));
+            if (services.dropbox.getAccessToken()) {
+              return resolve(uploadMockupToDropbox(b64, newMockup));
+            } else {
+              const res = {
+                error: 'Cloud repo as Dropbox/etc does not exist',
+                mockupName: newMockup.name,
+                newMockup: newMockup,
+                sharedLink: 'cannot get shared link "' + newMockup.name + '"'
+              };
+              saveAs(b64, newMockup);
+
+              return resolve(res);
+            }
           }
         );
       };

@@ -226,40 +226,44 @@ const StepUploadDesign = (props: any) => {
           />
         </CardActionArea>
       </Card>
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={dropboxIcon}
-            title="Get Designs from Dropbox"
-            onClick={chooseDesignsOnDropbox}
-          />
-        </CardActionArea>
-      </Card>
-      <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        className={classes.modal}
-        open={isOpenDropbox}
-        onClose={closeDropboxPopper}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500
-        }}
-      >
-        <Fade in={isOpenDropbox}>
-          <div className={classes.gridListWrap}>
-            <GridList className={classes.gridList} cellHeight={160} cols={3}>
-              {designsOnDropbox.map(design => (
-                <GridListTile key={design.metadata.id} cols={1}>
-                  <img src={'data:image/jpeg;base64, ' + design.thumbnail} alt={design.metadata.name} />
-                </GridListTile>
-              ))}
-            </GridList>
-          </div>
-        </Fade>
-      </Modal>
+      {services.dropbox.getAccessToken() ? (
+        <>
+        <Card className={classes.card}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={dropboxIcon}
+              title="Get Designs from Dropbox"
+              onClick={chooseDesignsOnDropbox}
+            />
+          </CardActionArea>
+        </Card>
+        <Modal
+          aria-labelledby="spring-modal-title"
+          aria-describedby="spring-modal-description"
+          className={classes.modal}
+          open={isOpenDropbox}
+          onClose={closeDropboxPopper}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500
+          }}
+        >
+          <Fade in={isOpenDropbox}>
+            <div className={classes.gridListWrap}>
+              <GridList className={classes.gridList} cellHeight={160} cols={3}>
+                {designsOnDropbox.map(design => (
+                  <GridListTile key={design.metadata.id} cols={1}>
+                    <img src={'data:image/jpeg;base64, ' + design.thumbnail} alt={design.metadata.name} />
+                  </GridListTile>
+                ))}
+              </GridList>
+            </div>
+          </Fade>
+        </Modal>
+        </>
+      ): null}
     </>
   );
 };

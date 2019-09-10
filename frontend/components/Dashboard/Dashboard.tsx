@@ -351,6 +351,10 @@ const Dashboard = () => {
       );
     });
 
+    if (!services.dropbox.getAccessToken()) {
+      return alert('Cloud repo as Dropbox/etc does not exist, so you cannot re-sync the mockups');
+    }
+
     const promises = [];
 
     filterdMockups.map(mockup => {
