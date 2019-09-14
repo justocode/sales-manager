@@ -86,6 +86,7 @@ export type MUG_PATTERN = {
   colors?: COLOR[];
   sizes?: SIZE[];
   data?: AMZ_APP_SHIRT;
+  sketchInfo: object;
   exportedAt: number;
 };
 

@@ -107,7 +107,7 @@ const NewProductPage = () => {
   const [completed, setCompleted] = React.useState(0);
 
   // getModalStyle is not a pure function, we roll the style only on the first render
-  const [activeStep, setActiveStep] = useState(0);
+  const [activeStep, setActiveStep] = useState(2);
   const steps = ['Select Designs', 'Select Patterns', 'Add Properties'];
 
   function handleNext() {
@@ -210,7 +210,7 @@ const NewProductPage = () => {
           newMug.patterns.map((mugPattern: MUG_PATTERN) => {
             // NOTE: If the Mug have color then create Mockup
             if (mugPattern.colors.length) {
-              mugPattern.colors.map((color: COLOR, cidx: number) => {
+              mugPattern.colors.map((color: COLOR, idx: number) => {
                 const fileName =
                   'mockup-' +
                   designName.replace('.png', '-') +
@@ -237,7 +237,7 @@ const NewProductPage = () => {
                 setMockups([...mockups, newMockup]);
 
                 // NOTE: Merge design with color to pattern and then upload to Dropbox to get the public link.
-                genMockupPromises.push(timeout(cidx * REQUEST_TIME++, generateMockupImage(newMockup)));
+                genMockupPromises.push(timeout(idx++ * REQUEST_TIME, generateMockupImage(newMockup, mugPattern.sketchInfo)));
               });
             }
           });
@@ -264,57 +264,86 @@ const NewProductPage = () => {
       setCompleted(100);
 
       setTimeout(() => {
-        utils.link({ path: '/dashboard' });
+        // utils.link({ path: '/dashboard' });
         clearInterval(timer);
       }, 3000);
     });
   }
 
-  function generateMockupImage(newMockup: MOCKUP): Promise<any> {
-    const designSrc = designs[newMockup.designName].src;
+  function generateMockupImage(newMockup: MOCKUP, sketchInfo: any): Promise<any> {
     const patternSrc = patterns[newMockup.patternName].src;
+    const designSrc = designs[newMockup.designName].src;
 
-    var canvas = document.createElement('canvas') as HTMLCanvasElement;
-    var ctx = canvas.getContext('2d');
+    console.log('sketchInfo', sketchInfo);
+
+    let patternColorCanvas = document.createElement('canvas') as HTMLCanvasElement;
+    let ctx = patternColorCanvas.getContext('2d');
 
     return new Promise(function(resolve) {
-      var textureIMG = new Image();
-      textureIMG.src = patternSrc;
+      let tempImg = new Image();
+      tempImg.src = patternSrc;
 
-      textureIMG.onload = function() {
-        canvas.width = textureIMG.width;
-        canvas.height = textureIMG.height;
+      tempImg.onload = function() {
+        // TODO: Need to separate the process to a function
+        patternColorCanvas.width = tempImg.width;
+        patternColorCanvas.height = tempImg.height;
 
-        ctx.drawImage(textureIMG, 0, 0);
+        ctx.drawImage(tempImg, 0, 0);
         ctx.globalCompositeOperation = 'source-in';
         ctx.fillStyle = newMockup.color.hex;
-        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.fillRect(0, 0, patternColorCanvas.width, patternColorCanvas.height);
 
-        var colorFilledB64 = canvas.toDataURL();
+        const colorFilledB64 = patternColorCanvas.toDataURL();
 
-        mergeImages([{ src: patternSrc }, { src: colorFilledB64, opacity: 0.3 }, { src: designSrc }]).then(
-          (b64: any) => {
-            newMockup.b64 = b64;
+        const originWidth = sketchInfo.originWidth || 200;
+        const originHeight = sketchInfo.originHeight || 200;
 
-            // TODO: Save to the dropbox folder and then wait for syncing to the server. Get the image link afterward to update to "data" for each mockup
+        const x = (sketchInfo.x || 0) / originWidth * 1000;
+        const y = (sketchInfo.y || 0) / originHeight * 1000;
+        const width = (sketchInfo.width || 200) / originWidth * 1000;
+        const height = (sketchInfo.height || 200) / originHeight * 1000;
 
-            // const canvas = createCanvas(1000, 1000, 'pdf');
-            // const img = new Image();
-            if (services.dropbox.getAccessToken()) {
-              return resolve(uploadMockupToDropbox(b64, newMockup));
-            } else {
-              const res = {
-                error: 'Cloud repo as Dropbox/etc does not exist',
-                mockupName: newMockup.name,
-                newMockup: newMockup,
-                sharedLink: 'cannot get shared link "' + newMockup.name + '"'
-              };
-              saveAs(b64, newMockup);
+        let tempSketchImg = new Image();
+        tempSketchImg.src = designSrc;
 
-              return resolve(res);
+        tempSketchImg.onload = function () {
+          let sketchCanvas = document.createElement('canvas') as HTMLCanvasElement;
+          let sketchCtx = sketchCanvas.getContext('2d');
+
+          sketchCanvas.width = width;
+          sketchCanvas.height = height;
+          sketchCtx.drawImage(tempSketchImg, 0, 0, width, height);
+
+          const designB64 = sketchCanvas.toDataURL();
+
+          mergeImages([
+            { src: patternSrc, x: 0, y: 0 },
+            { src: colorFilledB64, x: 0, y: 0, opacity: 0.3 },
+            { src: designB64, x: x, y: y }
+          ]).then(
+            (b64: any) => {
+              newMockup.b64 = b64;
+
+              // TODO: Save to the dropbox folder and then wait for syncing to the server. Get the image link afterward to update to "data" for each mockup
+
+              // const canvas = createCanvas(1000, 1000, 'pdf');
+              // const img = new Image();
+              if (services.dropbox.getAccessToken()) {
+                return resolve(uploadMockupToDropbox(b64, newMockup));
+              } else {
+                const res = {
+                  error: 'Cloud repo as Dropbox/etc does not exist',
+                  mockupName: newMockup.name,
+                  newMockup: newMockup,
+                  sharedLink: 'cannot get shared link "' + newMockup.name + '"'
+                };
+                saveAs(b64, newMockup.name);
+
+                return resolve(res);
+              }
             }
-          }
-        );
+          );
+        };
       };
     });
   }
