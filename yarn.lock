@@ -3845,6 +3845,11 @@ dotenv@^8.1.0:
   resolved "https://registry.yarnpkg.com/dotenv/-/dotenv-8.1.0.tgz#d811e178652bfb8a1e593c6dd704ec7e90d85ea2"
   integrity sha512-GUE3gqcDCaMltj2++g6bRQ5rBJWtkWTmqmD0fo1RnnMuUqHNCt2oTPeDnS9n6fKYvlhn7AeBkb38lymBtWBQdA==
 
+downscale@^1.0.6:
+  version "1.0.6"
+  resolved "https://registry.yarnpkg.com/downscale/-/downscale-1.0.6.tgz#f1a1cb4d64c5831f1ba65341369131b5a73d2f2c"
+  integrity sha512-Arh9ftj+wo3CkFoT48SgT/crMyqmgZtNaaV/etjzHaUqNAaS36GS38ECURnfl7X/XvXN5uZNigGF7Vhffrm/pg==
+
 dropbox@^4.0.30:
   version "4.0.30"
   resolved "https://registry.yarnpkg.com/dropbox/-/dropbox-4.0.30.tgz#747247b5088e26ab143db39afed8c66f0887d670"

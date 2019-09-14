@@ -10,13 +10,14 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import { useSpring, animated } from 'react-spring';
 
-import { services } from '../../services';
-
 // Models
 import { DESIGN } from '../../types/amz-shirt.type';
 
 import camera512Icon from '../../assets/img/camera-512.png';
 import dropboxIcon from '../../assets/img/dropbox-icon.png';
+
+import { services } from '../../services';
+import { utils } from '../../utils';
 
 interface FadeProps {
   children: React.ReactElement;
@@ -158,18 +159,21 @@ const StepUploadDesign = (props: any) => {
           if (wasAdded) {
             // TODO: This is still not update to "designs" store.
             newDesign = designs[file.name];
+            resolve({ wasAdded: wasAdded, newDesign: newDesign });
           } else {
-            newDesign = {
-              id: Object.keys(designs).length + 1, // TODO: async so still not get id yet
-              src: reader.result,
-              name: file.name,
-              type: file.type,
-              lastModified: file.lastModified,
-              addedAt: Date.now()
-            } as DESIGN;
-          }
+            utils.scaleImage(reader.result, function(b64: WindowBase64) {
+              newDesign = {
+                id: Object.keys(designs).length + 1, // TODO: async so still not get id yet
+                src: b64,
+                name: file.name,
+                type: file.type,
+                lastModified: file.lastModified,
+                addedAt: Date.now()
+              } as DESIGN;
 
-          resolve({ wasAdded: wasAdded, newDesign: newDesign });
+              resolve({ wasAdded: wasAdded, newDesign: newDesign });
+            });
+          }
         };
       });
 
