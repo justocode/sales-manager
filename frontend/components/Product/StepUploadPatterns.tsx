@@ -159,8 +159,8 @@ const StepUploadPatterns = (props: any) => {
           if (wasAdded) {
             // TODO: This is still not update to "patterns" store.
             newPattern = patterns[file.name];
-            resolve({ wasAdded: wasAdded, newDesign: newDesign });
-          } else {
+            resolve({ wasAdded: wasAdded, newDesign: newPattern });
+          } else {newPattern
             utils.scaleImage(reader.result, function (b64: WindowBase64) {
               newPattern = {
                 id: Object.keys(patterns).length + 1, // TODO: async so still not get id yet
@@ -184,34 +184,36 @@ const StepUploadPatterns = (props: any) => {
 
     Promise.all(promises).then(res => {
       let newPatterns = { ...patterns };
-      let newCurrentPatterns = [...currentPatterns];
+      // let newCurrentPatterns = {...currentPatterns};
 
       res.map(info => {
         if (!info.wasAdded) {
           newPatterns[info.newPattern.name] = info.newPattern;
         }
 
-        newCurrentPatterns.push(info.newPattern);
+        // newCurrentPatterns.push(info.newPattern);
       });
 
       setPatterns(newPatterns);
-      setcurrentPatterns(newCurrentPatterns);
+      // setcurrentPatterns(newCurrentPatterns);
     });
   }
 
   return (
     <>
-      {currentPatterns && currentPatterns.length > 0
-        ? currentPatterns.map((pattern: PATTERN, index: number) => {
-            return (
-              <Card className={classes.card} key={'pattern-' + index}>
-                <CardActionArea>
-                  <CardMedia className={classes.media} image={pattern.src.toString()} title={pattern.name} />
-                </CardActionArea>
-              </Card>
-            );
-          })
-        : ''}
+      {
+        Object.keys(patterns).map((key: string, index: number) => {
+          const pattern: PATTERN = patterns[key];
+
+          return (
+            <Card className={classes.card} key={'pattern-' + index}>
+              <CardActionArea>
+                <CardMedia className={classes.media} image={pattern.src.toString()} title={pattern.name} />
+              </CardActionArea>
+            </Card>
+          );
+        })
+      }
       <Card className={classes.card}>
         <CardActionArea>
           <CardMedia

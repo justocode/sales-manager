@@ -267,15 +267,15 @@ const Dashboard = () => {
     setSelectedMugPatterns(newSelected);
   }
 
-  function createData(design: DESIGN, mugPattern: MUG_PATTERN, mockup: MOCKUP, isUploadedError: boolean): RowData {
+  function createData(designName: string, mugPattern: MUG_PATTERN, mockup: MOCKUP, isUploadedError: boolean): RowData {
     const status = isUploadedError ? 'Pending' : 'Uploaded';
     const createdAt = new Date(mockup.addedAt).toISOString();
 
     const rowdata = {
       sku: mugPattern.data.item_sku,
-      designName: design.name,
+      designName: designName,
       patternName: mugPattern.name,
-      mockupImage: mockup.sharedLink || design.src.toString(),
+      mockupImage: mockup.sharedLink,
       status: status,
       createdAt: createdAt,
       mugPattern: mugPattern
@@ -288,12 +288,11 @@ const Dashboard = () => {
     let rowdata = [];
 
     for (const mugId in mugs) {
-      const mug = mugs[mugId];
+      const mug: MUG = mugs[mugId];
 
       if (!mug.recycledAt) {
         mug.patterns.map((mugPattern: MUG_PATTERN) => {
           if (mugPattern.colors.length) {
-            const design: DESIGN = designs[mug.designName];
             const filterdMockups: MOCKUP[] = mockups.filter((mockup: MOCKUP) => {
               // Get all mockups belong to this mugPattern.
               if (mockup && mockup.patternName === mugPattern.name && mockup.designName === mug.designName) {
@@ -309,7 +308,7 @@ const Dashboard = () => {
               return !!mockup.sharedLink;
             });
 
-            mockup && rowdata.push(createData(design, mugPattern, mockup, isUploadedError));
+            mockup && rowdata.push(createData(mug.designName, mugPattern, mockup, isUploadedError));
           }
         });
       }

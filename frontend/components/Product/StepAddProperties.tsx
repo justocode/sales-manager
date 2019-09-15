@@ -887,8 +887,8 @@ const StepAddProperties = (props: any) => {
   return (
     <div className={classes.root}>
       {// NOTE: 1 Design will creates 1 Mug + relevant data (patterns + colors)
-      Object.keys(designs).map((key: string, mugDesignIndex: number) => {
-        const design: DESIGN = designs[key];
+      Object.keys(currentDesigns).map((key: string, mugDesignIndex: number) => {
+        const design: DESIGN = currentDesigns[key];
 
         return (
           <ExpansionPanel key={'designItem-' + mugDesignIndex}>
@@ -946,7 +946,7 @@ const StepAddProperties = (props: any) => {
                         designName={design.name}
                         mugPattern={mugPattern}
                         patterns={patterns}
-                        designs={designs}
+                        designs={currentDesigns}
                         currentMugs={currentMugs}
                         setCurrentMugs={setCurrentMugs}
                       />

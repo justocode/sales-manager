@@ -151,19 +151,19 @@ const StepUploadDesign = (props: any) => {
       const loadDesign = new Promise(function(resolve) {
         reader.onloadend = () => {
           const wasAdded =
-            designs[file.name] &&
-            designs[file.name].name === file.name &&
-            designs[file.name].lastModified === file.lastModified;
+            currentDesigns[file.name] &&
+            currentDesigns[file.name].name === file.name &&
+            currentDesigns[file.name].lastModified === file.lastModified;
           let newDesign: DESIGN;
 
           if (wasAdded) {
             // TODO: This is still not update to "designs" store.
-            newDesign = designs[file.name];
+            newDesign = currentDesigns[file.name];
             resolve({ wasAdded: wasAdded, newDesign: newDesign });
           } else {
             utils.scaleImage(reader.result, function(b64: WindowBase64) {
               newDesign = {
-                id: Object.keys(designs).length + 1, // TODO: async so still not get id yet
+                id: Object.keys(currentDesigns).length + 1, // TODO: async so still not get id yet
                 src: b64,
                 name: file.name,
                 type: file.type,
@@ -183,35 +183,36 @@ const StepUploadDesign = (props: any) => {
     });
 
     Promise.all(promises).then(res => {
-      let newDesigns = { ...designs };
-      let newCurrentDesigns = [...currentDesigns];
+      // let newDesigns = { ...designs };
+      let newCurrentDesigns = {...currentDesigns};
 
       res.map(info => {
         if (!info.wasAdded) {
-          newDesigns[info.newDesign.name] = info.newDesign;
+          // newDesigns[info.newDesign.name] = info.newDesign;
+          newCurrentDesigns[info.newDesign.name] = info.newDesign;
         }
-
-        newCurrentDesigns.push(info.newDesign);
       });
 
-      setDesigns(newDesigns);
+      // setDesigns(newDesigns);
       setcurrentDesigns(newCurrentDesigns);
     });
   };
 
   return (
     <>
-      {currentDesigns && currentDesigns.length > 0
-        ? currentDesigns.map((design: DESIGN, index: number) => {
-            return (
-              <Card className={classes.card} key={'design-' + index}>
-                <CardActionArea>
-                  <CardMedia className={classes.media} image={design.src.toString()} title={design.name} />
-                </CardActionArea>
-              </Card>
-            );
-          })
-        : ''}
+      {
+        Object.keys(currentDesigns).map((key: string, index: number) => {
+          const design: DESIGN = currentDesigns[key];
+
+          return (
+            <Card className={classes.card} key={'design-' + index}>
+              <CardActionArea>
+                <CardMedia className={classes.media} image={design.src.toString()} title={design.name} />
+              </CardActionArea>
+            </Card>
+          );
+        })
+      }
       <Card className={classes.card}>
         <CardActionArea>
           <CardMedia

@@ -101,8 +101,8 @@ const NewProductPage = () => {
   const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', {});
   const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
   const [mugs, setMugs] = utils.useStateWithLocalStorage('mugs', {});
-  const [currentDesigns, setcurrentDesigns] = React.useState<DESIGN[]>([]);
-  const [currentPatterns, setcurrentPatterns] = React.useState<PATTERN[]>([]);
+  const [currentDesigns, setcurrentDesigns] = React.useState({});
+  const [currentPatterns, setcurrentPatterns] = React.useState({});
   const [currentMugs, setCurrentMugs] = useState({});
   const [completed, setCompleted] = React.useState(0);
 
@@ -264,7 +264,7 @@ const NewProductPage = () => {
       setCompleted(100);
 
       setTimeout(() => {
-        // utils.link({ path: '/dashboard' });
+        utils.link({ path: '/dashboard' });
         clearInterval(timer);
       }, 3000);
     });
@@ -272,7 +272,7 @@ const NewProductPage = () => {
 
   function generateMockupImage(newMockup: MOCKUP, sketchInfo: any): Promise<any> {
     const patternSrc = patterns[newMockup.patternName].src;
-    const designSrc = designs[newMockup.designName].src;
+    const designSrc = currentDesigns[newMockup.designName].src;
 
     console.log('sketchInfo', sketchInfo);
 
