@@ -287,7 +287,7 @@ const Dashboard = () => {
   function loadData() {
     let rowdata = [];
 
-    for (const mugId in mugs) {
+    Object.keys(mugs).map(mugId => {
       const mug: MUG = mugs[mugId];
 
       if (!mug.recycledAt) {
@@ -312,7 +312,7 @@ const Dashboard = () => {
           }
         });
       }
-    }
+    });
 
     return rowdata;
   }

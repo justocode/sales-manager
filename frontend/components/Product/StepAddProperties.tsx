@@ -10,11 +10,9 @@ import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Card from '@material-ui/core/Card';
-import CardHeader from '@material-ui/core/CardHeader';
 import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
 import CheckIcon from '@material-ui/icons/Check';
-import Avatar from '@material-ui/core/Avatar';
 import RefreshIcon from '@material-ui/icons/Refresh';
 
 import Grid from '@material-ui/core/Grid';
@@ -23,7 +21,6 @@ import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
-import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
 import IconButton from '@material-ui/core/IconButton';
 
@@ -31,25 +28,15 @@ import IconButton from '@material-ui/core/IconButton';
 import IChip from '../common/IChip';
 
 // Colors
-import { lightGreen, red } from '@material-ui/core/colors';
+import { lightGreen } from '@material-ui/core/colors';
 
 // Models
 import { DESIGN, PATTERN, MOCKUP, MUG, MUG_PATTERN, COLOR, SIZE, AMZ_APP_SHIRT } from '../../types/amz-shirt.type';
 import { AMZ_COLOR, AMZ_APP_COLOR, AMZ_DEPARTMENT, AMZ_SIZE_MAP, AMZ_APP_SIZE_MAP } from '../../types/amz-product.type';
 
+import { services } from '../../services';
 import { utils } from '../../utils';
-import { rect } from '@interactjs/utils';
 
-const ITEM_HEIGHT = 48;
-const ITEM_PADDING_TOP = 8;
-const MenuProps = {
-  PaperProps: {
-    style: {
-      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-      width: 250
-    }
-  }
-};
 
 const APP_SIZES: SIZE[] = AMZ_APP_SIZE_MAP.map((size, index) => {
   return {
@@ -69,11 +56,11 @@ const createDefaultColor = (name?: string, hex?: string, amzColor?: string): COL
   return newColor;
 };
 
-const APP_COLORS: COLOR[] = [
-  createDefaultColor('Black', 'Black', 'Black'),
-  createDefaultColor('Blue', 'Blue', 'Blue'),
-  createDefaultColor('Red', 'Red', 'Red')
-];
+// const APP_COLORS: COLOR[] = [
+//   createDefaultColor('Black', 'Black', 'Black'),
+//   createDefaultColor('Blue', 'Blue', 'Blue'),
+//   createDefaultColor('Red', 'Red', 'Red')
+// ];
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -194,10 +181,9 @@ const getDefaultMockupInfos = (designName: string): AMZ_APP_SHIRT => {
 };
 
 const FormFields = (props: {
-  designName: string;
+  design: DESIGN;
+  patternName: string;
   mugPattern: MUG_PATTERN;
-  patterns: PATTERN[];
-  designs: DESIGN[];
   currentMugs: any;
   setCurrentMugs: Function;
 }) => {
@@ -205,21 +191,18 @@ const FormFields = (props: {
   const classes = useStyles(theme);
   const patternRef = useRef(null);
   const sketchRef = useRef(null);
-  const { designName, mugPattern, patterns, designs, currentMugs, setCurrentMugs } = props;
-  const [colors, setColors] = utils.useStateWithLocalStorage('colors', []);
+  const { design, patternName, mugPattern, currentMugs, setCurrentMugs } = props;
   const [position, setPosition] = useState({});
-  // const [ amzcolorname, setAmzcolorname ] = useState<COLOR[]>(mugPattern.colors);
 
-  // const changeColorName = (event: React.ChangeEvent<{ value: string[] }>) => {
-  //   mugPattern.data.color_name = (event.target.value as string[]).join('/');
-  //   setAmzcolorname(event.target.value as string[]);
-  // };
+  const patternColors: COLOR[] = services.patternStore.patterns[patternName].map(patternColor => {
+      return {
+        name: patternColor.name,
+        hex: patternColor.hex,
+        amzColor: patternColor.amzColor,
+      } as COLOR;
+    });
 
-  // const handleDeleteColorName = (colorname: string) => () => {
-  //   setAmzcolorname(amzcolorname => amzcolorname.filter(value => value !== colorname));
-  // };
-
-  // Now we call our hook, passing in the current searchTerm value.
+    // Now we call our hook, passing in the current searchTerm value.
   // The hook will only return the latest value (what we passed in) ...
   // ... if it's been more than 250ms since it was last called.
   // Otherwise, it will return the previous value of searchTerm.
@@ -283,7 +266,7 @@ const FormFields = (props: {
       if(debouncedPosition) {
         setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
           let newcurrentMugs = { ...currentMugs };
-          let newMugPatternInfo = newcurrentMugs[designName].patterns.find((imugPattern: MUG_PATTERN) => {
+          let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
             return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
           });
 
@@ -331,7 +314,7 @@ const FormFields = (props: {
         })
         .on('resizemove', resizeMoveListener);
     },
-    [designName, mugPattern.name]
+    [design.name, mugPattern.name]
   );
 
   function resetSketchInfo() {
@@ -351,7 +334,7 @@ const FormFields = (props: {
   const toggleColorToMug = (color: COLOR) => () => {
     setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
       let newcurrentMugs = { ...currentMugs };
-      let newMugPatternInfo = newcurrentMugs[designName].patterns.find((imugPattern: MUG_PATTERN) => {
+      let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
         return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
       });
       const idx = mugPattern.colors.findIndex(colorItem => {
@@ -371,7 +354,7 @@ const FormFields = (props: {
   const toggleSizeToMug = (size: SIZE) => () => {
     setCurrentMugs((currentMugs: MUG_PATTERN) => {
       let newcurrentMugs = { ...currentMugs };
-      let newMugPatternInfo = newcurrentMugs[designName].patterns.find((imugPattern: MUG_PATTERN) => {
+      let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
         return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
       });
       const idx = mugPattern.sizes.findIndex(sizeItem => {
@@ -392,28 +375,19 @@ const FormFields = (props: {
     <form className={clsx(classes.formFields)} noValidate autoComplete="off">
       <Grid container>
         <Grid item xs={12} sm={6} lg={4} className={classes.sketchPanel}>
-          <img className={classes.patternImg} src={patterns[mugPattern.name].src.toString()} alt={mugPattern.name} ref={patternRef}/>
-          <img className={classes.sketchImg} src={designs[designName].src.toString()} alt={designName} ref={sketchRef}/>
+          <img className={classes.patternImg} src={`../../assets/patterns/${patternName}_default.png`} alt={mugPattern.name} ref={patternRef}/>
+          <img className={classes.sketchImg} src={design.src.toString()} alt={design.name} ref={sketchRef}/>
           <IconButton className={classes.sketchRefreshBtn} color="primary" onClick={() => resetSketchInfo()}>
             <RefreshIcon fontSize="small" />
           </IconButton>
-          {/* <Card className={classes.card}>
-            <CardActionArea>
-              <CardMedia
-                className={classes.designImg}
-                image={patterns[mugPattern.name].src.toString()}
-                title={mugPattern.name}
-              />
-            </CardActionArea>
-          </Card> */}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <FormControl fullWidth className={classes.textField} id="amz-field-color_name">
             <InputLabel>Color</InputLabel>
             <div className={classes.chipContent}>
-              {APP_COLORS.map(color => (
+              {patternColors.map(color => (
                 <IChip
-                  key={'mockupColor-' + designName + '-' + mugPattern + '-' + color.name}
+                  key={'mockupColor-' + design.name + '-' + mugPattern.name + '-' + color.name}
                   label={color.name}
                   color={color}
                   onClick={toggleColorToMug(color)}
@@ -428,42 +402,13 @@ const FormFields = (props: {
             </div>
           </FormControl>
         </Grid>
-        {/* <Grid item xs={12} sm={6} lg={4}>
-          <FormControl fullWidth className={classes.textField}>
-            <InputLabel htmlFor="select-multiple-chip">Color Map</InputLabel>
-            <Select
-              id="amz-field-color_map"
-              required
-              multiple
-              value={amzcolormap}
-              onChange={changeColorMap}
-              input={<Input id="select-multiple-chip" />}
-              renderValue={selected => (
-                <>
-                  {selected ? (selected as string[]).map(value => (
-                    (value === 'Blue') ?
-                      <Chip key={value} label={value} color="primary" onDelete={handleDeleteColorMap(value)} /> :
-                      <Chip key={value} label={value} color="secondary" onDelete={handleDeleteColorMap(value)} />
-                  )) : ''}
-                </>
-              )}
-              MenuProps={MenuProps}
-            >
-              {AMZ_COLOR.map(name => (
-                <MenuItem key={name} value={name}>
-                  {name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        </Grid> */}
         <Grid item xs={12} sm={6} lg={4}>
           <FormControl fullWidth className={classes.textField}>
             <InputLabel>Size</InputLabel>
             <div className={classes.chipContent}>
               {APP_SIZES.map(size => (
                 <IChip
-                  key={'mockupSize-' + designName + '-' + mugPattern.name + '-' + size.amzSize}
+                  key={'mockupSize-' + design.name + '-' + mugPattern.name + '-' + size.amzSize}
                   label={size.appSize}
                   onClick={toggleSizeToMug(size)}
                   className={clsx({
@@ -807,20 +752,20 @@ const FormFields = (props: {
 const StepAddProperties = (props: any) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { designs, patterns, currentDesigns, currentPatterns, currentMugs, setCurrentMugs } = props;
+  const { designs, patterns, currentDesigns, currentMugs, setCurrentMugs } = props;
   const [isExpanded, setIsExpanded] = useState(false);
 
   function handleExpand() {
     setIsExpanded(!isExpanded);
   }
 
-  function addPatternToMug(e: React.MouseEvent, design: DESIGN, pattern: PATTERN) {
+  function addPatternToMug(e: React.MouseEvent, design: DESIGN, patternName: string) {
     const currentMugPattern = currentMugs[design.name];
 
     const wasAdded =
       currentMugPattern &&
       currentMugPattern.patterns.some((patternItem: MUG_PATTERN) => {
-        return patternItem.name === pattern.name; // && patternItem.id === pattern.id;
+        return patternItem.name === patternName; // && patternItem.id === pattern.id;
       });
 
     if (
@@ -840,7 +785,7 @@ const StepAddProperties = (props: any) => {
         const idx =
           newCurrentMugs[design.name] &&
           newCurrentMugs[design.name].patterns.findIndex((patternItem: MUG_PATTERN) => {
-            return patternItem.name === pattern.name; // && patternItem.id === pattern.id;
+            return patternItem.name === patternName; // && patternItem.id === pattern.id;
           });
         const newPatterns = newCurrentMugs[design.name] ? newCurrentMugs[design.name].patterns : [];
 
@@ -850,10 +795,20 @@ const StepAddProperties = (props: any) => {
         return newCurrentMugs;
       });
     } else {
+      const patternDefaultColors: COLOR[] = services.patternStore.patterns[patternName].filter(patternColor => {
+        return patternColor.isDefault;
+      })
+      .map(patternColor => {
+        return {
+          name: patternColor.name,
+          hex: patternColor.hex,
+          amzColor: patternColor.amzColor,
+        } as COLOR;
+      });
+
       const newMugPattern = {
-        id: pattern.id, // TODO: async so still not get id yet
-        name: pattern.name,
-        colors: [...APP_COLORS],
+        name: patternName,
+        colors: [...patternDefaultColors],
         sizes: APP_SIZES.slice(0, 4),
         data: getDefaultMockupInfos(design.name)
       } as MUG_PATTERN;
@@ -906,22 +861,20 @@ const StepAddProperties = (props: any) => {
               </Card>
 
               {/* Show Pattern Images to choose --> Create new Mug */}
-              {Object.keys(patterns).map((key: string, mugPatternIndex: number) => {
-                const pattern: PATTERN = patterns[key];
-
+              {Object.keys(services.patternStore.patterns).map((patternName: string, mugPatternIndex: number) => {
                 return (
                   <Card className={classes.card} key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex}>
                     <CardActionArea>
                       <CardMedia
                         className={classes.designImg}
-                        image={pattern.src.toString()}
+                        image={`../../assets/patterns/${patternName}_default.png`}
                         onClick={e => {
-                          addPatternToMug(e, design, pattern);
+                          addPatternToMug(e, design, patternName);
                         }}
                       />
                       <CheckIcon
                         className={clsx(classes.checkedIcon, {
-                          [classes.checked]: isPatternChoosen(design.name, pattern.name)
+                          [classes.checked]: isPatternChoosen(design.name, patternName)
                         })}
                       />
                     </CardActionArea>
@@ -943,10 +896,9 @@ const StepAddProperties = (props: any) => {
                       key={'mugPatternImage-' + mugDesignIndex + '-' + mugPatternIndex}
                     >
                       <FormFields
-                        designName={design.name}
+                        design={currentDesigns[design.name]}
+                        patternName={mugPattern.name}
                         mugPattern={mugPattern}
-                        patterns={patterns}
-                        designs={currentDesigns}
                         currentMugs={currentMugs}
                         setCurrentMugs={setCurrentMugs}
                       />
