@@ -1,0 +1,5 @@
+{
+  "watch": ["backend", "frontend"],
+  "ext": "typedef.ts",
+  "exec": "graphql-codegen"
+}

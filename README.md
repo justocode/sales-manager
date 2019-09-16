@@ -1,24 +1,21 @@
-# sales-manager
-An application for manage sales.
+# Sale Manager
 
-# Installation
-For installation, please follow these steps:
+## Usage
 
-Step 1: `$ git clone https://github.com/justocode/sales-manager.git`
+### Install dependencies
+```
+npm install
+```
 
-Step 2: `$ cd sales-manager`
+### For development
+```
+npm run dev
+```
 
-Step 3: `$ npm install`
+### For production
+```
+npm run build
+npm start
+```
 
-Step 4: `$ npm install -g gulp`
-
-Step 5: `$ bower install`
-
-# Usage
-For building project, please run command below:
-
-`$ npm build`
-
-For running project, please run command below:
-
-`$ npm start`
+Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
