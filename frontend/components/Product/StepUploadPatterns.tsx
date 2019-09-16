@@ -10,13 +10,14 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import { useSpring, animated } from 'react-spring';
 
-import { services } from '../../services';
-
 // Models
 import { PATTERN } from '../../types/amz-shirt.type';
 
 import camera512Icon from '../../assets/img/camera-512.png';
 import dropboxIcon from '../../assets/img/dropbox-icon.png';
+
+import { services } from '../../services';
+import { utils } from '../../utils';
 
 const useStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -158,18 +159,21 @@ const StepUploadPatterns = (props: any) => {
           if (wasAdded) {
             // TODO: This is still not update to "patterns" store.
             newPattern = patterns[file.name];
-          } else {
-            newPattern = {
-              id: Object.keys(patterns).length + 1, // TODO: async so still not get id yet
-              src: reader.result,
-              name: file.name,
-              type: file.type,
-              lastModified: file.lastModified,
-              addedAt: Date.now()
-            } as PATTERN;
-          }
+            resolve({ wasAdded: wasAdded, newDesign: newPattern });
+          } else {newPattern
+            utils.scaleImage(reader.result, function (b64: WindowBase64) {
+              newPattern = {
+                id: Object.keys(patterns).length + 1, // TODO: async so still not get id yet
+                src: b64,
+                name: file.name,
+                type: file.type,
+                lastModified: file.lastModified,
+                addedAt: Date.now()
+              } as PATTERN;
 
-          resolve({ wasAdded: wasAdded, newPattern: newPattern });
+              resolve({ wasAdded: wasAdded, newPattern: newPattern });
+            });
+          }
         };
       });
 
@@ -180,34 +184,36 @@ const StepUploadPatterns = (props: any) => {
 
     Promise.all(promises).then(res => {
       let newPatterns = { ...patterns };
-      let newCurrentPatterns = [...currentPatterns];
+      // let newCurrentPatterns = {...currentPatterns};
 
       res.map(info => {
         if (!info.wasAdded) {
           newPatterns[info.newPattern.name] = info.newPattern;
         }
 
-        newCurrentPatterns.push(info.newPattern);
+        // newCurrentPatterns.push(info.newPattern);
       });
 
       setPatterns(newPatterns);
-      setcurrentPatterns(newCurrentPatterns);
+      // setcurrentPatterns(newCurrentPatterns);
     });
   }
 
   return (
     <>
-      {currentPatterns && currentPatterns.length > 0
-        ? currentPatterns.map((pattern: PATTERN, index: number) => {
-            return (
-              <Card className={classes.card} key={'pattern-' + index}>
-                <CardActionArea>
-                  <CardMedia className={classes.media} image={pattern.src.toString()} title={pattern.name} />
-                </CardActionArea>
-              </Card>
-            );
-          })
-        : ''}
+      {
+        Object.keys(patterns).map((key: string, index: number) => {
+          const pattern: PATTERN = patterns[key];
+
+          return (
+            <Card className={classes.card} key={'pattern-' + index}>
+              <CardActionArea>
+                <CardMedia className={classes.media} image={pattern.src.toString()} title={pattern.name} />
+              </CardActionArea>
+            </Card>
+          );
+        })
+      }
       <Card className={classes.card}>
         <CardActionArea>
           <CardMedia
@@ -226,40 +232,44 @@ const StepUploadPatterns = (props: any) => {
           />
         </CardActionArea>
       </Card>
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={dropboxIcon}
-            title="Get Patterns from Dropbox"
-            onClick={choosePatternsOnDropbox}
-          />
-        </CardActionArea>
-      </Card>
-      <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        className={classes.modal}
-        open={isOpenDropbox}
-        onClose={closeDropboxPopper}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500
-        }}
-      >
-        <Fade in={isOpenDropbox}>
-          <div className={classes.gridListWrap}>
-            <GridList className={classes.gridList} cellHeight={160} cols={3}>
-              {patternsOnDropbox.map(pattern => (
-                <GridListTile key={pattern.metadata.id} cols={1}>
-                  <img src={'data:image/jpeg;base64, ' + pattern.thumbnail} alt={pattern.metadata.name} />
-                </GridListTile>
-              ))}
-            </GridList>
-          </div>
-        </Fade>
-      </Modal>
+      {services.dropbox.getAccessToken() ? (
+        <>
+        <Card className={classes.card}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={dropboxIcon}
+              title="Get Patterns from Dropbox"
+              onClick={choosePatternsOnDropbox}
+            />
+          </CardActionArea>
+        </Card>
+        <Modal
+          aria-labelledby="spring-modal-title"
+          aria-describedby="spring-modal-description"
+          className={classes.modal}
+          open={isOpenDropbox}
+          onClose={closeDropboxPopper}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500
+          }}
+        >
+          <Fade in={isOpenDropbox}>
+            <div className={classes.gridListWrap}>
+              <GridList className={classes.gridList} cellHeight={160} cols={3}>
+                {patternsOnDropbox.map(pattern => (
+                  <GridListTile key={pattern.metadata.id} cols={1}>
+                    <img src={'data:image/jpeg;base64, ' + pattern.thumbnail} alt={pattern.metadata.name} />
+                  </GridListTile>
+                ))}
+              </GridList>
+            </div>
+          </Fade>
+        </Modal>
+        </>
+      ): null}
     </>
   );
 };

@@ -10,13 +10,14 @@ import Modal from '@material-ui/core/Modal';
 import Backdrop from '@material-ui/core/Backdrop';
 import { useSpring, animated } from 'react-spring';
 
-import { services } from '../../services';
-
 // Models
 import { DESIGN } from '../../types/amz-shirt.type';
 
 import camera512Icon from '../../assets/img/camera-512.png';
 import dropboxIcon from '../../assets/img/dropbox-icon.png';
+
+import { services } from '../../services';
+import { utils } from '../../utils';
 
 interface FadeProps {
   children: React.ReactElement;
@@ -150,26 +151,29 @@ const StepUploadDesign = (props: any) => {
       const loadDesign = new Promise(function(resolve) {
         reader.onloadend = () => {
           const wasAdded =
-            designs[file.name] &&
-            designs[file.name].name === file.name &&
-            designs[file.name].lastModified === file.lastModified;
+            currentDesigns[file.name] &&
+            currentDesigns[file.name].name === file.name &&
+            currentDesigns[file.name].lastModified === file.lastModified;
           let newDesign: DESIGN;
 
           if (wasAdded) {
             // TODO: This is still not update to "designs" store.
-            newDesign = designs[file.name];
+            newDesign = currentDesigns[file.name];
+            resolve({ wasAdded: wasAdded, newDesign: newDesign });
           } else {
-            newDesign = {
-              id: Object.keys(designs).length + 1, // TODO: async so still not get id yet
-              src: reader.result,
-              name: file.name,
-              type: file.type,
-              lastModified: file.lastModified,
-              addedAt: Date.now()
-            } as DESIGN;
-          }
+            utils.scaleImage(reader.result, function(b64: WindowBase64) {
+              newDesign = {
+                id: Object.keys(currentDesigns).length + 1, // TODO: async so still not get id yet
+                src: b64,
+                name: file.name,
+                type: file.type,
+                lastModified: file.lastModified,
+                addedAt: Date.now()
+              } as DESIGN;
 
-          resolve({ wasAdded: wasAdded, newDesign: newDesign });
+              resolve({ wasAdded: wasAdded, newDesign: newDesign });
+            });
+          }
         };
       });
 
@@ -179,35 +183,36 @@ const StepUploadDesign = (props: any) => {
     });
 
     Promise.all(promises).then(res => {
-      let newDesigns = { ...designs };
-      let newCurrentDesigns = [...currentDesigns];
+      // let newDesigns = { ...designs };
+      let newCurrentDesigns = {...currentDesigns};
 
       res.map(info => {
         if (!info.wasAdded) {
-          newDesigns[info.newDesign.name] = info.newDesign;
+          // newDesigns[info.newDesign.name] = info.newDesign;
+          newCurrentDesigns[info.newDesign.name] = info.newDesign;
         }
-
-        newCurrentDesigns.push(info.newDesign);
       });
 
-      setDesigns(newDesigns);
+      // setDesigns(newDesigns);
       setcurrentDesigns(newCurrentDesigns);
     });
   };
 
   return (
     <>
-      {currentDesigns && currentDesigns.length > 0
-        ? currentDesigns.map((design: DESIGN, index: number) => {
-            return (
-              <Card className={classes.card} key={'design-' + index}>
-                <CardActionArea>
-                  <CardMedia className={classes.media} image={design.src.toString()} title={design.name} />
-                </CardActionArea>
-              </Card>
-            );
-          })
-        : ''}
+      {
+        Object.keys(currentDesigns).map((key: string, index: number) => {
+          const design: DESIGN = currentDesigns[key];
+
+          return (
+            <Card className={classes.card} key={'design-' + index}>
+              <CardActionArea>
+                <CardMedia className={classes.media} image={design.src.toString()} title={design.name} />
+              </CardActionArea>
+            </Card>
+          );
+        })
+      }
       <Card className={classes.card}>
         <CardActionArea>
           <CardMedia
@@ -226,40 +231,44 @@ const StepUploadDesign = (props: any) => {
           />
         </CardActionArea>
       </Card>
-      <Card className={classes.card}>
-        <CardActionArea>
-          <CardMedia
-            className={classes.media}
-            image={dropboxIcon}
-            title="Get Designs from Dropbox"
-            onClick={chooseDesignsOnDropbox}
-          />
-        </CardActionArea>
-      </Card>
-      <Modal
-        aria-labelledby="spring-modal-title"
-        aria-describedby="spring-modal-description"
-        className={classes.modal}
-        open={isOpenDropbox}
-        onClose={closeDropboxPopper}
-        closeAfterTransition
-        BackdropComponent={Backdrop}
-        BackdropProps={{
-          timeout: 500
-        }}
-      >
-        <Fade in={isOpenDropbox}>
-          <div className={classes.gridListWrap}>
-            <GridList className={classes.gridList} cellHeight={160} cols={3}>
-              {designsOnDropbox.map(design => (
-                <GridListTile key={design.metadata.id} cols={1}>
-                  <img src={'data:image/jpeg;base64, ' + design.thumbnail} alt={design.metadata.name} />
-                </GridListTile>
-              ))}
-            </GridList>
-          </div>
-        </Fade>
-      </Modal>
+      {services.dropbox.getAccessToken() ? (
+        <>
+        <Card className={classes.card}>
+          <CardActionArea>
+            <CardMedia
+              className={classes.media}
+              image={dropboxIcon}
+              title="Get Designs from Dropbox"
+              onClick={chooseDesignsOnDropbox}
+            />
+          </CardActionArea>
+        </Card>
+        <Modal
+          aria-labelledby="spring-modal-title"
+          aria-describedby="spring-modal-description"
+          className={classes.modal}
+          open={isOpenDropbox}
+          onClose={closeDropboxPopper}
+          closeAfterTransition
+          BackdropComponent={Backdrop}
+          BackdropProps={{
+            timeout: 500
+          }}
+        >
+          <Fade in={isOpenDropbox}>
+            <div className={classes.gridListWrap}>
+              <GridList className={classes.gridList} cellHeight={160} cols={3}>
+                {designsOnDropbox.map(design => (
+                  <GridListTile key={design.metadata.id} cols={1}>
+                    <img src={'data:image/jpeg;base64, ' + design.thumbnail} alt={design.metadata.name} />
+                  </GridListTile>
+                ))}
+              </GridList>
+            </div>
+          </Fade>
+        </Modal>
+        </>
+      ): null}
     </>
   );
 };

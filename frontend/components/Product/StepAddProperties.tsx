@@ -1,6 +1,7 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { Theme, useTheme, createStyles, makeStyles } from '@material-ui/core/styles';
 import clsx from 'clsx';
+import interact from 'interactjs';
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -14,6 +15,7 @@ import CardActionArea from '@material-ui/core/CardActionArea';
 import CardMedia from '@material-ui/core/CardMedia';
 import CheckIcon from '@material-ui/icons/Check';
 import Avatar from '@material-ui/core/Avatar';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 import Grid from '@material-ui/core/Grid';
 import MenuItem from '@material-ui/core/MenuItem';
@@ -23,6 +25,7 @@ import InputLabel from '@material-ui/core/InputLabel';
 import Input from '@material-ui/core/Input';
 import Select from '@material-ui/core/Select';
 import Chip from '@material-ui/core/Chip';
+import IconButton from '@material-ui/core/IconButton';
 
 // Custom component
 import IChip from '../common/IChip';
@@ -35,6 +38,7 @@ import { DESIGN, PATTERN, MOCKUP, MUG, MUG_PATTERN, COLOR, SIZE, AMZ_APP_SHIRT }
 import { AMZ_COLOR, AMZ_APP_COLOR, AMZ_DEPARTMENT, AMZ_SIZE_MAP, AMZ_APP_SIZE_MAP } from '../../types/amz-product.type';
 
 import { utils } from '../../utils';
+import { rect } from '@interactjs/utils';
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -119,7 +123,24 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     chipChecked: {
       opacity: 1
-    }
+    },
+    sketchPanel: {
+      position: 'relative',
+    },
+    patternImg: {
+      width: theme.typography.pxToRem(200),
+      height: theme.typography.pxToRem(200)
+    },
+    sketchImg: {
+      width: theme.typography.pxToRem(200),
+      height: theme.typography.pxToRem(200),
+      position: 'absolute',
+      left: 0,
+      border: '1px solid #dfdfdf'
+    },
+    sketchRefreshBtn: {
+      position: 'absolute'
+    },
   })
 );
 
@@ -176,13 +197,17 @@ const FormFields = (props: {
   designName: string;
   mugPattern: MUG_PATTERN;
   patterns: PATTERN[];
+  designs: DESIGN[];
   currentMugs: any;
   setCurrentMugs: Function;
 }) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { designName, mugPattern, patterns, currentMugs, setCurrentMugs } = props;
+  const patternRef = useRef(null);
+  const sketchRef = useRef(null);
+  const { designName, mugPattern, patterns, designs, currentMugs, setCurrentMugs } = props;
   const [colors, setColors] = utils.useStateWithLocalStorage('colors', []);
+  const [position, setPosition] = useState({});
   // const [ amzcolorname, setAmzcolorname ] = useState<COLOR[]>(mugPattern.colors);
 
   // const changeColorName = (event: React.ChangeEvent<{ value: string[] }>) => {
@@ -193,6 +218,135 @@ const FormFields = (props: {
   // const handleDeleteColorName = (colorname: string) => () => {
   //   setAmzcolorname(amzcolorname => amzcolorname.filter(value => value !== colorname));
   // };
+
+  // Now we call our hook, passing in the current searchTerm value.
+  // The hook will only return the latest value (what we passed in) ...
+  // ... if it's been more than 250ms since it was last called.
+  // Otherwise, it will return the previous value of searchTerm.
+  // The goal is to only have the API call fire when user stops typing ...
+  // ... so that we aren't hitting our API rapidly.
+  const debouncedPosition = utils.useDebounce(position, 250);
+
+  function dragMoveListener(event) {
+    let target = event.target;
+    // keep the dragged position in the data-x/data-y attributes
+    let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
+    let y = (parseFloat(target.getAttribute('data-y')) || 0) + event.dy;
+
+    // translate the element
+    target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px, ' + y + 'px)';
+    // update the posiion attributes
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+
+    const newPosition = {
+      ...position, x: x, y: y,
+      width: event.rect.width,
+      height: event.rect.height,
+      originWidth: patternRef.current.width,
+      originHeight: patternRef.current.height,
+    };
+    setPosition(newPosition);
+  }
+
+  function resizeMoveListener(event) {
+    let target = event.target;
+    let x = (parseFloat(target.getAttribute('data-x')) || 0);
+    let y = (parseFloat(target.getAttribute('data-y')) || 0);
+
+    // update the element's style
+    target.style.width = event.rect.width + 'px';
+    target.style.height = event.rect.height + 'px';
+
+    // translate when resizing from top or left edges
+    x += event.deltaRect.left;
+    y += event.deltaRect.top;
+
+    target.style.webkitTransform = target.style.transform = 'translate(' + x + 'px,' + y + 'px)';
+
+    target.setAttribute('data-x', x);
+    target.setAttribute('data-y', y);
+    target.textContent = Math.round(event.rect.width) + '\u00D7' + Math.round(event.rect.height);
+
+    const newPosition = {
+      ...position, x: x, y: y,
+      width: event.rect.width,
+      height: event.rect.height,
+      originWidth: patternRef.current.width,
+      originHeight: patternRef.current.height,
+    };
+    setPosition(newPosition);
+  }
+
+  useEffect(
+    () => {
+      if(debouncedPosition) {
+        setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
+          let newcurrentMugs = { ...currentMugs };
+          let newMugPatternInfo = newcurrentMugs[designName].patterns.find((imugPattern: MUG_PATTERN) => {
+            return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
+          });
+
+          newMugPatternInfo.sketchInfo = debouncedPosition;
+
+          return newcurrentMugs;
+        });
+      }
+    },
+    [debouncedPosition]
+  );
+
+  useEffect(
+    () => {
+      interact(sketchRef.current)
+        .draggable({
+          onmove: dragMoveListener,
+          modifiers: [
+            // create a restrict modifier to prevent dragging an element out of its parent
+            interact.modifiers.restrict({
+              restriction: 'parent',
+              elementRect: { left: 1, right: 1, top: 1, bottom: 0 },
+            }),
+          ],
+        })
+        .resizable({
+          // resize from all edges and corners
+          edges: { left: true, right: true, bottom: true, top: true },
+
+          modifiers: [
+            // keep the edges inside the parent
+            interact.modifiers.restrictEdges({
+              outer: 'parent',
+              endOnly: true
+            }),
+
+            // minimum size
+            interact.modifiers.restrictSize({
+              min: { width: 50, height: 50 },
+              max: { width: 300, height: 300 }
+            })
+          ],
+
+          inertia: true
+        })
+        .on('resizemove', resizeMoveListener);
+    },
+    [designName, mugPattern.name]
+  );
+
+  function resetSketchInfo() {
+    let target = sketchRef.current;
+
+    // translate the element
+    target.style.webkitTransform = target.style.transform = 'translate(0, 0)';
+    // update the posiion attributes
+    target.setAttribute('data-x', 0);
+    target.setAttribute('data-y', 0);
+    target.style.width = patternRef.current.width + 'px';
+    target.style.height = patternRef.current.height + 'px';
+
+    setPosition({});
+  }
 
   const toggleColorToMug = (color: COLOR) => () => {
     setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
@@ -237,8 +391,13 @@ const FormFields = (props: {
   return (
     <form className={clsx(classes.formFields)} noValidate autoComplete="off">
       <Grid container>
-        <Grid item xs={12} sm={6} lg={4}>
-          <Card className={classes.card}>
+        <Grid item xs={12} sm={6} lg={4} className={classes.sketchPanel}>
+          <img className={classes.patternImg} src={patterns[mugPattern.name].src.toString()} alt={mugPattern.name} ref={patternRef}/>
+          <img className={classes.sketchImg} src={designs[designName].src.toString()} alt={designName} ref={sketchRef}/>
+          <IconButton className={classes.sketchRefreshBtn} color="primary" onClick={() => resetSketchInfo()}>
+            <RefreshIcon fontSize="small" />
+          </IconButton>
+          {/* <Card className={classes.card}>
             <CardActionArea>
               <CardMedia
                 className={classes.designImg}
@@ -246,7 +405,7 @@ const FormFields = (props: {
                 title={mugPattern.name}
               />
             </CardActionArea>
-          </Card>
+          </Card> */}
         </Grid>
         <Grid item xs={12} sm={6} lg={4}>
           <FormControl fullWidth className={classes.textField} id="amz-field-color_name">
@@ -747,8 +906,8 @@ const StepAddProperties = (props: any) => {
               </Card>
 
               {/* Show Pattern Images to choose --> Create new Mug */}
-              {Object.keys(currentPatterns).map((key: string, mugPatternIndex: number) => {
-                const pattern: PATTERN = currentPatterns[key];
+              {Object.keys(patterns).map((key: string, mugPatternIndex: number) => {
+                const pattern: PATTERN = patterns[key];
 
                 return (
                   <Card className={classes.card} key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex}>
@@ -787,6 +946,7 @@ const StepAddProperties = (props: any) => {
                         designName={design.name}
                         mugPattern={mugPattern}
                         patterns={patterns}
+                        designs={currentDesigns}
                         currentMugs={currentMugs}
                         setCurrentMugs={setCurrentMugs}
                       />
