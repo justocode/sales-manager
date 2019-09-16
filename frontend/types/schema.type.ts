@@ -11,6 +11,19 @@ export type Scalars = {
   Float: number,
 };
 
+export type Mockup = {
+   __typename?: 'Mockup',
+  id: Scalars['ID'],
+  name?: Maybe<Scalars['String']>,
+  image?: Maybe<Scalars['String']>,
+};
+
+export type MockupInput = {
+  id: Scalars['ID'],
+  name: Scalars['String'],
+  image: Scalars['String'],
+};
+
 export type Mutation = {
    __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
@@ -19,6 +32,7 @@ export type Mutation = {
   deletePost?: Maybe<Scalars['Boolean']>,
   signUpToGetToken?: Maybe<Scalars['String']>,
   signInToGetToken?: Maybe<Scalars['String']>,
+  createMockup?: Maybe<Mockup>,
 };
 
 
@@ -47,6 +61,11 @@ export type MutationSignInToGetTokenArgs = {
   input?: Maybe<UserInput>
 };
 
+
+export type MutationCreateMockupArgs = {
+  input?: Maybe<MockupInput>
+};
+
 export type Post = {
    __typename?: 'Post',
   id: Scalars['ID'],
@@ -66,6 +85,7 @@ export type Query = {
   posts?: Maybe<Array<Maybe<Post>>>,
   _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
+  mockups?: Maybe<Array<Maybe<Mockup>>>,
 };
 
 
@@ -101,8 +121,7 @@ export type UserInput = {
   email: Scalars['String'],
   password: Scalars['String'],
 };
-export type WithIndex<TObject> = TObject & Record<string, any>;
-export type ResolversObject<TObject> = WithIndex<TObject>;
+
 
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
@@ -172,68 +191,81 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 ) => TResult | Promise<TResult>;
 
 /** Mapping between all available schema types and the resolvers types */
-export type ResolversTypes = ResolversObject<{
+export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Post: ResolverTypeWrapper<Post>,
   String: ResolverTypeWrapper<Scalars['String']>,
   User: ResolverTypeWrapper<User>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
+  Mockup: ResolverTypeWrapper<Mockup>,
   Mutation: ResolverTypeWrapper<{}>,
   PostInput: PostInput,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   UserInput: UserInput,
-}>;
+  MockupInput: MockupInput,
+};
 
 /** Mapping between all available schema types and the resolvers parents */
-export type ResolversParentTypes = ResolversObject<{
+export type ResolversParentTypes = {
   Query: {},
   ID: Scalars['ID'],
   Post: Post,
   String: Scalars['String'],
   User: User,
   Int: Scalars['Int'],
+  Mockup: Mockup,
   Mutation: {},
   PostInput: PostInput,
   Boolean: Scalars['Boolean'],
   UserInput: UserInput,
-}>;
+  MockupInput: MockupInput,
+};
 
-export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+export type MockupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mockup'] = ResolversParentTypes['Mockup']> = {
+  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
+  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+};
+
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   createPost?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, MutationCreatePostArgs>,
   updatePost?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<MutationUpdatePostArgs, 'id'>>,
   deletePost?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType, RequireFields<MutationDeletePostArgs, 'id'>>,
   signUpToGetToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, MutationSignUpToGetTokenArgs>,
   signInToGetToken?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType, MutationSignInToGetTokenArgs>,
-}>;
+  createMockup?: Resolver<Maybe<ResolversTypes['Mockup']>, ParentType, ContextType, MutationCreateMockupArgs>,
+};
 
-export type PostResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = ResolversObject<{
+export type PostResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   title?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   content?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   author?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>,
-}>;
+};
 
-export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>,
   posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, QueryPostsArgs>,
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>,
-}>;
+  mockups?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mockup']>>>, ParentType, ContextType>,
+};
 
-export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
+export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   email?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, UserPostsArgs>,
-}>;
+};
 
-export type Resolvers<ContextType = Context> = ResolversObject<{
+export type Resolvers<ContextType = Context> = {
+  Mockup?: MockupResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Post?: PostResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
   User?: UserResolvers<ContextType>,
-}>;
+};
 
 
 /**

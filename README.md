@@ -1,4 +1,4 @@
-# Sale Manager
+# Sales Manager
 
 ## Usage
 

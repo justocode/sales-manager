@@ -17,7 +17,11 @@ export const resolvers: Resolvers = {
       const password = bcrypt.hashSync(args.input.password, bcrypt.genSaltSync(8));
       const user = Object.assign(newUser(), args.input, { password });
 
-      await utils.db.validate(user);
+      if (args.input.password.length < 6) {
+        throw new Error('Password must be longer than 6 characters.');
+      } else {
+        await utils.db.validate(user);
+      }
 
       const { id } = await getUserRepo().save(user);
 
