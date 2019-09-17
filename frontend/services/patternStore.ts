@@ -4,14 +4,19 @@ function generateDefaultPattern(
   _hex: string,
   _amzColor: string,
   _isDefault: boolean = false
-  ) {
-  return {
+) {
+  const _fileSrc = require(`../assets/patterns/${_fileName}.png`);
+
+  const patternImgInfo = {
     fileName: _fileName,
     name: _name,
     hex: _hex,
     amzColor: _amzColor,
     isDefault: _isDefault,
+    fileSrc: _fileSrc
   };
+
+  return patternImgInfo;
 };
 
 export function getPatternFilePath(patternName: string, hex: string) {
@@ -19,9 +24,19 @@ export function getPatternFilePath(patternName: string, hex: string) {
   //   return `../../assets/patterns/${pattern.fileName}.png`;
   // }
   if (patternName && hex) {
-    return `../../assets/patterns/${patternName}_${hex.substr(1)}.png`;
+    // NOTE: This is just a hack case
+    // if (hex === '#000000') {
+    //   hex = '#default';
+    // }
+    // return `../../assets/patterns/${patternName}_${hex.substr(1)}.png`;
+    const patternFile = patterns[patternName].find(pattern => {
+      return (pattern.hex === hex);
+    });
+
+    return patternFile.fileSrc;
   }
-  return '../../assets/patterns/empty.png';
+
+  return '../assets/patterns/empty.png';
 };
 
 export const patterns = {
@@ -75,26 +90,26 @@ export const patterns = {
     generateDefaultPattern('sweater_d8447e', 'Pink', '#d8447e', 'multicolored'),
     generateDefaultPattern('sweater_ffffff', 'White', '#ffffff', 'white'),
   ],
-  "long sleeve": [
-    generateDefaultPattern('long sleeve_default', 'Black', '#000000', 'Black', true),
-    generateDefaultPattern('long sleeve_2e394b', 'Navy', '#2e394b', 'multicolored', true),
-    generateDefaultPattern('long sleeve_3e332f', 'Brown', '#3e332f', 'brown'),
-    generateDefaultPattern('long sleeve_5f4c84', 'Purple', '#5f4c84', 'Purple'),
-    generateDefaultPattern('long sleeve_9e273b', 'Red', '#9e273b', 'Red'),
-    generateDefaultPattern('long sleeve_269d5f', 'Green', '#269d5f', 'Green'),
-    generateDefaultPattern('long sleeve_20519f', 'Royal', '#20519f', 'Blue'),
-    generateDefaultPattern('long sleeve_24352d', 'Forest', '#24352d', 'multicolored'),
-    generateDefaultPattern('long sleeve_c1c4c9', 'Sport grey', '#c1c4c9', 'multicolored'),
-    generateDefaultPattern('long sleeve_ffffff', 'White', '#ffffff', 'white'),
+  "long_sleeve": [
+    generateDefaultPattern('long_sleeve_default', 'Black', '#000000', 'Black', true),
+    generateDefaultPattern('long_sleeve_2e394b', 'Navy', '#2e394b', 'multicolored', true),
+    generateDefaultPattern('long_sleeve_3e332f', 'Brown', '#3e332f', 'brown'),
+    generateDefaultPattern('long_sleeve_5f4c84', 'Purple', '#5f4c84', 'Purple'),
+    generateDefaultPattern('long_sleeve_9e273b', 'Red', '#9e273b', 'Red'),
+    generateDefaultPattern('long_sleeve_269d5f', 'Green', '#269d5f', 'Green'),
+    generateDefaultPattern('long_sleeve_20519f', 'Royal', '#20519f', 'Blue'),
+    generateDefaultPattern('long_sleeve_24352d', 'Forest', '#24352d', 'multicolored'),
+    generateDefaultPattern('long_sleeve_c1c4c9', 'Sport grey', '#c1c4c9', 'multicolored'),
+    generateDefaultPattern('long_sleeve_ffffff', 'White', '#ffffff', 'white'),
   ],
   "mug": [
-    generateDefaultPattern('mug', 'Black', '#000000', 'Black', true),
-    generateDefaultPattern('mug', 'White', '#ffffff', 'white'),
+    generateDefaultPattern('mug_default', 'Black', '#000000', 'Black', true),
+    generateDefaultPattern('mug_ffffff', 'White', '#ffffff', 'white'),
   ],
-  "magic mug": [
-    generateDefaultPattern('mug', 'Black', '#000000', 'Black', true),
+  "magic_mug": [
+    generateDefaultPattern('magic_mug_default', 'Black', '#000000', 'Black', true),
   ],
-  "Tanktop": [
+  "tanktop": [
     generateDefaultPattern('tanktop_default', 'Black', '#000000', 'Black', true),
     generateDefaultPattern('tanktop_2e394b', 'Navy', '#2e394b', 'multicolored', true),
     generateDefaultPattern('tanktop_c1c4c9', 'Sport grey', '#c1c4c9', 'multicolored'),

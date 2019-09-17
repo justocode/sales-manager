@@ -45,16 +45,16 @@ const APP_SIZES: SIZE[] = AMZ_APP_SIZE_MAP.map((size, index) => {
   };
 });
 
-const createDefaultColor = (name?: string, hex?: string, amzColor?: string): COLOR => {
-  const newColor = {
-    name: name,
-    addedAt: Date.now(),
-    hex: hex,
-    amzColor: amzColor
-  } as COLOR;
+// const createDefaultColor = (name?: string, hex?: string, amzColor?: string): COLOR => {
+//   const newColor = {
+//     name: name,
+//     addedAt: Date.now(),
+//     hex: hex,
+//     amzColor: amzColor
+//   } as COLOR;
 
-  return newColor;
-};
+//   return newColor;
+// };
 
 // const APP_COLORS: COLOR[] = [
 //   createDefaultColor('Black', 'Black', 'Black'),
@@ -77,13 +77,17 @@ const useStyles = makeStyles((theme: Theme) =>
       height: theme.typography.pxToRem(100)
     },
     card: {
+      position: 'relative',
       marginLeft: 10,
       marginRight: 5,
       width: theme.typography.pxToRem(100),
       height: theme.typography.pxToRem(100),
       display: 'inline-flex',
       alignItems: 'center',
-      justifyContent: 'center'
+      justifyContent: 'center',
+      '&:hover': {
+        border: '1px solid #dfdfdf',
+      }
     },
     checkedIcon: {
       display: 'none'
@@ -375,7 +379,7 @@ const FormFields = (props: {
     <form className={clsx(classes.formFields)} noValidate autoComplete="off">
       <Grid container>
         <Grid item xs={12} sm={6} lg={4} className={classes.sketchPanel}>
-          <img className={classes.patternImg} src={`../../assets/patterns/${patternName}_default.png`} alt={mugPattern.name} ref={patternRef}/>
+          <img className={classes.patternImg} src={require(`../../assets/patterns/${patternName}_default.png`)} alt={mugPattern.name} ref={patternRef}/>
           <img className={classes.sketchImg} src={design.src.toString()} alt={design.name} ref={sketchRef}/>
           <IconButton className={classes.sketchRefreshBtn} color="primary" onClick={() => resetSketchInfo()}>
             <RefreshIcon fontSize="small" />
@@ -385,9 +389,9 @@ const FormFields = (props: {
           <FormControl fullWidth className={classes.textField} id="amz-field-color_name">
             <InputLabel>Color</InputLabel>
             <div className={classes.chipContent}>
-              {patternColors.map(color => (
+              {patternColors.map((color: COLOR, index: number) => (
                 <IChip
-                  key={'mockupColor-' + design.name + '-' + mugPattern.name + '-' + color.name}
+                  key={'mockupColor-' + design.name.replace(/ /g, '_').replace('.png', '') + '-' + color.hex + '-' + mugPattern.name + '-' + index}
                   label={color.name}
                   color={color}
                   onClick={toggleColorToMug(color)}
@@ -863,22 +867,37 @@ const StepAddProperties = (props: any) => {
               {/* Show Pattern Images to choose --> Create new Mug */}
               {Object.keys(services.patternStore.patterns).map((patternName: string, mugPatternIndex: number) => {
                 return (
-                  <Card className={classes.card} key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex}>
-                    <CardActionArea>
-                      <CardMedia
-                        className={classes.designImg}
-                        image={`../../assets/patterns/${patternName}_default.png`}
-                        onClick={e => {
-                          addPatternToMug(e, design, patternName);
-                        }}
-                      />
-                      <CheckIcon
-                        className={clsx(classes.checkedIcon, {
-                          [classes.checked]: isPatternChoosen(design.name, patternName)
-                        })}
-                      />
-                    </CardActionArea>
-                  </Card>
+                  <div key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex} className={classes.card}>
+                    <img className={classes.designImg}
+                      src={require(`../../assets/patterns/${patternName}_default.png`)}
+                      alt={`${patternName}_default.png`}
+                      onClick={e => {
+                        addPatternToMug(e, design, patternName);
+                      }}
+                    />
+                    <CheckIcon
+                      className={clsx(classes.checkedIcon, {
+                        [classes.checked]: isPatternChoosen(design.name, patternName)
+                      })}
+                    />
+                  </div>
+
+                  // <Card className={classes.card} key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex}>
+                  //   <CardActionArea>
+                  //     <CardMedia
+                  //       className={classes.designImg}
+                  //       image={require(`../../assets/patterns/${patternName}_default.png`)}
+                  //       onClick={e => {
+                  //         addPatternToMug(e, design, patternName);
+                  //       }}
+                  //     />
+                  //     <CheckIcon
+                  //       className={clsx(classes.checkedIcon, {
+                  //         [classes.checked]: isPatternChoosen(design.name, patternName)
+                  //       })}
+                  //     />
+                  //   </CardActionArea>
+                  // </Card>
                 );
               })}
             </ExpansionPanelSummary>

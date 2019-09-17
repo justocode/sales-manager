@@ -206,15 +206,15 @@ const NewProductPage = () => {
 
         setMugs({ ...mugs, [newMug.name]: newMug });
 
-        newMug.patterns.map((mugPattern: MUG_PATTERN) => {
+        newMug.patterns.map((mugPattern: MUG_PATTERN, index: number) => {
           // NOTE: If the Mug have color then create Mockup
           if (mugPattern.colors.length) {
             mugPattern.colors.map((color: COLOR, idx: number) => {
               const fileName =
                 'mockup-' +
-                designName.replace('.png', '-') +
-                mugPattern.name.replace('.png', '-') +
-                Date.now() +
+                designName.replace(/ /g, '_').replace('.png', '-') +
+                mugPattern.name + '-' +
+                Date.now() + '-' + idx +
                 '.png';
 
               const newMockup = {
@@ -272,8 +272,6 @@ const NewProductPage = () => {
     const patternSrc = services.patternStore.getPatternFilePath(newMockup.patternName, newMockup.color.hex);
     const designSrc = currentDesigns[newMockup.designName].src;
 
-    console.log('sketchInfo', sketchInfo);
-
     // let patternColorCanvas = document.createElement('canvas') as HTMLCanvasElement;
     // let ctx = patternColorCanvas.getContext('2d');
 
@@ -296,10 +294,10 @@ const NewProductPage = () => {
         const originWidth = sketchInfo.originWidth || 200;
         const originHeight = sketchInfo.originHeight || 200;
 
-        const x = (sketchInfo.x || 0) / originWidth * 1000;
-        const y = (sketchInfo.y || 0) / originHeight * 1000;
-        const width = (sketchInfo.width || 200) / originWidth * 1000;
-        const height = (sketchInfo.height || 200) / originHeight * 1000;
+        const x = (sketchInfo.x || 0) / originWidth * tempImg.width;
+        const y = (sketchInfo.y || 0) / originHeight * tempImg.height;
+        const width = (sketchInfo.width || 200) / originWidth * tempImg.width;
+        const height = (sketchInfo.height || 200) / originHeight * tempImg.height;
 
         let tempSketchImg = new Image();
         tempSketchImg.src = designSrc;
@@ -320,25 +318,30 @@ const NewProductPage = () => {
             { src: designB64, x: x, y: y }
           ]).then(
             (b64: any) => {
-              newMockup.b64 = b64;
-
               // TODO: Save to the dropbox folder and then wait for syncing to the server. Get the image link afterward to update to "data" for each mockup
 
               // const canvas = createCanvas(1000, 1000, 'pdf');
               // const img = new Image();
-              if (services.dropbox.getAccessToken()) {
-                return resolve(uploadMockupToDropbox(b64, newMockup));
-              } else {
-                const res = {
-                  error: 'Cloud repo as Dropbox/etc does not exist',
-                  mockupName: newMockup.name,
-                  newMockup: newMockup,
-                  sharedLink: 'cannot get shared link "' + newMockup.name + '"'
-                };
-                saveAs(b64, newMockup.name);
 
-                return resolve(res);
-              }
+              // NOTE: Scale mockup image with max size = 1000
+              utils.scaleImage(b64, function (b64w1000h1000: WindowBase64) {
+
+                newMockup.b64 = b64w1000h1000;
+
+                if (services.dropbox.getAccessToken()) {
+                  return resolve(uploadMockupToDropbox(b64w1000h1000, newMockup));
+                } else {
+                  const res = {
+                    error: 'Cloud repo as Dropbox/etc does not exist',
+                    mockupName: newMockup.name,
+                    newMockup: newMockup,
+                    sharedLink: 'cannot get shared link "' + newMockup.name + '"'
+                  };
+                  saveAs(b64w1000h1000, newMockup.name);
+
+                  return resolve(res);
+                }
+              });
             }
           );
         };
