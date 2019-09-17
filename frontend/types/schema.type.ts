@@ -1,5 +1,7 @@
 import { GraphQLResolveInfo } from 'graphql';
 import { Context } from './context.type';
+import { COLOR } from "./amz-shirt.type";
+
 export type Maybe<T> = T | null;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
 /** All built-in and custom scalars, mapped to their actual values */
@@ -13,15 +15,41 @@ export type Scalars = {
 
 export type Mockup = {
    __typename?: 'Mockup',
-  id: Scalars['ID'],
+  id: Scalars['Int'],
   name?: Maybe<Scalars['String']>,
-  image?: Maybe<Scalars['String']>,
+  addedAt?: Maybe<Scalars['Int']>,
+  uploadedAt: Maybe<Scalars['Int']>,
+  recycledAt: Maybe<Scalars['Int']>,
+  mugId?: Maybe<Scalars['Int']>,
+  mugName?: Maybe<Scalars['String']>,
+  designId?: Maybe<Scalars['Int']>,
+  designName?: Maybe<Scalars['String']>,
+  patternId?: Maybe<Scalars['Int']>,
+  patternName?: Maybe<Scalars['String']>,
+  sku?: Maybe<Scalars['String']>,
+  color?: COLOR,
+  link: Maybe<Scalars['String']>,
+  sharedLink: Maybe<Scalars['String']>,
+  b64: Maybe<Scalars['String']>,
 };
 
 export type MockupInput = {
-  id: Scalars['ID'],
-  name: Scalars['String'],
-  image: Scalars['String'],
+  id: Scalars['Int'],
+  name?: Scalars['String'],
+  addedAt?: Scalars['Int'],
+  uploadedAt: Scalars['Int'],
+  recycledAt: Scalars['Int'],
+  mugId?: Scalars['Int'],
+  mugName?: Scalars['String'],
+  designId?: Scalars['Int'],
+  designName?: Scalars['String'],
+  patternId?: Scalars['Int'],
+  patternName?: Scalars['String'],
+  sku?: Scalars['String'],
+  color?: COLOR,
+  link: Scalars['String'],
+  sharedLink: Scalars['String'],
+  b64: Scalars['String'],
 };
 
 export type Mutation = {
@@ -225,7 +253,7 @@ export type ResolversParentTypes = {
 export type MockupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mockup'] = ResolversParentTypes['Mockup']> = {
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  mugName?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {

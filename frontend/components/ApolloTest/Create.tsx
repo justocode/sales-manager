@@ -16,15 +16,16 @@ function Create() {
   return (
     <button
       onClick={() =>
-        createMockup({
-          variables: {
-            input: {
-              id: Date.now().toString(),
-              name: Date.now().toString(),
-              image: Date.now().toString()
-            }
-          }
-        })
+        console.log('onClick')
+        // createMockup({
+        //   variables: {
+        //     input: {
+        //       id: Date.now().toString(),
+        //       name: Date.now().toString(),
+        //       image: Date.now().toString()
+        //     }
+        //   }
+        // })
       }
     >
       Create Mockup

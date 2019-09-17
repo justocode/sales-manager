@@ -67,7 +67,7 @@ export type MOCKUP = APP_TYPE & {
   color?: COLOR;
   link: string;
   sharedLink: string;
-  b64: string | ArrayBuffer | WindowBase64;
+  b64: string;// | ArrayBuffer | WindowBase64;
 };
 
 export type COLOR = APP_TYPE & {

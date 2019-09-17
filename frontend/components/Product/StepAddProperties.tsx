@@ -756,7 +756,7 @@ const FormFields = (props: {
 const StepAddProperties = (props: any) => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const { designs, patterns, currentDesigns, currentMugs, setCurrentMugs } = props;
+  const { currentDesigns, currentMugs, setCurrentMugs } = props;
   const [isExpanded, setIsExpanded] = useState(false);
 
   function handleExpand() {

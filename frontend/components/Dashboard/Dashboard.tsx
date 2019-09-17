@@ -42,6 +42,15 @@ import { services } from '../../services';
 import { utils } from '../../utils';
 import XLSX from 'xlsx';
 
+import _ from 'lodash';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { MOCKUPS_QUERY, CREATE_MOCKUP_MUATION } from '~/frontend/operations/mockup.operation';
+import {
+  MockupsQuery, MockupsQueryVariables,
+  CreateMockupMutationVariables, CreateMockupMutation
+} from '~/frontend/types/operations.type';
+
+
 // Models
 import {
   DESIGN,
@@ -205,11 +214,19 @@ const Dashboard = () => {
   const [page, setPage] = useState(0);
   const [dense, setDense] = useState(true);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
-  const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
+  // const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
+  // const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
   const [mugs] = utils.useStateWithLocalStorage('mugs', {});
-  const [rows, setRows] = useState<RowData[]>(loadData());
   const [selectedMugPatterns, setSelectedMugPatterns] = useState<MUG_PATTERN[]>([]);
+
+  const { data } = useQuery<MockupsQuery, MockupsQueryVariables>(MOCKUPS_QUERY);
+  const [createMockup] = useMutation<CreateMockupMutation, CreateMockupMutationVariables>(
+    CREATE_MOCKUP_MUATION
+    );
+  const mockups = _.get(data, 'mockups', []);
+
+  // NOTE: These initial data always at last
+  const [rows, setRows] = useState<RowData[]>(loadData());
   const [emptyRows, setEmptyRows] = useState(loadRowPerPage());
 
   function handleRequestSort(event: React.MouseEvent<unknown>, property: keyof KeySortable) {
@@ -287,27 +304,34 @@ const Dashboard = () => {
   function loadData() {
     let rowdata = [];
 
-    Object.keys(mugs).map(mugId => {
-      const mug: MUG = mugs[mugId];
+    Object.keys(mugs).map(mugKey => {
+      const mug: MUG = mugs[mugKey];
 
       if (!mug.recycledAt) {
         mug.patterns.map((mugPattern: MUG_PATTERN) => {
-          if (mugPattern.colors.length) {
+          if (mugPattern.colors.length && mockups) {
             const filterdMockups: MOCKUP[] = mockups.filter((mockup: MOCKUP) => {
               // Get all mockups belong to this mugPattern.
-              if (mockup && mockup.patternName === mugPattern.name && mockup.designName === mug.designName) {
+              if (mockup &&
+                mockup.patternName === mugPattern.name &&
+                mockup.designName === mug.designName &&
+                mockup.mugName === mug.name
+              ) {
                 return mockup;
               }
             });
+
             const isUploadedError = filterdMockups.some((mockup: MOCKUP) => {
               // If there is any mockup has not uploaded then it need to be resynced.
               return !mockup.sharedLink;
             });
-            const mockup = filterdMockups.find((mockup: MOCKUP) => {
+
+            let mockup = filterdMockups.find((mockup: MOCKUP) => {
               // Get mockup info from the first mockup has uploaded.
               return !!mockup.sharedLink;
             });
 
+            mockup = mockup || filterdMockups[0];
             mockup && rowdata.push(createData(mug.designName, mugPattern, mockup, isUploadedError));
           }
         });
@@ -335,7 +359,6 @@ const Dashboard = () => {
 
       console.log('recycleTheMugPattern, newList', newMugPatterns);
 
-      // setMockups(newMugPatterns);
       setRows(loadData());
     }
   }
@@ -362,23 +385,32 @@ const Dashboard = () => {
 
     Promise.all(promises).then(res => {
       // Update mockups store.
-      let newMockups = [...mockups];
+      // let newMockups = [];
 
       res.map(info => {
         let mockupInfo = info.mockup;
 
         if (!info.error || info.error.status === 409) {
-          newMockups.map((mockup: MOCKUP) => {
-            if (mockup && mockup.name === mockupInfo.name) {
-              mockupInfo.uploadedAt = Date.now();
-              mockupInfo.sharedLink = info.sharedLink;
-              mockupInfo.b64 = null;
-            }
+          let mockup = mockups.find((mockup: MOCKUP) => {
+            return (mockup && mockup.name === mockupInfo.name);
           });
+
+          if (mockup) {
+            mockup.uploadedAt = Date.now();
+            mockup.sharedLink = info.sharedLink;
+            mockup.b64 = null;
+
+            // createMockup({
+            //   variables: {
+            //     input: {
+            //       ...mockup
+            //     }
+            //   }
+            // });
+          }
         }
       });
 
-      setMockups(newMockups);
       setRows(loadData());
     });
   }
@@ -464,7 +496,7 @@ const Dashboard = () => {
           }
 
           // const sharedLink = mockup ? (mockup.sharedLink || mockup.b64 || 'async problem') : 'sharedLink';
-          const sharedLink = mockup.sharedLink || mockup.b64;
+          const sharedLink = mockup.sharedLink || 'Was not uploaded yet';
 
           mugPattern.sizes.map((size: SIZE, sidx: number) => {
             count++;

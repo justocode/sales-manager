@@ -38,6 +38,14 @@ import { saveAs } from 'file-saver';
 import { services } from '../../services';
 import { utils } from '../../utils';
 
+import _ from 'lodash';
+import { useQuery, useMutation } from '@apollo/react-hooks';
+import { MOCKUPS_QUERY, CREATE_MOCKUP_MUATION } from '~/frontend/operations/mockup.operation';
+import {
+  MockupsQuery, MockupsQueryVariables,
+  CreateMockupMutationVariables, CreateMockupMutation
+} from '~/frontend/types/operations.type';
+
 // Rough implementation. Untested.
 function timeout(ms, promise) {
   return new Promise(function(resolve, reject) {
@@ -96,12 +104,12 @@ const useStyles = makeStyles((theme: Theme) =>
 const NewProductPage = () => {
   const theme = useTheme();
   const classes = useStyles(theme);
-  const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
+  // const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
   // const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', {});
-  const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
+  // const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
   const [mugs, setMugs] = utils.useStateWithLocalStorage('mugs', {});
   const [currentDesigns, setcurrentDesigns] = React.useState({});
-  const [currentPatterns, setcurrentPatterns] = React.useState({});
+  // const [currentPatterns, setcurrentPatterns] = React.useState({});
   const [currentMugs, setCurrentMugs] = useState({});
   const [completed, setCompleted] = React.useState(0);
 
@@ -109,6 +117,10 @@ const NewProductPage = () => {
   const [activeStep, setActiveStep] = useState(0);
   // const steps = ['Select Designs', 'Select Patterns', 'Add Properties'];
   const steps = ['Select Designs', 'Add Properties'];
+
+  const [createMockup, { data, loading, error }] = useMutation<CreateMockupMutation, CreateMockupMutationVariables>(
+    CREATE_MOCKUP_MUATION
+  );
 
   function handleNext() {
     if (activeStep === steps.length - 1) {
@@ -136,12 +148,8 @@ const NewProductPage = () => {
       case 0:
         return (
           <StepUploadDesigns
-            designs={designs}
-            setDesigns={setDesigns}
             currentDesigns={currentDesigns}
             setcurrentDesigns={setcurrentDesigns}
-            currentMugs={currentMugs}
-            setCurrentMugs={setCurrentMugs}
           />
         );
       // case 1:
@@ -156,12 +164,7 @@ const NewProductPage = () => {
       case 1:
         return (
           <StepAddProperties
-            designs={designs}
-            // patterns={patterns}
             currentDesigns={currentDesigns}
-            currentPatterns={currentPatterns}
-            mugs={mugs}
-            setMugs={setMugs}
             currentMugs={currentMugs}
             setCurrentMugs={setCurrentMugs}
           />
@@ -192,35 +195,36 @@ const NewProductPage = () => {
 
     let REQUEST_TIME = 3000;
     let genMockupPromises = [];
+    let newMugs = { ...mugs };
 
     // NOTE: 1 Design will creates 1 Mug + relevant data (patterns + colors)
     // NOTE: 1 Mockup = 1 Design + 1 Pattern + 1 Color
-    Object.keys(currentMugs).map(designName => {
+    Object.keys(currentMugs).map((designName: string, index: number) => {
       let newMug = currentMugs[designName] as MUG;
 
       if (newMug.patterns && newMug.patterns.length) {
         // NOTE: Save Mug to History
-        newMug.id = mugs.length + 1; // async cannot assign id like this
+        newMug.id = Object.keys(mugs).length + 1; // async cannot assign id like this
         newMug.addedAt = Date.now();
-        newMug.name = 'mug-' + designName.replace('.png', '-') + newMug.addedAt;
+        newMug.name = 'mug-' + designName.replace(/ /g, '_').replace('.png', '-') + newMug.addedAt + '-' + index;
+        newMug.designName = designName;
 
-        setMugs({ ...mugs, [newMug.name]: newMug });
-
-        newMug.patterns.map((mugPattern: MUG_PATTERN, index: number) => {
+        newMug.patterns.map((mugPattern: MUG_PATTERN) => {
           // NOTE: If the Mug have color then create Mockup
           if (mugPattern.colors.length) {
             mugPattern.colors.map((color: COLOR, idx: number) => {
+              const dateTime = Date.now();
               const fileName =
                 'mockup-' +
                 designName.replace(/ /g, '_').replace('.png', '-') +
-                mugPattern.name + '-' +
-                Date.now() + '-' + idx +
+                mugPattern.name + '_' + color.hex.substr(1) + '-' +
+                dateTime + '-' + idx +
                 '.png';
 
               const newMockup = {
-                id: mockups.length + 1,
+                id: dateTime,
                 name: fileName,
-                addedAt: Date.now(),
+                addedAt: dateTime,
                 mugId: newMug.id,
                 mugName: newMug.name,
                 designId: newMug.designId,
@@ -230,22 +234,23 @@ const NewProductPage = () => {
                 sku: mugPattern.data.item_sku,
                 color: color,
                 link: '/mockups/' + mugPattern.data.item_sku + '/' + fileName,
-                sharedLink: null
+                sharedLink: null,
+                b64: null
               } as MOCKUP;
-
-              setMockups([...mockups, newMockup]);
 
               // NOTE: Merge design with color to pattern and then upload to Dropbox to get the public link.
               genMockupPromises.push(timeout(idx++ * REQUEST_TIME, generateMockupImage(newMockup, mugPattern.sketchInfo)));
             });
           }
         });
+
+        newMugs[newMug.name] = newMug;
       }
     });
 
-    Promise.all(genMockupPromises).then(res => {
-      let newMockups = [...mockups];
+    setMugs(newMugs);
 
+    Promise.all(genMockupPromises).then(res => {
       res.map(info => {
         let newMockup = info.newMockup;
 
@@ -255,10 +260,15 @@ const NewProductPage = () => {
           newMockup.b64 = null;
         }
 
-        newMockups.push(newMockup);
+        createMockup({
+          variables: {
+            input: {
+              ...newMockup
+            }
+          }
+        });
       });
 
-      setMockups(newMockups);
       setCompleted(100);
 
       setTimeout(() => {
@@ -326,7 +336,7 @@ const NewProductPage = () => {
               // NOTE: Scale mockup image with max size = 1000
               utils.scaleImage(b64, function (b64w1000h1000: WindowBase64) {
 
-                newMockup.b64 = b64w1000h1000;
+                newMockup.b64 = b64w1000h1000.toString();
 
                 if (services.dropbox.getAccessToken()) {
                   return resolve(uploadMockupToDropbox(b64w1000h1000, newMockup));
@@ -337,6 +347,7 @@ const NewProductPage = () => {
                     newMockup: newMockup,
                     sharedLink: 'cannot get shared link "' + newMockup.name + '"'
                   };
+
                   saveAs(b64w1000h1000, newMockup.name);
 
                   return resolve(res);

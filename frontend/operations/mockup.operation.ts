@@ -4,7 +4,17 @@ export const MOCKUP_FRAGMENT = gql`
   fragment mockup on Mockup {
     id
     name
-    image
+    addedAt
+    mugId
+    mugName
+    designId
+    designName
+    patternName
+    sku
+    color
+    link
+    sharedLink
+    b64
   }
 `;
 
