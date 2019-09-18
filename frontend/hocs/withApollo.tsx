@@ -7,7 +7,9 @@ import { typeDefs, resolvers } from '~/frontend/schema';
 
 const client = new ApolloClient({
   ssrMode: true,
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({
+    dataIdFromObject: o => (o['name'] ? `${o.__typename}-${o['name']}` : `${o.__typename}-${o.id}`),
+  }),
   link: new HttpLink({
     uri: '/api'
   }),

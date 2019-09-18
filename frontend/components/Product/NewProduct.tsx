@@ -222,7 +222,7 @@ const NewProductPage = () => {
                 '.png';
 
               const newMockup = {
-                id: dateTime,
+                id: parseInt(dateTime + '' + index + '' + idx),
                 name: fileName,
                 addedAt: dateTime,
                 mugId: newMug.id,
