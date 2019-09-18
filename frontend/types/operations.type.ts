@@ -1,5 +1,3 @@
-import { COLOR } from "./amz-shirt.type";
-
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
@@ -10,47 +8,59 @@ export type Scalars = {
   Float: number,
 };
 
+export type Color = {
+  __typename?: 'Color',
+  name: Scalars['String'],
+  hex: Scalars['String'],
+  amzColor: Scalars['String'],
+};
+
+export type ColorInput = {
+  __typename?: 'Color',
+  name: Scalars['String'],
+  hex: Scalars['String'],
+  amzColor: Scalars['String'],
+};
+
 export type Mockup = {
-   __typename?: 'Mockup',
+  __typename?: 'Mockup',
   id: Scalars['Int'],
-  name?: Maybe<Scalars['String']>,
-  addedAt?: Maybe<Scalars['Int']>,
-  uploadedAt: Maybe<Scalars['Int']>,
-  recycledAt: Maybe<Scalars['Int']>,
-  mugId?: Maybe<Scalars['Int']>,
-  mugName?: Maybe<Scalars['String']>,
-  designId?: Maybe<Scalars['Int']>,
-  designName?: Maybe<Scalars['String']>,
-  patternId?: Maybe<Scalars['Int']>,
-  patternName?: Maybe<Scalars['String']>,
-  sku?: Maybe<Scalars['String']>,
-  color?: COLOR,
-  link: Maybe<Scalars['String']>,
-  sharedLink: Maybe<Scalars['String']>,
-  b64: Maybe<Scalars['String']>,
+  name: Scalars['String'],
+  addedAt: Scalars['Int'],
+  uploadedAt?: Maybe<Scalars['Int']>,
+  recycledAt?: Maybe<Scalars['Int']>,
+  mugId: Scalars['Int'],
+  mugName: Scalars['String'],
+  designId: Scalars['Int'],
+  designName: Scalars['String'],
+  patternName: Scalars['String'],
+  sku: Scalars['String'],
+  color: Color,
+  link?: Maybe<Scalars['String']>,
+  sharedLink?: Maybe<Scalars['String']>,
+  b64?: Maybe<Scalars['String']>,
 };
 
 export type MockupInput = {
   id: Scalars['Int'],
-  name?: Scalars['String'],
-  addedAt?: Scalars['Int'],
-  uploadedAt: Scalars['Int'],
-  recycledAt: Scalars['Int'],
-  mugId?: Scalars['Int'],
-  mugName?: Scalars['String'],
-  designId?: Scalars['Int'],
-  designName?: Scalars['String'],
-  patternId?: Scalars['Int'],
-  patternName?: Scalars['String'],
-  sku?: Scalars['String'],
-  color?: COLOR,
-  link: Scalars['String'],
-  sharedLink: Scalars['String'],
-  b64: Scalars['String'],
+  name: Scalars['String'],
+  addedAt: Scalars['Int'],
+  uploadedAt?: Maybe<Scalars['Int']>,
+  recycledAt?: Maybe<Scalars['Int']>,
+  mugId: Scalars['Int'],
+  mugName: Scalars['String'],
+  designId: Scalars['Int'],
+  designName: Scalars['String'],
+  patternName: Scalars['String'],
+  sku: Scalars['String'],
+  color: ColorInput,
+  link?: Maybe<Scalars['String']>,
+  sharedLink?: Maybe<Scalars['String']>,
+  b64?: Maybe<Scalars['String']>,
 };
 
 export type Mutation = {
-   __typename?: 'Mutation',
+  __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
   createPost?: Maybe<Post>,
   updatePost?: Maybe<Post>,
@@ -148,7 +158,11 @@ export type UserInput = {
 };
 export type MockupFragment = (
   { __typename?: 'Mockup' }
-  & Pick<Mockup, 'id' | 'name' | 'addedAt' | 'uploadedAt' | 'recycledAt' | 'mugId' | 'mugName' | 'designId' | 'designName' | 'patternId' | 'patternName' | 'sku' | 'color' | 'link' | 'sharedLink' | 'b64'>
+  & Pick<Mockup, 'id' | 'name' | 'addedAt' | 'mugId' | 'mugName' | 'designId' | 'designName' | 'patternName' | 'sku' | 'link' | 'sharedLink' | 'b64'>
+  & { color: (
+    { __typename?: 'Color' }
+    & Pick<Color, 'name' | 'hex' | 'amzColor'>
+  ) }
 );
 
 export type CreateMockupMutationVariables = {

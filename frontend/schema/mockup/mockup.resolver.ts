@@ -8,10 +8,20 @@ export const resolvers: Resolvers = {
       const { cache } = context;
       const __typename: 'Mockup' = 'Mockup';
 
-      const mockup = {
+      let mockup = {
         __typename,
-        ...args.input
+        ...args.input,
+        color: getColor()
       };
+
+      function getColor() {
+        const __typename: 'Color' = 'Color';
+
+        return {
+          __typename,
+          ...args.input.color
+        };
+      }
 
       const query = MOCKUPS_QUERY;
 

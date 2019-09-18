@@ -484,7 +484,7 @@ const Dashboard = () => {
       // NOTE: Generate Row child
       mugPattern.colors.map((color: COLOR, cidx: number) => {
         const mockup: MOCKUP = mockups.find((mockup: MOCKUP) => {
-          return mockup.patternName === mugPattern.name && mockup.color.name === color.name;
+          return mockup.patternName === mugPattern.name && mockup.color.hex === color.hex;
         });
 
         if (mockup) {

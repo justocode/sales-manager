@@ -2,10 +2,16 @@ import { gql } from 'apollo-boost';
 
 export const typeDef = gql`
 
-  type COLOR {
-    name: String
-    hex: String
-    amzColor: String
+  type Color {
+    name: String!
+    hex: String!
+    amzColor: String!
+  }
+
+  input ColorInput {
+    name: String!
+    hex: String!
+    amzColor: String!
   }
 
   type Mockup {
@@ -18,10 +24,9 @@ export const typeDef = gql`
     mugName: String!
     designId: Int!
     designName: String!
-    patternId: Int!
     patternName: String!
     sku: String!
-    color: COLOR!
+    color: Color!
     link: String
     sharedLink: String
     b64: String
@@ -37,10 +42,9 @@ export const typeDef = gql`
     mugName: String!
     designId: Int!
     designName: String!
-    patternId: Int!
     patternName: String!
     sku: String!
-    color: COLOR!
+    color: ColorInput!
     link: String
     sharedLink: String
     b64: String

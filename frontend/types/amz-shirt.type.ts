@@ -61,7 +61,6 @@ export type MOCKUP = APP_TYPE & {
   mugName?: string;
   designId?: number;
   designName?: string;
-  patternId?: number;
   patternName?: string;
   sku?: string;
   color?: COLOR;
@@ -71,6 +70,7 @@ export type MOCKUP = APP_TYPE & {
 };
 
 export type COLOR = APP_TYPE & {
+  __typename?: 'Color',
   hex?: string;
   amzColor?: string;
 };

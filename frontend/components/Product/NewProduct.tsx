@@ -229,7 +229,6 @@ const NewProductPage = () => {
                 mugName: newMug.name,
                 designId: newMug.designId,
                 designName: newMug.designName,
-                patternId: mugPattern.id,
                 patternName: mugPattern.name,
                 sku: mugPattern.data.item_sku,
                 color: color,

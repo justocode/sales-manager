@@ -11,7 +11,11 @@ export const MOCKUP_FRAGMENT = gql`
     designName
     patternName
     sku
-    color
+    color {
+      name
+      hex
+      amzColor
+    }
     link
     sharedLink
     b64
