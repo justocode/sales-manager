@@ -9,21 +9,20 @@ export type Scalars = {
 };
 
 export type Color = {
-  __typename?: 'Color',
+   __typename?: 'Color',
   name: Scalars['String'],
   hex: Scalars['String'],
   amzColor: Scalars['String'],
 };
 
 export type ColorInput = {
-  __typename?: 'Color',
   name: Scalars['String'],
   hex: Scalars['String'],
   amzColor: Scalars['String'],
 };
 
 export type Mockup = {
-  __typename?: 'Mockup',
+   __typename?: 'Mockup',
   id: Scalars['Int'],
   name: Scalars['String'],
   addedAt: Scalars['Int'],
@@ -60,7 +59,7 @@ export type MockupInput = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation',
+   __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
   createPost?: Maybe<Post>,
   updatePost?: Maybe<Post>,

@@ -12,21 +12,20 @@ export type Scalars = {
 };
 
 export type Color = {
-  __typename?: 'Color',
+   __typename?: 'Color',
   name: Scalars['String'],
   hex: Scalars['String'],
   amzColor: Scalars['String'],
 };
 
 export type ColorInput = {
-  __typename?: 'Color',
   name: Scalars['String'],
   hex: Scalars['String'],
   amzColor: Scalars['String'],
 };
 
 export type Mockup = {
-  __typename?: 'Mockup',
+   __typename?: 'Mockup',
   id: Scalars['Int'],
   name: Scalars['String'],
   addedAt: Scalars['Int'],
@@ -63,7 +62,7 @@ export type MockupInput = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation',
+   __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
   createPost?: Maybe<Post>,
   updatePost?: Maybe<Post>,
@@ -73,33 +72,39 @@ export type Mutation = {
   createMockup?: Maybe<Mockup>,
 };
 
+
 export type MutationCreatePostArgs = {
   input?: Maybe<PostInput>
 };
+
 
 export type MutationUpdatePostArgs = {
   id: Scalars['ID'],
   input?: Maybe<PostInput>
 };
 
+
 export type MutationDeletePostArgs = {
   id: Scalars['ID']
 };
+
 
 export type MutationSignUpToGetTokenArgs = {
   input?: Maybe<UserInput>
 };
 
+
 export type MutationSignInToGetTokenArgs = {
   input?: Maybe<UserInput>
 };
+
 
 export type MutationCreateMockupArgs = {
   input?: Maybe<MockupInput>
 };
 
 export type Post = {
-  __typename?: 'Post',
+   __typename?: 'Post',
   id: Scalars['ID'],
   title?: Maybe<Scalars['String']>,
   content?: Maybe<Scalars['String']>,
@@ -120,14 +125,17 @@ export type Query = {
   mockups?: Maybe<Array<Maybe<Mockup>>>,
 };
 
+
 export type QueryPostArgs = {
   id: Scalars['ID']
 };
+
 
 export type QueryPostsArgs = {
   take?: Maybe<Scalars['Int']>,
   skip?: Maybe<Scalars['Int']>
 };
+
 
 export type QueryUserArgs = {
   id: Scalars['ID']
@@ -140,6 +148,7 @@ export type User = {
   posts?: Maybe<Array<Maybe<Post>>>,
 };
 
+
 export type UserPostsArgs = {
   take?: Maybe<Scalars['Int']>,
   skip?: Maybe<Scalars['Int']>
@@ -150,6 +159,7 @@ export type UserInput = {
   password: Scalars['String'],
 };
 
+
 export type ResolverTypeWrapper<T> = Promise<T> | T;
 
 export type ResolverFn<TResult, TParent, TContext, TArgs> = (
@@ -158,6 +168,7 @@ export type ResolverFn<TResult, TParent, TContext, TArgs> = (
   context: TContext,
   info: GraphQLResolveInfo
 ) => Promise<TResult> | TResult;
+
 
 export type StitchingResolver<TResult, TParent, TContext, TArgs> = {
   fragment: string;
@@ -181,10 +192,12 @@ export type SubscriptionResolveFn<TResult, TParent, TContext, TArgs> = (
   context: TContext,
   info: GraphQLResolveInfo
 ) => TResult | Promise<TResult>;
+
 export interface SubscriptionSubscriberObject<TResult, TKey extends string, TParent, TContext, TArgs> {
   subscribe: SubscriptionSubscribeFn<{ [key in TKey]: TResult }, TParent, TContext, TArgs>;
   resolve?: SubscriptionResolveFn<TResult, { [key in TKey]: TResult }, TContext, TArgs>;
 }
+
 export interface SubscriptionResolverObject<TResult, TParent, TContext, TArgs> {
   subscribe: SubscriptionSubscribeFn<any, TParent, TContext, TArgs>;
   resolve: SubscriptionResolveFn<TResult, any, TContext, TArgs>;
@@ -313,6 +326,7 @@ export type Resolvers<ContextType = Context> = {
   Query?: QueryResolvers<ContextType>,
   User?: UserResolvers<ContextType>,
 };
+
 
 /**
  * @deprecated
