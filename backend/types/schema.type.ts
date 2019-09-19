@@ -12,7 +12,7 @@ export type Scalars = {
 };
 
 export type Mutation = {
-  __typename?: 'Mutation',
+   __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
   createPost?: Maybe<Post>,
   updatePost?: Maybe<Post>,
@@ -48,7 +48,7 @@ export type MutationSignInToGetTokenArgs = {
 };
 
 export type Post = {
-  __typename?: 'Post',
+   __typename?: 'Post',
   id: Scalars['ID'],
   title?: Maybe<Scalars['String']>,
   content?: Maybe<Scalars['String']>,
@@ -61,7 +61,7 @@ export type PostInput = {
 };
 
 export type Query = {
-  __typename?: 'Query',
+   __typename?: 'Query',
   post?: Maybe<Post>,
   posts?: Maybe<Array<Maybe<Post>>>,
   _empty?: Maybe<Scalars['String']>,
@@ -85,7 +85,7 @@ export type QueryUserArgs = {
 };
 
 export type User = {
-  __typename?: 'User',
+   __typename?: 'User',
   id: Scalars['ID'],
   email?: Maybe<Scalars['String']>,
   posts?: Maybe<Array<Maybe<Post>>>,

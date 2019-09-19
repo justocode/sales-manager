@@ -1,8 +1,9 @@
 ---
 overwrite: true
 schema:
-  "./backend/schema/**/*.ts":
+  "./backend/schema/**/*.typedef.ts":
     noRequire: true
+
 generates:
   backend/types/schema.type.ts:
     config:
@@ -11,7 +12,22 @@ generates:
     plugins:
     - typescript
     - typescript-resolvers
-  frontend/types/graphql.type.ts:
+
+  frontend/types/schema.type.ts:
+    schema:
+      "./frontend/schema/**/*.typedef.ts":
+        noRequire: true
+    config:
+      contextType: "./context.type#Context"
+    plugins:
+    - typescript
+    - typescript-resolvers
+
+  frontend/types/operations.type.ts:
+    schema:
+      "./frontend/schema/**/*.typedef.ts":
+        noRequire: true
+    documents: "frontend/operations/**/*.operation.ts"
     plugins:
     - typescript
     - typescript-operations

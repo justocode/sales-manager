@@ -92,7 +92,7 @@ const StepUploadDesign = (props: any) => {
   const theme = useTheme();
   const classes = useStyles(theme);
   const inputRef = useRef(null);
-  const { designs, setDesigns, currentDesigns, setcurrentDesigns } = props;
+  const { currentDesigns, setcurrentDesigns } = props;
   const [isOpenDropbox, setIsOpenDropbox] = React.useState(false);
   const [designsOnDropbox, setDesignsOnDropbox] = React.useState<any[]>([]);
 

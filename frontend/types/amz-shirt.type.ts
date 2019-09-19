@@ -61,16 +61,16 @@ export type MOCKUP = APP_TYPE & {
   mugName?: string;
   designId?: number;
   designName?: string;
-  patternId?: number;
   patternName?: string;
   sku?: string;
   color?: COLOR;
   link: string;
   sharedLink: string;
-  b64: string | ArrayBuffer | WindowBase64;
+  b64: string;// | ArrayBuffer | WindowBase64;
 };
 
 export type COLOR = APP_TYPE & {
+  __typename?: 'Color',
   hex?: string;
   amzColor?: string;
 };
