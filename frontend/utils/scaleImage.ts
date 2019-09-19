@@ -29,7 +29,7 @@ function scaleImage(imageBuffer: any, callback: Function) {
     };
 
     downscale(tempImg.src, width, height, options)
-      .then(result => callback(result));
+      .then((result: WindowBase64) => callback(result));
   }
 }
 

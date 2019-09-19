@@ -11,17 +11,54 @@ export type Scalars = {
   Float: number,
 };
 
+export type Color = {
+   __typename?: 'Color',
+  name: Scalars['String'],
+  hex: Scalars['String'],
+  amzColor: Scalars['String'],
+};
+
+export type ColorInput = {
+  name: Scalars['String'],
+  hex: Scalars['String'],
+  amzColor: Scalars['String'],
+};
+
 export type Mockup = {
    __typename?: 'Mockup',
-  id: Scalars['ID'],
-  name?: Maybe<Scalars['String']>,
-  image?: Maybe<Scalars['String']>,
+  id: Scalars['Int'],
+  name: Scalars['String'],
+  addedAt: Scalars['Int'],
+  uploadedAt?: Maybe<Scalars['Int']>,
+  recycledAt?: Maybe<Scalars['Int']>,
+  mugId: Scalars['Int'],
+  mugName: Scalars['String'],
+  designId: Scalars['Int'],
+  designName: Scalars['String'],
+  patternName: Scalars['String'],
+  sku: Scalars['String'],
+  color: Color,
+  link?: Maybe<Scalars['String']>,
+  sharedLink?: Maybe<Scalars['String']>,
+  b64?: Maybe<Scalars['String']>,
 };
 
 export type MockupInput = {
-  id: Scalars['ID'],
+  id: Scalars['Int'],
   name: Scalars['String'],
-  image: Scalars['String'],
+  addedAt: Scalars['Int'],
+  uploadedAt?: Maybe<Scalars['Int']>,
+  recycledAt?: Maybe<Scalars['Int']>,
+  mugId: Scalars['Int'],
+  mugName: Scalars['String'],
+  designId: Scalars['Int'],
+  designName: Scalars['String'],
+  patternName: Scalars['String'],
+  sku: Scalars['String'],
+  color: ColorInput,
+  link?: Maybe<Scalars['String']>,
+  sharedLink?: Maybe<Scalars['String']>,
+  b64?: Maybe<Scalars['String']>,
 };
 
 export type Mutation = {
@@ -81,9 +118,9 @@ export type PostInput = {
 
 export type Query = {
    __typename?: 'Query',
+  _empty?: Maybe<Scalars['String']>,
   post?: Maybe<Post>,
   posts?: Maybe<Array<Maybe<Post>>>,
-  _empty?: Maybe<Scalars['String']>,
   user?: Maybe<User>,
   mockups?: Maybe<Array<Maybe<Mockup>>>,
 };
@@ -193,39 +230,61 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = {
   Query: ResolverTypeWrapper<{}>,
+  String: ResolverTypeWrapper<Scalars['String']>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Post: ResolverTypeWrapper<Post>,
-  String: ResolverTypeWrapper<Scalars['String']>,
   User: ResolverTypeWrapper<User>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Mockup: ResolverTypeWrapper<Mockup>,
+  Color: ResolverTypeWrapper<Color>,
   Mutation: ResolverTypeWrapper<{}>,
   PostInput: PostInput,
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   UserInput: UserInput,
   MockupInput: MockupInput,
+  ColorInput: ColorInput,
 };
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = {
   Query: {},
+  String: Scalars['String'],
   ID: Scalars['ID'],
   Post: Post,
-  String: Scalars['String'],
   User: User,
   Int: Scalars['Int'],
   Mockup: Mockup,
+  Color: Color,
   Mutation: {},
   PostInput: PostInput,
   Boolean: Scalars['Boolean'],
   UserInput: UserInput,
   MockupInput: MockupInput,
+  ColorInput: ColorInput,
+};
+
+export type ColorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Color'] = ResolversParentTypes['Color']> = {
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  hex?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  amzColor?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
 };
 
 export type MockupResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mockup'] = ResolversParentTypes['Mockup']> = {
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
-  name?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  image?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  addedAt?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  uploadedAt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  recycledAt?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
+  mugId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  mugName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  designId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  designName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  patternName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  sku?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  color?: Resolver<ResolversTypes['Color'], ParentType, ContextType>,
+  link?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  sharedLink?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  b64?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
 };
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = {
@@ -246,9 +305,9 @@ export type PostResolvers<ContextType = Context, ParentType extends ResolversPar
 };
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = {
+  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   post?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, RequireFields<QueryPostArgs, 'id'>>,
   posts?: Resolver<Maybe<Array<Maybe<ResolversTypes['Post']>>>, ParentType, ContextType, QueryPostsArgs>,
-  _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>,
   mockups?: Resolver<Maybe<Array<Maybe<ResolversTypes['Mockup']>>>, ParentType, ContextType>,
 };
@@ -260,6 +319,7 @@ export type UserResolvers<ContextType = Context, ParentType extends ResolversPar
 };
 
 export type Resolvers<ContextType = Context> = {
+  Color?: ColorResolvers<ContextType>,
   Mockup?: MockupResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Post?: PostResolvers<ContextType>,
