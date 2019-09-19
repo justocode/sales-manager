@@ -4,7 +4,7 @@ import Container from '@material-ui/core/Container';
 import AppBar from './AppBar';
 import * as Sentry from '@sentry/browser';
 
-// Sentry.init({ dsn: 'https://7494f78220d744509c9717008f069287@sentry.io/1548200' });
+Sentry.init({ dsn: 'https://7494f78220d744509c9717008f069287@sentry.io/1548200' });
 
 interface Props {
   children: any;
