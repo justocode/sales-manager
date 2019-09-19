@@ -207,7 +207,25 @@ const FormFields = (props: {
       } as COLOR;
     });
 
-    // Now we call our hook, passing in the current searchTerm value.
+  // NOTE: Debounce to improve performance when update mugPattern data by using Formik.
+  const debouncedSubmit = utils.useDebounce(mugPattern.data, 250);
+
+  useEffect(() => {
+    if (debouncedSubmit) {
+      setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
+        let newcurrentMugs = { ...currentMugs };
+        let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
+          return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
+        });
+
+        newMugPatternInfo.data = debouncedSubmit;
+
+        return newcurrentMugs;
+      });
+    }
+  }, [debouncedSubmit]);
+
+  // Now we call our hook, passing in the current searchTerm value.
   // The hook will only return the latest value (what we passed in) ...
   // ... if it's been more than 250ms since it was last called.
   // Otherwise, it will return the previous value of searchTerm.
@@ -391,29 +409,15 @@ const FormFields = (props: {
       //   return errors;
       // }}
       onSubmit={(values, { setSubmitting }) => {
-        setTimeout(() => {
-          setSubmitting(false);
-
-          setCurrentMugs((currentMugs: MUG_PATTERN[]) => {
-            let newcurrentMugs = { ...currentMugs };
-            let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
-              return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
-            });
-
-            newMugPatternInfo.data = values;
-
-            return newcurrentMugs;
-          });
-        }, 400);
+        setSubmitting(false);
+        mugPattern.data = values;
       }}
     >
       {({
         values,
         errors,
-        touched,
         handleChange,
         submitForm
-        /* and other goodies */
       }) => (
         <form className={clsx(classes.formFields)} noValidate autoComplete="off">
           <Grid container>
