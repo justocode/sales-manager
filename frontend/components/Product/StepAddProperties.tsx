@@ -233,7 +233,7 @@ const FormFields = (props: {
   // ... so that we aren't hitting our API rapidly.
   const debouncedPosition = utils.useDebounce(position, 250);
 
-  function dragMoveListener(event) {
+  function dragMoveListener(event: any) {
     let target = event.target;
     // keep the dragged position in the data-x/data-y attributes
     let x = (parseFloat(target.getAttribute('data-x')) || 0) + event.dx;
@@ -255,7 +255,7 @@ const FormFields = (props: {
     setPosition(newPosition);
   }
 
-  function resizeMoveListener(event) {
+  function resizeMoveListener(event: any) {
     let target = event.target;
     let x = (parseFloat(target.getAttribute('data-x')) || 0);
     let y = (parseFloat(target.getAttribute('data-y')) || 0);

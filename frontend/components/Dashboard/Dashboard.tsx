@@ -357,8 +357,6 @@ const Dashboard = () => {
         return row.mugPattern;
       });
 
-      console.log('recycleTheMugPattern, newList', newMugPatterns);
-
       setRows(loadData());
     }
   }
@@ -444,6 +442,11 @@ const Dashboard = () => {
   }
 
   function exportToExcel() {
+    if (!selectedMugPatterns || selectedMugPatterns.length === 0) {
+      alert('You still not choose any MUG to export to Excel yet!');
+      return;
+    }
+
     // NOTE: Adding 3 first rows for AMZ
     let exportedData = [AMZ_DEFAULT_ROW];
 
@@ -490,7 +493,7 @@ const Dashboard = () => {
         if (mockup) {
           if (!mockup.sharedLink && mockup.b64) {
             alert(
-              'ERROR: There are some Mockups were not uploaded yet, hence cannot getting mockups sharedLink to export to Excel file.'
+              'ERROR: There are some Mockups were not uploaded yet, hence cannot getting mockups sharedLink to export to Excel.'
             );
             return;
           }
@@ -532,6 +535,16 @@ const Dashboard = () => {
 
     setRows(loadData());
     setSelectedMugPatterns([]);
+  }
+
+  function editMug(event: React.MouseEvent) {
+    event.stopPropagation();
+    console.log('click editMug');
+  }
+
+  function cloneMug(event: React.MouseEvent) {
+    event.stopPropagation();
+    console.log('click cloneMug');
   }
 
   const isSelected = (row: RowData) =>
@@ -634,7 +647,7 @@ const Dashboard = () => {
                         <TableCell>
                           <img
                             src={row.mockupImage}
-                            alt={row.designName + row.patternName}
+                            alt={row.designName}
                             className={classes.rowImg}
                           />
                         </TableCell>
@@ -644,10 +657,10 @@ const Dashboard = () => {
                         <TableCell>{row.sku}</TableCell>
                         <TableCell>{row.createdAt}</TableCell>
                         <TableCell align="right" id="actionGroups">
-                          <IconButton size="small" className={classes.rightIcon} onClick={() => {}}>
+                          <IconButton size="small" className={classes.rightIcon} onClick={(e) => editMug(e)}>
                             <EditIcon color="primary" />
                           </IconButton>
-                          <IconButton size="small" className={classes.rightIcon}>
+                          <IconButton size="small" className={classes.rightIcon} onClick={(e) => editMug(e)}>
                             <SaveIcon color="primary" />
                           </IconButton>
                           <IconButton
@@ -659,7 +672,7 @@ const Dashboard = () => {
                           >
                             <DeleteIcon color="secondary" />
                           </IconButton>
-                          <IconButton size="small" className={classes.rightIcon}>
+                          <IconButton size="small" className={classes.rightIcon} onClick={(e) => cloneMug(e)}>
                             <ContentCopyIcon color="primary" />
                           </IconButton>
                         </TableCell>
