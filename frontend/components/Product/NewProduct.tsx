@@ -107,6 +107,7 @@ const NewProductPage = () => {
   // const [designs, setDesigns] = utils.useStateWithLocalStorage('designs', {});
   // const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', {});
   // const [mockups, setMockups] = utils.useStateWithLocalStorage('mockups', []);
+  const [lastMugPatternData, setLastMugPatternData] = utils.useStateWithLocalStorage('lastMugPatternData', {});
   const [mugs, setMugs] = utils.useStateWithLocalStorage('mugs', {});
   const [currentDesigns, setcurrentDesigns] = React.useState({});
   // const [currentPatterns, setcurrentPatterns] = React.useState({});
@@ -240,6 +241,11 @@ const NewProductPage = () => {
               // NOTE: Merge design with color to pattern and then upload to Dropbox to get the public link.
               genMockupPromises.push(timeout(idx++ * REQUEST_TIME, generateMockupImage(newMockup, mugPattern.sketchInfo)));
             });
+
+            // NOTE: Update lastMugPatternData
+            let _lastMugPatternData = Object.assign({}, mugPattern) as MUG_PATTERN;
+            delete _lastMugPatternData.exportedAt;
+            setLastMugPatternData({ ...lastMugPatternData, [mugPattern.name]: _lastMugPatternData });
           }
         });
 

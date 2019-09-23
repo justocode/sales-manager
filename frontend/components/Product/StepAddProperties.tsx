@@ -151,7 +151,7 @@ const getCurrentDateWithFormat = () => {
   );
 };
 
-const getDefaultMockupInfos = (designName: string): AMZ_APP_SHIRT => {
+const generateDefaultMugPatternData = (designName: string): AMZ_APP_SHIRT => {
   return {
     feed_product_type: 'shirt',
     item_sku: 'DLS-' + getCurrentDateWithFormat(),
@@ -824,6 +824,7 @@ const StepAddProperties = (props: any) => {
   const classes = useStyles(theme);
   const { currentDesigns, currentMugs, setCurrentMugs } = props;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [lastMugPatternData] = utils.useStateWithLocalStorage('lastMugPatternData', {});
 
   function handleExpand() {
     setIsExpanded(!isExpanded);
@@ -876,11 +877,11 @@ const StepAddProperties = (props: any) => {
         } as COLOR;
       });
 
-      const newMugPattern = {
+      const newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
         sizes: APP_SIZES.slice(0, 4),
-        data: getDefaultMockupInfos(design.name)
+        data: generateDefaultMugPatternData(design.name)
       } as MUG_PATTERN;
 
       const newMug = {
