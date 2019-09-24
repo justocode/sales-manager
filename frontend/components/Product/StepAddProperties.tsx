@@ -495,7 +495,7 @@ const FormFields = (props: {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={12} lg={4}>
+            <Grid item xs={12} sm={12} lg={8}>
               <TextField
                 required
                 fullWidth
@@ -898,7 +898,7 @@ const StepAddProperties = (props: any) => {
       const newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
-        sizes: isCupPattern ? CUP_SIZES : APP_SIZES.slice(0, 4),
+        sizes: isCupPattern ? CUP_SIZES : [APP_SIZES[0], APP_SIZES[6], APP_SIZES[7], APP_SIZES[8]],
         data: newMugPatternData
       } as MUG_PATTERN;
 

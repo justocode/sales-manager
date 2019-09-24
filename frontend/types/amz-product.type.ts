@@ -215,32 +215,32 @@ export const AMZ_DEPARTMENT = [
 
 export const AMZ_SIZE_MAP = [
   'Small',
+  'X-Small',
+  'XX-Small',
+  'XXX-Small',
+  'XXXX-Small',
+  'XXXXX-Small',
   'Medium',
   'Large',
   'X-Large',
-  'X-Small',
   'XX-Large',
-  'XX-Small',
   'XXX-Large',
-  'XXX-Small',
   'XXXX-Large',
-  'XXXX-Small',
   'XXXXX-Large',
-  'XXXXX-Small'
 ];
 
 export const AMZ_APP_SIZE_MAP = [
   'S',
+  'X-S',
+  '2X-S',
+  '3X-S',
+  '4X-S',
+  '5X-S',
   'M',
   'L',
   'X-L',
-  'X-S',
   '2X-L',
-  '2X-S',
   '3X-L',
-  '3X-S',
   '4X-L',
-  '4X-S',
   '5X-L',
-  '5X-S'
 ];
