@@ -46,6 +46,17 @@ const APP_SIZES: SIZE[] = AMZ_APP_SIZE_MAP.map((size, index) => {
   };
 });
 
+const CUP_SIZES: SIZE[] = [
+  {
+    appSize: '11oz',
+    amzSize: '11oz'
+  },
+  {
+    appSize: '15oz',
+    amzSize: '15oz'
+  }
+];
+
 // const createDefaultColor = (name?: string, hex?: string, amzColor?: string): COLOR => {
 //   const newColor = {
 //     name: name,
@@ -877,10 +888,12 @@ const StepAddProperties = (props: any) => {
         } as COLOR;
       });
 
+      const isCupPattern = patternName.includes('mug') || patternName.includes('Mug');
+
       const newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
-        sizes: APP_SIZES.slice(0, 4),
+        sizes: isCupPattern ? CUP_SIZES : APP_SIZES.slice(0, 4),
         data: generateDefaultMugPatternData(design.name)
       } as MUG_PATTERN;
 
