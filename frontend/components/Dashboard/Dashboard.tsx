@@ -467,13 +467,20 @@ const Dashboard = () => {
 
       let rowParent = {} as AMZ_APP_SHIRT;
 
+      // NOTE: Parent row needed infos
+      rowParent.parent_child = 'parent';
       rowParent.feed_product_type = mugPattern.data.feed_product_type;
       rowParent.item_sku = mugPattern.data.item_sku;
       rowParent.brand_name = mugPattern.data.brand_name;
       rowParent.item_name = mugPattern.data.item_name;
       rowParent.department_name = mugPattern.data.department_name;
-      rowParent.parent_child = 'parent';
       rowParent.variation_theme = mugPattern.data.variation_theme;
+      rowParent.product_description = mugPattern.data.product_description;
+      rowParent.bullet_point1 = mugPattern.data.bullet_point1;
+      rowParent.bullet_point2 = mugPattern.data.bullet_point2;
+      rowParent.bullet_point3 = mugPattern.data.bullet_point3;
+      rowParent.bullet_point4 = mugPattern.data.bullet_point4;
+      rowParent.generic_keywords = mugPattern.data.generic_keywords;
 
       // Add the Row parent
       const parentRowData = keys.map(key => {
