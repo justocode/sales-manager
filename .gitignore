@@ -19,3 +19,8 @@ package-lock.json
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# auto generated graphql schemas
+/backend/types/schema.type.ts
+/frontend/types/schema.type.ts
+/frontend/types/operations.type.ts
