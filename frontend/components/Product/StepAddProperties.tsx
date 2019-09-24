@@ -889,12 +889,18 @@ const StepAddProperties = (props: any) => {
       });
 
       const isCupPattern = patternName.includes('mug') || patternName.includes('Mug');
+      let newMugPatternData = generateDefaultMugPatternData(design.name);
+
+      if (isCupPattern) {
+        newMugPatternData.feed_product_type = 'kitchen';
+        newMugPatternData.item_type = 'mugs';
+      }
 
       const newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
         sizes: isCupPattern ? CUP_SIZES : APP_SIZES.slice(0, 4),
-        data: generateDefaultMugPatternData(design.name)
+        data: newMugPatternData
       } as MUG_PATTERN;
 
       const newMug = {
