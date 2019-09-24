@@ -217,6 +217,9 @@ const FormFields = (props: {
       } as COLOR;
     });
 
+  const isCupPattern = patternName.includes('mug') || patternName.includes('Mug');
+  const patternSizes = isCupPattern ? CUP_SIZES : APP_SIZES;
+
   // NOTE: Debounce to improve performance when update mugPattern data by using Formik.
   const debouncedSubmit = utils.useDebounce(mugPattern.data, 250);
 
@@ -463,7 +466,7 @@ const FormFields = (props: {
               <FormControl fullWidth className={classes.textField}>
                 <InputLabel>Size</InputLabel>
                 <div className={classes.chipContent}>
-                  {APP_SIZES.map(size => (
+                    {patternSizes.map(size => (
                     <IChip
                       key={'mockupSize-' + design.name + '-' + patternName + '-' + size.amzSize}
                       label={size.appSize}
@@ -898,7 +901,7 @@ const StepAddProperties = (props: any) => {
       const newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
-        sizes: isCupPattern ? CUP_SIZES : [APP_SIZES[0], APP_SIZES[6], APP_SIZES[7], APP_SIZES[8]],
+        sizes: isCupPattern ? [...CUP_SIZES] : [APP_SIZES[0], APP_SIZES[6], APP_SIZES[7], APP_SIZES[8]],
         data: newMugPatternData
       } as MUG_PATTERN;
 
