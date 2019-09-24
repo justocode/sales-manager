@@ -184,13 +184,12 @@ const generateDefaultMugPatternData = (designName: string): AMZ_APP_SHIRT => {
     parent_sku: null,
     relationship_type: 'Variation',
     variation_theme: 'sizecolor',
-    product_description:
-      'Solid colors: 100% Cotton; Heather Grey: 90% Cotton, 10% Polyester; All Other Heathers: 50% Cotton, 50% Polyester',
+    product_description: 'Solid colors: 100% Cotton; Heather Grey: 90% Cotton, 10% Polyester; All Other Heathers: 50% Cotton, 50% Polyester',
     bullet_point1: 'Designed and printed in the USA',
     bullet_point2: '100% preshrunk ringspun cotton',
     bullet_point3: 'Double-needle stitched sleeves and bottom hem',
     bullet_point4: 'Taped neck and shoulders',
-    generic_keywords: 'I dont give a Hufflefuck tshirt,Hufflefuck,huffle,gryffindor,gryffin,harry',
+    generic_keywords: designName.replace('.png', ''),
     fulfillment_latency: 6,
     merchant_shipping_group_name: 'Migrated Template AMZ'
   };
@@ -496,7 +495,7 @@ const FormFields = (props: {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} lg={4}>
+            <Grid item xs={12} sm={12} lg={4}>
               <TextField
                 required
                 fullWidth
