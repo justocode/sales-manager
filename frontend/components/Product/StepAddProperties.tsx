@@ -896,6 +896,8 @@ const StepAddProperties = (props: any) => {
       if (isCupPattern) {
         newMugPatternData.feed_product_type = 'kitchen';
         newMugPatternData.item_type = 'mugs';
+        newMugPatternData.item_name = design.name.replace('.png', '');
+        newMugPatternData.generic_keywords = design.name.replace('.png', '');
       }
 
       const newMugPattern = lastMugPatternData[patternName] || {
