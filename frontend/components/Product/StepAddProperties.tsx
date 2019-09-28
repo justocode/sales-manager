@@ -79,6 +79,10 @@ const useStyles = makeStyles((theme: Theme) =>
     root: {
       width: '100%'
     },
+    expandDetail: {
+      maxHeight: 600,
+      overflow: 'scroll',
+    },
     heading: {
       marginLeft: theme.spacing(1),
       fontSize: theme.typography.pxToRem(15),
@@ -113,7 +117,7 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     formFields: {
       flexGrow: 1,
-      marginLeft: 10
+      marginLeft: 10,
     },
     textField: {
       paddingRight: theme.spacing(1)
@@ -991,7 +995,7 @@ const StepAddProperties = (props: any) => {
                 );
               })}
             </ExpansionPanelSummary>
-            <ExpansionPanelDetails>
+            <ExpansionPanelDetails className={classes.expandDetail}>
               <Grid container>
                 {currentMugs &&
                   currentMugs[design.name] &&
