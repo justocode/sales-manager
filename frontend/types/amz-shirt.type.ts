@@ -67,6 +67,7 @@ export type MOCKUP = APP_TYPE & {
   link: string;
   sharedLink: string;
   b64: string;// | ArrayBuffer | WindowBase64;
+  [propName: string]: any;
 };
 
 export type COLOR = APP_TYPE & {
@@ -78,6 +79,7 @@ export type COLOR = APP_TYPE & {
 export type SIZE = {
   appSize?: string;
   amzSize?: string;
+  price?: number;
 };
 
 export type MUG_PATTERN = {

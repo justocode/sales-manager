@@ -402,6 +402,7 @@ const FormFields = (props: {
       });
 
       if (idx === -1) {
+        size.price = mugPattern.data.standard_price;
         newMugPatternInfo.sizes.push(size);
       } else {
         newMugPatternInfo.sizes.splice(idx, 1);
@@ -410,6 +411,22 @@ const FormFields = (props: {
       return newcurrentMugs;
     });
   };
+
+  function changeSizePrice(size: SIZE, value: number) {
+    setCurrentMugs((currentMugs: MUG_PATTERN) => {
+      let newcurrentMugs = { ...currentMugs };
+      let newMugPatternInfo = newcurrentMugs[design.name].patterns.find((imugPattern: MUG_PATTERN) => {
+        return imugPattern.name === mugPattern.name && imugPattern.data.item_sku === mugPattern.data.item_sku;
+      });
+      let editableSize = newMugPatternInfo.sizes.find((sizeItem: SIZE) => {
+        return sizeItem.appSize === size.appSize;
+      });
+
+      editableSize.price = value;
+
+      return newcurrentMugs;
+    });
+  }
 
   return (
     <Formik
@@ -468,13 +485,21 @@ const FormFields = (props: {
             </Grid>
             <Grid item xs={12} sm={6} lg={4}>
               <FormControl fullWidth className={classes.textField}>
-                <InputLabel>Size</InputLabel>
+                <InputLabel>Sizes & Prices</InputLabel>
                 <div className={classes.chipContent}>
                     {patternSizes.map(size => (
                     <IChip
                       key={'mockupSize-' + design.name + '-' + patternName + '-' + size.amzSize}
                       label={size.appSize}
                       onClick={toggleSizeToMug(size)}
+                      size={mugPattern.sizes.find(mugSize => {
+                        return mugSize.appSize === size.appSize;
+                      })}
+                      chipType={IChip.type.input}
+                      editable={mugPattern.sizes.findIndex(mugSize => {
+                        return mugSize.appSize === size.appSize;
+                      }) !== -1}
+                      onEdit={changeSizePrice}
                       className={clsx({
                         [classes.chipChecked]:
                           mugPattern.sizes.findIndex(mugSize => {

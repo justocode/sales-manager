@@ -520,6 +520,7 @@ const Dashboard = () => {
             rowChild.color_map = color.amzColor;
             rowChild.size_name = size.appSize;
             rowChild.size_map = size.amzSize;
+            rowChild.standard_price = size.price || rowChild.standard_price;
             rowChild.main_image_url = sharedLink.toString();
 
             const childRowData = keys.map(key => {
