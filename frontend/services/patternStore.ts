@@ -3,7 +3,8 @@ function generateDefaultPattern(
   _name: string,
   _hex: string,
   _amzColor: string,
-  _isDefault: boolean = false
+  _isDefault: boolean = false,
+  _isUsed: boolean = true,
 ) {
   const _fileSrc = require(`../assets/patterns/${_fileName}.png`);
 
@@ -13,6 +14,7 @@ function generateDefaultPattern(
     hex: _hex,
     amzColor: _amzColor,
     isDefault: _isDefault,
+    isUsed: _isUsed,
     fileSrc: _fileSrc
   };
 
