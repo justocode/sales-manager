@@ -56,6 +56,10 @@ const useStyles = makeStyles((theme: Theme) =>
       textAlign: 'center',
       cursor: 'pointer',
     },
+    patternColorTitle: {
+      paddingLeft: 20,
+      paddingBottom: 20
+    },
     patternColorAvailable: {
       opacity: 1
     },
@@ -101,7 +105,20 @@ const ManagePatterns = (props: any) => {
   const classes = useStyles(theme);
   const [patterns, setPatterns] = utils.useStateWithLocalStorage('patterns', defaultPatterns);
 
-  function togglePatternColor(patternName: string, patternColor: any) {
+  function setDefaultPatternColor(patternName: string, patternColor: any) {
+    setPatterns((patterns: any) => {
+      let pattern = patterns[patternName];
+      pattern.colors.map((patternColorItem: any) => {
+        if (patternColorItem.hex === patternColor.hex) {
+          patternColorItem.isUsed = !patternColorItem.isUsed;
+        }
+      });
+
+      return { ...patterns, [patternName]: pattern };
+    });
+  }
+
+  function usePatternColor(patternName: string, patternColor: any) {
     setPatterns((patterns: any) => {
       let pattern = patterns[patternName];
       pattern.colors.map((patternColorItem: any) => {
@@ -114,7 +131,7 @@ const ManagePatterns = (props: any) => {
     });
   }
 
-  function togglePattern(e: any, patternName: string) {
+  function usePattern(e: any, patternName: string) {
     e.stopPropagation();
 
     setPatterns((patterns: any) => {
@@ -139,7 +156,7 @@ const ManagePatterns = (props: any) => {
                 id={'pattern-header-' + key}
                 className={clsx({ [classes.patternDeactived]: !patterns[key].isUsed })}
               >
-                <Card className={classes.pattern} onClick={e => togglePattern(e, key)}>
+                <Card className={classes.pattern} onClick={e => usePattern(e, key)}>
                   <CardActionArea>
                     <CardMedia className={classes.media} image={pattern.fileSrc} title={pattern.name} />
                   </CardActionArea>
@@ -159,20 +176,27 @@ const ManagePatterns = (props: any) => {
                     <Typography variant="h5" component="h5">
                       Default Colors:
                     </Typography>
-                    {_.get(patterns, [key, 'colors']).map((patternColor: any, patternColorIndex: number) => (
-                      <IChip
-                        key={'patternColorItem-' + patternColor.hex}
-                        label={patternColor.name}
-                        color={patternColor}
-                        onClick={[togglePatternColor, key, patternColor]}
-                        className={clsx({[classes.patternColorAvailable]: patternColor.isDefault})}
-                      />
-                    ))}
+                    {_.get(patterns, [key, 'colors']).map((patternColor: any, patternColorIndex: number) => {
+                      return patternColor.isUsed ? (
+                        <IChip
+                          key={'patternColorItem-' + patternColor.hex}
+                          label={patternColor.name}
+                          color={patternColor}
+                          onClick={[usePatternColor, key, patternColor]}
+                          className={clsx({[classes.patternColorAvailable]: patternColor.isDefault})}
+                        />
+                      ) : null
+                    }) }
                   </div>
                 </div>
               </ExpansionPanelSummary>
               <ExpansionPanelDetails className={classes.expandDetail}>
                 <Grid container>
+                  <Grid item className={classes.patternColorTitle} xs={12} sm={12} lg={12}>
+                    <Typography variant="h4" component="h4">
+                      Available Colors
+                    </Typography>
+                  </Grid>
                   {_.get(patterns, [key, 'colors']).map((patternColor: any, patternColorIndex: number) => {
                     return (
                       <Grid
@@ -184,11 +208,11 @@ const ManagePatterns = (props: any) => {
                           className={classes.media}
                           src={patternColor.fileSrc}
                           alt={patternColor.fileName}
-                          onClick={e => {togglePatternColor(key, patternColor)}}
+                          onClick={e => {setDefaultPatternColor(key, patternColor)}}
                         />
                         <CheckIcon
                           className={clsx(classes.checkedIcon, classes.colorChecked, {
-                            [classes.checked]: patternColor.isDefault
+                            [classes.checked]: patternColor.isUsed
                           })}
                         />
                       </Grid>

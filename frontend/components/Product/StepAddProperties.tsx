@@ -212,12 +212,14 @@ const FormFields = (props: {
   const [position, setPosition] = useState({});
 
   const patternColors: COLOR[] = patterns[patternName].colors.filter((patternColor: any) => {
+    if (patternColor.isUsed) {
       return {
         name: patternColor.name,
         hex: patternColor.hex,
         amzColor: patternColor.amzColor,
       } as COLOR;
-    });
+    }
+  });
 
   const isCupPattern = patternName.includes('mug') || patternName.includes('Mug');
   const patternSizes = isCupPattern ? CUP_SIZES : APP_SIZES;
@@ -908,7 +910,7 @@ const StepAddProperties = (props: any) => {
       });
     } else {
       const patternDefaultColors: COLOR[] = patterns[patternName].colors.filter((patternColor: any) => {
-        return patternColor.isDefault;
+        return patternColor.isUsed && patternColor.isDefault;
       })
       .map((patternColor: any) => {
         return {
