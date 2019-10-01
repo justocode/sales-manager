@@ -38,9 +38,20 @@ const IChip = (props: any) => {
     borderColor: '#e0e0e0'
   };
 
-  function clickOnChip() {
+  function clickOnChip(event: React.MouseEvent) {
+    event.stopPropagation();
+
     if (typeof onClick === 'function') {
       onClick();
+    }
+    else if (Array.isArray(onClick) && typeof onClick[0] === 'function') {
+      const params = onClick.filter((param: any, index: number) => {
+        if (index > 0) {
+          return param;
+        }
+      });
+
+      onClick[0].call(null, ...params);
     }
   }
 
@@ -59,7 +70,7 @@ const IChip = (props: any) => {
   }
 
   return (
-    <div className={clsx(classes.root, className)} onClick={clickOnChip} style={styles}>
+    <div className={clsx(classes.root, className)} onClick={e => clickOnChip(e)} style={styles}>
       <span>{label}</span>
       {
         chipType === IChip.type.input && editable ? (
