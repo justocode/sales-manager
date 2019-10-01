@@ -7,7 +7,6 @@ import { Formik } from 'formik';
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
 import ExpansionPanelDetails from '@material-ui/core/ExpansionPanelDetails';
-import Typography from '@material-ui/core/Typography';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import Card from '@material-ui/core/Card';
@@ -21,8 +20,6 @@ import MenuItem from '@material-ui/core/MenuItem';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import InputLabel from '@material-ui/core/InputLabel';
-import Input from '@material-ui/core/Input';
-import Chip from '@material-ui/core/Chip';
 import IconButton from '@material-ui/core/IconButton';
 
 // Custom component
@@ -211,9 +208,10 @@ const FormFields = (props: {
   const patternRef = useRef(null);
   const sketchRef = useRef(null);
   const { design, patternName, mugPattern, currentMugs, setCurrentMugs } = props;
+  const [patterns] = utils.useStateWithLocalStorage('patterns', {});
   const [position, setPosition] = useState({});
 
-  const patternColors: COLOR[] = services.patternStore.patterns[patternName].map(patternColor => {
+  const patternColors: COLOR[] = patterns[patternName].colors.filter((patternColor: any) => {
       return {
         name: patternColor.name,
         hex: patternColor.hex,
@@ -866,6 +864,7 @@ const StepAddProperties = (props: any) => {
   const classes = useStyles(theme);
   const { currentDesigns, currentMugs, setCurrentMugs } = props;
   const [isExpanded, setIsExpanded] = useState(false);
+  const [patterns] = utils.useStateWithLocalStorage('patterns', {});
   const [lastMugPatternData] = utils.useStateWithLocalStorage('lastMugPatternData', {});
 
   function handleExpand() {
@@ -908,10 +907,10 @@ const StepAddProperties = (props: any) => {
         return newCurrentMugs;
       });
     } else {
-      const patternDefaultColors: COLOR[] = services.patternStore.patterns[patternName].filter(patternColor => {
+      const patternDefaultColors: COLOR[] = patterns[patternName].colors.filter((patternColor: any) => {
         return patternColor.isDefault;
       })
-      .map(patternColor => {
+      .map((patternColor: any) => {
         return {
           name: patternColor.name,
           hex: patternColor.hex,
@@ -984,8 +983,10 @@ const StepAddProperties = (props: any) => {
               </Card>
 
               {/* Show Pattern Images to choose --> Create new Mug */}
-              {Object.keys(services.patternStore.patterns).map((patternName: string, mugPatternIndex: number) => {
-                return (
+              {Object.keys(patterns).map((patternName: string, mugPatternIndex: number) => {
+                const isUsed = !!patterns[patternName].isUsed;
+
+                return isUsed ? (
                   <div key={'mugPattern-' + mugDesignIndex + '-' + mugPatternIndex} className={classes.card}>
                     <img className={classes.designImg}
                       src={require(`../../assets/patterns/${patternName}_default.png`)}
@@ -1017,7 +1018,7 @@ const StepAddProperties = (props: any) => {
                   //     />
                   //   </CardActionArea>
                   // </Card>
-                );
+                ) : null;
               })}
             </ExpansionPanelSummary>
             <ExpansionPanelDetails className={classes.expandDetail}>
