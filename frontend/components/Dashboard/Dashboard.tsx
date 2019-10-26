@@ -70,6 +70,7 @@ import {
 
 type KeySortable = {
   sku: string;
+  name: string;
   designName: string;
   patternName: string;
   mockupImage: string;
@@ -91,7 +92,8 @@ interface HeadRow {
 const headRows: HeadRow[] = [
   { id: 'status', numeric: false, disablePadding: false, label: 'Status' },
   { id: 'mockupImage', numeric: false, disablePadding: false, label: 'Image' },
-  { id: 'designName', numeric: false, disablePadding: true, label: 'Name' },
+  { id: 'name', numeric: false, disablePadding: true, label: 'Name' },
+  // { id: 'designName', numeric: false, disablePadding: true, label: 'Name' },
   { id: 'sku', numeric: false, disablePadding: false, label: 'SKU' },
   { id: 'createdAt', numeric: false, disablePadding: false, label: 'Created at' }
 ];
@@ -290,6 +292,7 @@ const Dashboard = () => {
 
     const rowdata = {
       sku: mugPattern.data.item_sku,
+      name: mugPattern.data.item_name,
       designName: designName,
       patternName: mugPattern.name,
       mockupImage: mockup.sharedLink,
@@ -638,7 +641,7 @@ const Dashboard = () => {
                         key={itemkey}
                         selected={isItemSelected}
                       >
-                        <TableCell padding="checkbox">
+                        <TableCell id={labelId} scope="row" padding="checkbox">
                           <Checkbox checked={isItemSelected} inputProps={{ 'aria-labelledby': labelId }} />
                         </TableCell>
                         <TableCell>
@@ -659,8 +662,8 @@ const Dashboard = () => {
                             className={classes.rowImg}
                           />
                         </TableCell>
-                        <TableCell id={labelId} scope="row" padding="none">
-                          {row.designName}
+                        <TableCell padding="none">
+                          {row.name}
                         </TableCell>
                         <TableCell>{row.sku}</TableCell>
                         <TableCell>{row.createdAt}</TableCell>
