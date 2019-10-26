@@ -930,12 +930,14 @@ const StepAddProperties = (props: any) => {
         newMugPatternData.generic_keywords = design.name.replace('.png', '');
       }
 
-      const newMugPattern = lastMugPatternData[patternName] || {
+      let newMugPattern = lastMugPatternData[patternName] || {
         name: patternName,
         colors: [...patternDefaultColors],
         sizes: isCupPattern ? [...CUP_SIZES] : [APP_SIZES[0], APP_SIZES[6], APP_SIZES[7], APP_SIZES[8]],
         data: newMugPatternData
       } as MUG_PATTERN;
+
+      newMugPattern.data.item_sku = 'DLS-' + getCurrentDateWithFormat();
 
       const newMug = {
         designId: design.id,

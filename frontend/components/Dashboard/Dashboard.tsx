@@ -557,7 +557,7 @@ const Dashboard = () => {
 
   const isSelected = (row: RowData) =>
     selectedMugPatterns.findIndex(mugPattern => {
-      return mugPattern.data.item_sku === row.sku;
+      return mugPattern.data.item_sku === row.sku && mugPattern.name === row.patternName;
     }) !== -1;
 
   return (
