@@ -3,6 +3,7 @@ import { Theme, useTheme, createStyles, makeStyles } from '@material-ui/core/sty
 import clsx from 'clsx';
 import interact from 'interactjs';
 import { Formik } from 'formik';
+import uuid from "uuid/v1";
 
 import ExpansionPanel from '@material-ui/core/ExpansionPanel';
 import ExpansionPanelSummary from '@material-ui/core/ExpansionPanelSummary';
@@ -166,7 +167,7 @@ const getCurrentDateWithFormat = () => {
 const generateDefaultMugPatternData = (designName: string): AMZ_APP_SHIRT => {
   return {
     feed_product_type: 'shirt',
-    item_sku: 'DLS-' + getCurrentDateWithFormat(),
+    item_sku: 'this uuid will be generated when addPatternToMug',
     brand_name: 'Dilostyle',
     item_name: designName.replace('.png', ''),
     item_type: 'music-fan-t-shirts',
@@ -937,7 +938,7 @@ const StepAddProperties = (props: any) => {
         data: newMugPatternData
       } as MUG_PATTERN;
 
-      newMugPattern.data.item_sku = 'DLS-' + getCurrentDateWithFormat();
+      newMugPattern.data.item_sku = uuid().substr(0, 8) + getCurrentDateWithFormat();
 
       const newMug = {
         designId: design.id,

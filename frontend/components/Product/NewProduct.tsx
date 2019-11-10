@@ -216,10 +216,10 @@ const NewProductPage = () => {
             mugPattern.colors.map((color: COLOR, idx: number) => {
               const dateTime = Date.now();
               const fileName =
-                'mockup-' +
-                designName.replace(/ /g, '_').replace('.png', '-') +
-                mugPattern.name + '_' + color.hex.substr(1) + '-' +
-                dateTime + '-' + idx +
+                'MK-' + color.name + '-' + mugPattern.name + '-' + mugPattern.data.item_sku +
+                // designName.replace(/ /g, '_').replace('.png', '-') +
+                // mugPattern.name + '_' + color.hex.substr(1) + '-' +
+                // dateTime + '-' + idx +
                 '.png';
 
               const newMockup = {
@@ -231,7 +231,7 @@ const NewProductPage = () => {
                 designId: newMug.designId,
                 designName: newMug.designName,
                 patternName: mugPattern.name,
-                sku: mugPattern.data.item_sku,
+                sku: color.name + '-' + mugPattern.name + '-' + mugPattern.data.item_sku,
                 color: color,
                 link: '/mockups/' + mugPattern.data.item_sku + '/' + fileName,
                 sharedLink: null,

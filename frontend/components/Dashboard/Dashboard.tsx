@@ -492,12 +492,11 @@ const Dashboard = () => {
 
       exportedData.push(parentRowData);
 
-      let count = 0;
-
       // NOTE: Generate Row child
       mugPattern.colors.map((color: COLOR, cidx: number) => {
         const mockup: MOCKUP = mockups.find((mockup: MOCKUP) => {
-          return mockup.patternName === mugPattern.name && mockup.color.hex === color.hex;
+          let comparedUUID = mockup.color.name + '-' + mockup.patternName + '-' + mugPattern.data.item_sku;
+          return comparedUUID === mockup.sku;
         });
 
         if (mockup) {
@@ -512,12 +511,10 @@ const Dashboard = () => {
           const sharedLink = mockup.sharedLink || 'Was not uploaded yet';
 
           mugPattern.sizes.map((size: SIZE, sidx: number) => {
-            count++;
-
             let rowChild = Object.assign({}, mugPattern.data);
 
             rowChild.parent_sku = rowParent.item_sku;
-            rowChild.item_sku = rowParent.item_sku + '-' + count;
+            rowChild.item_sku = size.appSize + '-' + color.name + '-' + mugPattern.name + '-' + rowParent.item_sku;
             rowChild.parent_child = 'child';
             rowChild.color_name = color.name;
             rowChild.color_map = color.amzColor;
