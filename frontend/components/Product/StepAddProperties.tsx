@@ -512,7 +512,7 @@ const FormFields = (props: {
                 </div>
               </FormControl>
             </Grid>
-            <Grid item xs={12} sm={6} lg={4}>
+            {/* <Grid item xs={12} sm={6} lg={4}>
               <TextField
                 required
                 fullWidth
@@ -527,7 +527,7 @@ const FormFields = (props: {
                   shrink: true
                 }}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={12} lg={8}>
               <TextField
                 required
@@ -695,7 +695,7 @@ const FormFields = (props: {
                 }}
               />
             </Grid>
-            <Grid item xs={12} sm={6} lg={4}>
+            {/* <Grid item xs={12} sm={6} lg={4}>
               <TextField
                 required
                 fullWidth
@@ -710,8 +710,8 @@ const FormFields = (props: {
                   shrink: true
                 }}
               />
-            </Grid>
-            <Grid item xs={12} sm={6} lg={4}>
+            </Grid> */}
+            {/* <Grid item xs={12} sm={6} lg={4}>
               <TextField
                 required
                 fullWidth
@@ -726,7 +726,7 @@ const FormFields = (props: {
                   shrink: true
                 }}
               />
-            </Grid>
+            </Grid> */}
             <Grid item xs={12} sm={6} lg={4}>
               <TextField
                 required
