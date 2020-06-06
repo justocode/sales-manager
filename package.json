@@ -21,7 +21,7 @@
     "apollo-boost": "^0.4.4",
     "apollo-datasource": "^0.6.1",
     "apollo-modulizer": "^0.2.3",
-    "apollo-server-micro": "^2.8.1",
+    "apollo-server-micro": "^2.14.2",
     "bcrypt": "^3.0.6",
     "class-validator": "^0.10.0",
     "detect-node": "^2.0.4",
