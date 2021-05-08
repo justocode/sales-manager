@@ -48,7 +48,7 @@
     "react-spring": "^8.0.27",
     "redux-starter-kit": "^0.6.3",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.18",
+    "typeorm": "^0.2.25",
     "xlsx": "^0.15.1"
   },
   "devDependencies": {
