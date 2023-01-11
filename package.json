@@ -23,7 +23,7 @@
     "apollo-modulizer": "^0.2.3",
     "apollo-server-micro": "^2.8.1",
     "bcrypt": "^3.0.6",
-    "class-validator": "^0.10.0",
+    "class-validator": "^0.14.0",
     "detect-node": "^2.0.4",
     "dotenv": "^8.1.0",
     "downscale": "^1.0.6",
